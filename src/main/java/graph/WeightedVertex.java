@@ -5,14 +5,14 @@ package graph;
  */
 public class WeightedVertex {
     private String _name;
-    private int _weight;
+    private double _weight;
 
     public WeightedVertex(String name) {
         _name = name;
         _weight = -1;
     }
 
-    public WeightedVertex(String name, int weight) {
+    public WeightedVertex(String name, double weight) {
         _name = name;
         _weight = weight;
     }
@@ -21,8 +21,13 @@ public class WeightedVertex {
         return _name;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return _weight;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override
