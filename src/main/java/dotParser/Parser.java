@@ -73,6 +73,14 @@ public class Parser {
         return graph;
     }
 
+    /**
+     * Outputs a graph to a .dot file
+     * @param name name of output file
+     */
+    public static void outputGraphToFile(String name) {
+
+    }
+
     private static double getValue(String value) {
         return Double.parseDouble(value.substring(value.indexOf("=") + 1, value.lastIndexOf("]")).trim());
     }
