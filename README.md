@@ -1,5 +1,20 @@
 # 306-scheduling
-This project uses Maven.
+
+[![Build Status](https://travis-ci.com/Nateeo/306-scheduling.svg?token=8jyemjiGm66sspKKLBKp&branch=master)](https://travis-ci.com/Nateeo/306-scheduling)
+
+Parallel processor task scheduling application with visualisation.
+
+This project uses Java, Maven and JGraph.
+
+**Command-line usage**
+
+`java -jar scheduler.jar INPUT.dot P [OPTION]`
+
+- `INPUT.dot` .dot file representing the task graph
+- `P` number of processors to schedule on
+- `[OPTION]`
+    * `-v` visualise search
+    * `-o` specify output file (default is `INPUT-output.dot`)
 
 **IntelliJ setup:**
 
@@ -13,8 +28,11 @@ This project uses Maven.
 
 5. Build will be in `/target` folder
 
-## package structure
-starts from **src/main/java**
+## Team Hi-5
 
-#### package: scheduler
-- **Scheduler** class: contains entry-point to scheduling algorithm
+- Edison Rho
+- Eli Salter
+- Samule Li
+- Zihao Yang
+- Sueyeon Lee
+- Nathan Hur
