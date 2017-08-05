@@ -22,6 +22,7 @@ public class Parser {
      */
     public static Graph parseDotFile (File file) {
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        HashMap startNodes;
         Graph graph;
         BufferedReader br = null;
         try {
@@ -55,6 +56,9 @@ public class Parser {
         } catch (IOException e) {
             return null;
         }
+
+        // clone nodeMap to find possible starting nodes
+        startNodes = (HashMap<String, Node>)nodeMap.clone();
         // process arcQueue
         for (String[] string : arcQueue) {
             String[] arcString = string[0].split("->");
@@ -62,7 +66,10 @@ public class Parser {
             String to =  arcString[0];
             int weight = getValue(string[1]);
             nodeMap.get(from).addEdge(nodeMap.get(to), weight);
+            startNodes.remove(nodeMap.get(to));
         }
+
+        graph.setStart(new ArrayList<Node>(startNodes.values()));
 
         return graph;
     }
