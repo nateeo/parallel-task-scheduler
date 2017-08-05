@@ -22,4 +22,19 @@ public class PartialSolution {
             _processors[i] = new ArrayList<ProcessorSlot>();
         }
     }
+
+    /**
+     * check if a node is present within the schedule of the partial schedule.
+     * @param node
+     * @return
+     */
+    public boolean contains(Node node){
+        for (ArrayList<ProcessorSlot> processor : _processors){
+            if (processor.contains(node)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

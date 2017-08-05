@@ -10,6 +10,7 @@ public class Node {
     String _name;
     int _weight;
     ArrayList<Edge> _outgoing;
+    ArrayList<Edge> _ingoing;
 
     public Node(String name, int weight) {
         _name = name;
@@ -24,6 +25,11 @@ public class Node {
     public ArrayList<Edge> getOutgoing() {
         return _outgoing;
     }
+
+    public ArrayList<Edge> getIngoing() {
+        return _ingoing;
+    }
+
 
     @Override
     public boolean equals(Object other) {

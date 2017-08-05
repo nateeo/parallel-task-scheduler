@@ -5,7 +5,9 @@ package graph;
  */
 public class Edge {
     int _weight;
+
     Node _to;
+    Node _from;
 
     public Edge(Node to, int weight) {
         _weight = weight;
@@ -13,6 +15,10 @@ public class Edge {
 
     public Node getTo() {
         return _to;
+    }
+
+    public Node getFrom() {
+        return _from;
     }
 
     public int getWeight() {

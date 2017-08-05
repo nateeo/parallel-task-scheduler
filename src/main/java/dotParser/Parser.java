@@ -70,6 +70,7 @@ public class Parser {
         }
 
         graph.setStart(new ArrayList<Node>(startNodes.values()));
+        graph.setNodes(new ArrayList<Node>(nodeMap.values()));
 
         return graph;
     }

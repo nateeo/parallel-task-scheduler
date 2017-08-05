@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that represents a graph and contains some metadata
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 public class Graph {
     String _name;
     ArrayList<Node> _start;
+    List<Node> _nodes;
 
     public Graph(String name) {
         _name = name;
@@ -17,11 +19,18 @@ public class Graph {
         _start = start;
     }
 
+    public void setNodes(List<Node> nodes){
+        _nodes = nodes;
+    }
+
     public ArrayList<Node> getStart() {
         return _start;
     }
 
+    public List<Node> getNodes() { return _nodes; }
+
     public String getName() {
         return _name;
     }
+
 }
