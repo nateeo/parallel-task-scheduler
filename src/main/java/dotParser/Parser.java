@@ -1,9 +1,7 @@
 package dotParser;
 
-import graph.Arc;
-import graph.WeightedDigraph;
-import graph.WeightedVertex;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import graph.Graph;
+import graph.Node;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -19,12 +17,12 @@ public class Parser {
     /**
      * Parses .dot file and returns a JGraph representation.
      * @param file
-     * @return WeightedDigraph, null if there was an error reading the file
+     * @return Graph, null if there was an error reading the file
      * @throws IOException
      */
-    public static WeightedDigraph parseDotFile (File file) {
-        HashMap<String, WeightedVertex> vertexHashMap = new HashMap<String, WeightedVertex>();
-        WeightedDigraph graph;
+    public static Graph parseDotFile (File file) {
+        HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        Graph graph;
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));
@@ -35,39 +33,35 @@ public class Parser {
         // Parse graph lines
         String line;
         String[] splitLine;
-        ArrayList<Arc> arcQueue = new ArrayList<Arc>();
+        ArrayList<String[]> arcQueue = new ArrayList<String[]>();
         try {
             String graphName = br.readLine().split("\"")[1];
-            graph = new WeightedDigraph(graphName);
+            graph = new Graph(graphName);
 
             while (!(line = br.readLine()).equals("}")) {
                 splitLine = line.split("\\[");
                 String left = splitLine[0].trim();
                 String right = splitLine[1];
-                double weight;
+                int weight;
 
                 if (splitLine[0].trim().length() == 1) { // add single vertex to graph and hashmap
                     weight = getValue(right);
-                    WeightedVertex newVertex = new WeightedVertex(left, weight);
-                    graph.addVertex(newVertex);
-                    vertexHashMap.put(left, newVertex);
+                    Node newVertex = new Node(left, weight);
+                    nodeMap.put(left, newVertex);
                 } else { // add arc to queue for processing at the end
-                    String[] arcString = left.split("->");
-                    weight = getValue(right );
-                    arcQueue.add(new Arc (
-                            vertexHashMap.get(arcString[0].trim()),
-                            vertexHashMap.get(arcString[1].trim()),
-                            weight
-                    ));
+                    arcQueue.add(new String[]{left, right});
                 }
             }
         } catch (IOException e) {
             return null;
         }
         // process arcQueue
-        for (Arc arc : arcQueue) {
-            DefaultWeightedEdge e = graph.addEdge(arc.getSource(), arc.getDestination());
-            graph.setEdgeWeight(e, arc.getWeight());
+        for (String[] string : arcQueue) {
+            String[] arcString = string[0].split("->");
+            String from = arcString[1];
+            String to =  arcString[0];
+            int weight = getValue(string[1]);
+            nodeMap.get(from).addEdge(nodeMap.get(to), weight);
         }
 
         return graph;
@@ -81,7 +75,7 @@ public class Parser {
 
     }
 
-    private static double getValue(String value) {
-        return Double.parseDouble(value.substring(value.indexOf("=") + 1, value.lastIndexOf("]")).trim());
+    private static int getValue(String value) {
+        return Integer.parseInt(value.substring(value.indexOf("=") + 1, value.lastIndexOf("]")).trim());
     }
 }
