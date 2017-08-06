@@ -65,6 +65,9 @@ public class Parser {
             String from = arcString[1];
             String to =  arcString[0];
             int weight = getValue(string[1]);
+            System.out.println("GHe");
+            System.out.println(nodeMap.get(from));
+            System.out.println(nodeMap.get(to));
             nodeMap.get(from).addEdge(nodeMap.get(to), weight);
             startNodes.remove(nodeMap.get(to));
         }

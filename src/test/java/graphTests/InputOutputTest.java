@@ -1,9 +1,12 @@
 package graphTests;
 
+import algorithm.PSManager;
 import graph.Graph;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static dotParser.Parser.parseDotFile;
 
@@ -20,7 +23,11 @@ public class InputOutputTest {
      */
     public void parseInput() {
        Graph graph = parseDotFile(exampleDotFile);
+        HashMap<String, Integer> stuff = PSManager.bottomLevelCalculator(graph);
 
+        for (Map.Entry<String, Integer> e : stuff.entrySet()) {
+            System.out.println(e.getKey() + " blw is " + e.getValue());
+        }
     }
 
 

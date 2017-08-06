@@ -4,10 +4,7 @@ import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This static class utilises the Partial solutions to generate children partial solutions.
@@ -16,6 +13,8 @@ import java.util.TreeSet;
 
 public class PSManager {
 
+    //Hashset in PSManager, if you've calculated it before, Memoization.
+    private HashSet<Integer> _bottomLevels;
     private Graph _graph;
     private int _numberOfProcessors;
 
@@ -36,7 +35,6 @@ public class PSManager {
      * Returns a list of lower level partial solutions from a given partial solution.
      * It uses all the free variables that are available from the input partial solution
      * and generates partial solutions from those free variables.
-     * @param partialSolution
      * @return
      */
     public List<PartialSolution> generateChildren(PartialSolution prevPartialSolution){
@@ -50,7 +48,55 @@ public class PSManager {
                 PartialSolution partialSolution = new PartialSolution(_numberOfProcessors);
             }
         }
+    return null;
+    }
 
+    /**
+     * Calculates the bottomLevel value for all nodes in the graph, this only has to be run once in the initialization
+     * of the PSManager
+     * @param graph
+     * @return
+     */
+    public static HashMap<String,Integer> bottomLevelCalculator(Graph graph) {
+        List<Node> allNodes = graph.getNodes();
+        HashMap<String, Integer> bottomLevels = new HashMap<String, Integer>(allNodes.size());
+        Queue<Node> queuedNodes = new LinkedList<Node>();
+        Node predecessorNode;
+        Node currentNode;
+        int maxBottomLevel;
+        int currentNodeBL;
+        boolean allSuccessorsCalculated;
+
+        for(Node node: allNodes) {
+            if(node.getOutgoing().isEmpty()) {
+                queuedNodes.add(node);
+            }
+        }
+
+        while(!queuedNodes.isEmpty()) {
+            maxBottomLevel = 0;
+            currentNode = queuedNodes.remove();
+            for(Edge successors: currentNode.getOutgoing()) {
+                currentNodeBL = bottomLevels.get(successors.getTo().getName());
+                if (currentNodeBL > maxBottomLevel) {
+                    maxBottomLevel = currentNodeBL;
+                }
+            }
+            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
+            for (Edge predecessors: currentNode.getIngoing()) {
+                predecessorNode = predecessors.getFrom();
+                allSuccessorsCalculated = true;
+                for(Edge pSuccessors: predecessorNode.getOutgoing()) {
+                    if(!bottomLevels.containsKey(pSuccessors.getTo().getName())) {
+                        allSuccessorsCalculated = false;
+                    }
+                }
+                if (allSuccessorsCalculated) {
+                    queuedNodes.add(predecessorNode);
+                }
+            }
+        }
+        return bottomLevels;
     }
 
     private List<Node> getFreeNodes(PartialSolution prevPartial){
@@ -60,7 +106,7 @@ public class PSManager {
         //get all the free variables from list of all nodes in graph
         List<Edge> predecessorEdges;
         allNodes: for (Node node : nodes){
-            predecessorEdges = node.getIngoing().;
+            predecessorEdges = node.getIngoing();
             //check each predecessor of the node to see if it's in schedule already
             predecessors: for (Edge trialEdge : predecessorEdges) {
                 if (!prevPartial.contains(trialEdge.getFrom())){

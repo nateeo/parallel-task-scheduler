@@ -30,6 +30,13 @@ public class Node {
         return _ingoing;
     }
 
+    public String getName() {
+        return _name;
+    }
+
+    public int getWeight() {
+        return _weight;
+    }
 
     @Override
     public boolean equals(Object other) {
