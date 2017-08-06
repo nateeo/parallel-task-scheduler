@@ -62,8 +62,8 @@ public class Parser {
         // process arcQueue
         for (String[] string : arcQueue) {
             String[] arcString = string[0].split("->");
-            String from = arcString[1];
-            String to =  arcString[0];
+            String from = arcString[0].trim();
+            String to =  arcString[1].trim();
             int weight = getValue(string[1]);
             System.out.println("GHe");
             System.out.println(nodeMap.get(from));

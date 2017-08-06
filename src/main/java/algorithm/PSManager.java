@@ -76,23 +76,29 @@ public class PSManager {
         while(!queuedNodes.isEmpty()) {
             maxBottomLevel = 0;
             currentNode = queuedNodes.remove();
-            for(Edge successors: currentNode.getOutgoing()) {
-                currentNodeBL = bottomLevels.get(successors.getTo().getName());
-                if (currentNodeBL > maxBottomLevel) {
-                    maxBottomLevel = currentNodeBL;
-                }
-            }
-            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
-            for (Edge predecessors: currentNode.getIngoing()) {
-                predecessorNode = predecessors.getFrom();
-                allSuccessorsCalculated = true;
-                for(Edge pSuccessors: predecessorNode.getOutgoing()) {
-                    if(!bottomLevels.containsKey(pSuccessors.getTo().getName())) {
-                        allSuccessorsCalculated = false;
+            if (!currentNode.getOutgoing().isEmpty()) {
+                for (Edge successors : currentNode.getOutgoing()) {
+                    currentNodeBL = bottomLevels.get(successors.getTo().getName());
+                    if (currentNodeBL > maxBottomLevel) {
+                        maxBottomLevel = currentNodeBL;
                     }
                 }
-                if (allSuccessorsCalculated) {
-                    queuedNodes.add(predecessorNode);
+            }
+            System.out.println("node: "+currentNode.getName());
+            System.out.println("ingoing nodes: "+currentNode.getIngoing().size());
+            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
+            if (!currentNode.getIngoing().isEmpty()) {
+                for (Edge predecessors : currentNode.getIngoing()) {
+                    predecessorNode = predecessors.getFrom();
+                    allSuccessorsCalculated = true;
+                    for (Edge pSuccessors : predecessorNode.getOutgoing()) {
+                        if (!bottomLevels.containsKey(pSuccessors.getTo().getName())) {
+                            allSuccessorsCalculated = false;
+                        }
+                    }
+                    if (allSuccessorsCalculated) {
+                        queuedNodes.add(predecessorNode);
+                    }
                 }
             }
         }
