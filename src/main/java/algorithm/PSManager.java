@@ -13,10 +13,10 @@ import java.util.*;
 
 public class PSManager {
 
-    //Hashset in PSManager, if you've calculated it before, Memoization.
-    private HashSet<Integer> _bottomLevels;
     private Graph _graph;
     private int _numberOfProcessors;
+
+    //calculate all bottom level work values and cache them for the cost function
     private HashMap<String, Integer> _bottomLevelWork;
 
     public PSManager(int processors, Graph graph){
@@ -25,22 +25,18 @@ public class PSManager {
         _bottomLevelWork = bottomLevelCalculator(graph);
     }
 
-    public PriorityQueue<PartialSolution> initialise() {
-
-        return null;
-    }
-
     //BFS of  children of partial solution
     //for ever node, addNode to add to partial solution then return that
     //calculate functional cost i.e. the max formula
 
     /**
-     * Returns a list of lower level partial solutions from a given partial solution.
+     * Add the children of a partial solution to a given PSPriorityQueue
      * It uses all the free variables that are available from the input partial solution
      * and generates partial solutions from those free variables.
      * @return
      */
-    public List<PartialSolution> generateChildren(PartialSolution prevPartialSolution){
+    public void generateChildren(PartialSolution prevPartialSolution, PSPriorityQueue queue) {
+
         List<Node> freeNodes = getFreeNodes(prevPartialSolution);
         //for every free node, create the partial solutions that can be generated
         for (Node freeNode: freeNodes) {
@@ -51,7 +47,6 @@ public class PSManager {
                 PartialSolution partialSolution = new PartialSolution(_numberOfProcessors);
             }
         }
-    return null;
     }
 
     /**
@@ -60,7 +55,7 @@ public class PSManager {
      * @param graph
      * @return
      */
-    public static HashMap<String,Integer> bottomLevelCalculator(Graph graph) {
+    private static HashMap<String,Integer> bottomLevelCalculator(Graph graph) {
         List<Node> allNodes = graph.getNodes();
         HashMap<String, Integer> bottomLevels = new HashMap<String, Integer>(allNodes.size());
         Queue<Node> queuedNodes = new LinkedList<Node>();
@@ -104,6 +99,24 @@ public class PSManager {
             }
         }
         return bottomLevels;
+    }
+
+    /**
+     * Function to calculate and update the work for a partialsolution
+     * @param partialSolution
+     * @param lastAdded
+     */
+    private void calculateUnderestimate(PartialSolution partialSolution, Node lastAdded) {
+
+        // calculate idle time estimate
+        int prevCost = partialSolution._cost;
+        int newIdleTime = 0;
+        partialSolution._idleTime += newIdleTime;
+
+        // calculate bottom level work estimate
+
+
+        // update estimate
     }
 
     private List<Node> getFreeNodes(PartialSolution prevPartial){

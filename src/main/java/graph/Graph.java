@@ -10,6 +10,7 @@ public class Graph {
     String _name;
     ArrayList<Node> _start;
     ArrayList<Node> _nodes;
+    int _totalMinimumWork;
 
     public Graph(String name) {
         _name = name;
@@ -23,6 +24,10 @@ public class Graph {
         _nodes = nodes;
     }
 
+    public void setTotalMinimumWork(int work) {
+        _totalMinimumWork = work;
+    }
+
     public ArrayList<Node> getStart() {
         return _start;
     }
@@ -31,6 +36,17 @@ public class Graph {
 
     public String getName() {
         return _name;
+    }
+
+    public int totalMinimumWork() {
+        return _totalMinimumWork;
+    }
+
+    // TODO
+    @Override
+    public String toString() {
+        String nodes = "";
+        return nodes;
     }
 
 }

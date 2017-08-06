@@ -8,19 +8,13 @@ import graph.Node;
  */
 
 public class ProcessorSlot {
-    private Node _node;
-    private int _time;
+    protected Node _node;
+    protected int _start;
+    protected int _finish;
 
-    public ProcessorSlot (Node node, int time) {
+    public ProcessorSlot (Node node, int start, int finish) {
         _node = node;
-        _time = time;
-    }
-
-    public Node getNode() {
-        return _node;
-    }
-
-    public int getTime() {
-        return _time;
+        _start = start;
+        _finish = finish;
     }
 }

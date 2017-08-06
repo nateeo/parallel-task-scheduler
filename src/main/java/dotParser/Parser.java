@@ -24,6 +24,7 @@ public class Parser {
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
         HashMap startNodes;
         Graph graph;
+        int totalMinimumWork = 0;
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));
@@ -45,9 +46,10 @@ public class Parser {
                 String right = splitLine[1];
                 int weight;
 
-                if (splitLine[0].trim().length() == 1) { // add single vertex to graph and hashmap
+                if (splitLine[0].trim().length() == 1) { // add single vertex to graph and hashmap, as well as weight to min work
                     weight = getValue(right);
                     Node newVertex = new Node(left, weight);
+                    totalMinimumWork += weight;
                     nodeMap.put(left, newVertex);
                 } else { // add arc to queue for processing at the end
                     arcQueue.add(new String[]{left, right});
@@ -72,9 +74,10 @@ public class Parser {
             startNodes.remove(nodeMap.get(to).getName());
         }
 
+        // set some useful fields in graph Object
         graph.setStart(new ArrayList<Node>(startNodes.values()));
-
         graph.setNodes(new ArrayList<Node>(nodeMap.values()));
+        graph.setTotalMinimumWork(totalMinimumWork);
 
         return graph;
     }
