@@ -1,5 +1,6 @@
 package dotParser;
 
+import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
@@ -69,6 +70,7 @@ public class Parser {
             Node fromNode = nodeMap.get(from);
             Node toNode = nodeMap.get(to);
             int weight = getValue(string[1]);
+            graph.addEdge(new Edge(fromNode, toNode, weight));
             fromNode.addOutgoingEdge(toNode, weight);
             toNode.addIncomingEdge(fromNode, weight);
             startNodes.remove(nodeMap.get(to).getName());

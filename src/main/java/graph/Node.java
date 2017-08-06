@@ -31,8 +31,16 @@ public class Node {
         return _outgoing;
     }
 
-    public ArrayList<Edge> getIngoing() {
+    public ArrayList<Edge> getIncoming() {
         return _incoming;
+    }
+
+    public ArrayList<Node> getParentNodes() {
+        ArrayList<Node> parents = new ArrayList<Node>();
+        for (Edge e : _incoming) {
+            parents.add(e._from);
+        }
+        return parents;
     }
 
     public String getName() {

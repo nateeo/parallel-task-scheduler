@@ -1,7 +1,5 @@
 package algorithm;
 
-import graph.Node;
-
 import java.util.ArrayList;
 
 /**
@@ -11,10 +9,12 @@ import java.util.ArrayList;
 
 public class PartialSolution implements Comparable<PartialSolution> {
 
-    protected int _idleTime; // idle time heuristic (Total idle time + total node work) / processors TODO: test
+    protected int _idleTime; // total idle time (between slots)
     protected int _cost; // overall cost heuristic
     protected int _currentFinishTime; // the finish time of the lowest node in the schedule
     protected int _nodeCount;
+    protected ProcessorSlot _latestSlot;
+    protected ProcessorSlot[] _latestSlots;
     protected ArrayList<ProcessorSlot>[] _processors;
 
     public PartialSolution(int numberOfProcessors) {
@@ -22,24 +22,21 @@ public class PartialSolution implements Comparable<PartialSolution> {
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<ProcessorSlot>();
         }
-        _idleTime = 0;
-        _cost = 0;
-        _nodeCount = 0;
-        _currentFinishTime = 0;
+        _latestSlots = new ProcessorSlot[numberOfProcessors];
+
     }
 
     /**
-     * check if a node is present within the schedule of the partial schedule.
-     * @param node
-     * @return
+     * Copy constructor of parent
+     * @param ps
      */
-    protected boolean contains(Node node){
-        for (ArrayList<ProcessorSlot> processor : _processors){
-            if (processor.contains(node)){
-                return true;
-            }
-        }
-        return false;
+    public PartialSolution(PartialSolution ps) {
+        _processors = ps._processors.clone();
+        _idleTime = ps._idleTime;
+        _cost = ps._cost;
+        _nodeCount = ps._nodeCount;
+        _currentFinishTime = ps._currentFinishTime;
+        _latestSlots = ps._latestSlots.clone();
     }
 
     public int compareTo(PartialSolution o) {

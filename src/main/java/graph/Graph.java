@@ -10,6 +10,7 @@ public class Graph {
     String _name;
     ArrayList<Node> _start;
     ArrayList<Node> _nodes;
+    ArrayList<Edge> _edges;
     int _totalMinimumWork;
 
     public Graph(String name) {
@@ -28,11 +29,23 @@ public class Graph {
         _totalMinimumWork = work;
     }
 
+    public void addEdge(Edge e) {
+        _edges.add(e);
+    }
+
     public ArrayList<Node> getStart() {
         return _start;
     }
 
     public List<Node> getNodes() { return _nodes; }
+
+    public ArrayList<Edge> getEdges() {
+        return _edges;
+    }
+
+    public Edge getEdge(Edge e) {
+        return _edges.get(_edges.indexOf(e));
+    }
 
     public String getName() {
         return _name;

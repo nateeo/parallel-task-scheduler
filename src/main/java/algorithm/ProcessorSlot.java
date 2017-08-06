@@ -11,10 +11,15 @@ public class ProcessorSlot {
     protected Node _node;
     protected int _start;
     protected int _finish;
+    protected int _processor;
 
-    public ProcessorSlot (Node node, int start, int finish) {
+    public ProcessorSlot (Node node, int start, int finish, int _processor) {
         _node = node;
         _start = start;
         _finish = finish;
+    }
+
+    public ProcessorSlot (Node node, int start, int processor) {
+        this(node, start, start + node.getWeight(), processor);
     }
 }

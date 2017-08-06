@@ -26,4 +26,17 @@ public class Edge {
     public int getWeight() {
         return _weight;
     }
+
+    @Override
+    public String toString() {
+        return _from._name + _to._name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Edge) {
+            return this.toString().equals(other.toString());
+        }
+        return false;
+    }
 }
