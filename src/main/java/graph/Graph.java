@@ -15,6 +15,7 @@ public class Graph {
 
     public Graph(String name) {
         _name = name;
+        _edges = new ArrayList<Edge>();
     }
 
     public void setStart(ArrayList<Node> start) {
