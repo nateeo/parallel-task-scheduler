@@ -8,10 +8,10 @@ import graph.Node;
  */
 
 public class ProcessorSlot {
-    protected Node _node;
-    protected int _start;
-    protected int _finish;
-    protected int _processor;
+    private Node _node;
+    private int _start;
+    private int _finish;
+    private int _processor;
 
     public ProcessorSlot (Node node, int start, int finish, int processor) {
         _node = node;

@@ -28,16 +28,20 @@ public class ScheduleValidation {
         //ProcessorSlot _processorSlot (represents a task that is on the processor)
         //contains(Node node)
 
+        // nodes in the partial solution, in their respective processors according the the array
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+
+
 
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
-        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
+        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps.getProcessors());
 
         // if a node is scheduled before its dependencies -eli
         boolean test1 = SOMEFUNCTIONNAMEHERE();
 
         //if a length of task is not equal to the weight of a node
-        boolean test2 = checkWeight();
+        boolean test2 = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
         boolean test3 = lol();
@@ -82,7 +86,7 @@ public class ScheduleValidation {
     }
 
 
-    private static boolean checkWeight(ps._processors, Graph graph) {
+    private static boolean checkWeight(ArrayList<ProcessorSlot>[] processors, Graph graph) {
 
 
     }

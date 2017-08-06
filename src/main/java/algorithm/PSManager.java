@@ -120,7 +120,7 @@ public class PSManager {
     private void calculateUnderestimate(PartialSolution ps) {
 
         // get bottom level work
-        int bottomLevelWork = _bottomLevelWork.get(ps._latestSlot._node.getName());
+        int bottomLevelWork = _bottomLevelWork.get(ps._latestSlot.getNode().getName());
 
         // update idle time heuristic TODO: optimise
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
@@ -167,9 +167,9 @@ public class PSManager {
             ArrayList<ProcessorSlot> processor = parentPS._processors[i];
             for (int j = processor.size() - 1; j >= 0; j--) {
                 ProcessorSlot slot = processor.get(j);
-                if (slot._finish >= maxTime) {
-                    if (parents.contains(slot._node)) {
-                        maxTime = slot._finish;
+                if (slot.getFinish() >= maxTime) {
+                    if (parents.contains(slot.getNode())) {
+                        maxTime = slot.getFinish();
                         maxSlot = slot;
                     }
                 } else {
@@ -181,12 +181,12 @@ public class PSManager {
         //DEBUG
         if (maxSlot == null) Logger.error("maxSlot not found (earliestTimeOnProcessors)");
 
-        int maxTimeWithProcessorTransfer = maxSlot._finish + _graph.getEdge(new Edge(maxSlot._node, freeNode, 0)).getWeight();
+        int maxTimeWithProcessorTransfer = maxSlot.getFinish() + _graph.getEdge(new Edge(maxSlot.getNode(), freeNode, 0)).getWeight();
         for (int k = 0; k < _numberOfProcessors; k++) {
-            earliestTimes[k] = Math.max(maxTimeWithProcessorTransfer, parentPS._latestSlots[k]._finish);
+            earliestTimes[k] = Math.max(maxTimeWithProcessorTransfer, parentPS._latestSlots[k].getFinish());
         }
         // earliest time on the processor with the latest successor has no processor transfer time
-        earliestTimes[maxSlot._processor] = Math.max(maxTime, parentPS._latestSlots[maxSlot._processor]._finish);
+        earliestTimes[maxSlot.getProcessor()] = Math.max(maxTime, parentPS._latestSlots[maxSlot.getProcessor()].getFinish());
         return earliestTimes;
     }
 
@@ -209,12 +209,12 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        int prevSlotFinishTime = ps._latestSlots[slot._processor]._finish;
-        int processor = slot._processor;
+        int prevSlotFinishTime = ps._latestSlots[slot.getProcessor()].getFinish();
+        int processor = slot.getProcessor();
         ps._processors[processor].add(slot);
-        ps._idleTime += slot._start - prevSlotFinishTime;
+        ps._idleTime += slot.getStart() - prevSlotFinishTime;
         ps._latestSlots[processor] = slot;
-        if (ps._latestSlot == null || ps._latestSlot._finish < slot._finish) {
+        if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
             ps._latestSlot = slot;
         }
     }
