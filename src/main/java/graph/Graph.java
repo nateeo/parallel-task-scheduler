@@ -9,7 +9,7 @@ import java.util.List;
 public class Graph {
     String _name;
     ArrayList<Node> _start;
-    List<Node> _nodes;
+    ArrayList<Node> _nodes;
 
     public Graph(String name) {
         _name = name;
@@ -19,7 +19,7 @@ public class Graph {
         _start = start;
     }
 
-    public void setNodes(List<Node> nodes){
+    public void setNodes(ArrayList<Node> nodes){
         _nodes = nodes;
     }
 

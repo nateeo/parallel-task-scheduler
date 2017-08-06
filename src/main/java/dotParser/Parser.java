@@ -58,21 +58,22 @@ public class Parser {
         }
 
         // clone nodeMap to find possible starting nodes
-        startNodes = (HashMap<String, Node>)nodeMap.clone();
+        startNodes = new HashMap<String, Node>(nodeMap);
         // process arcQueue
         for (String[] string : arcQueue) {
             String[] arcString = string[0].split("->");
             String from = arcString[0].trim();
             String to =  arcString[1].trim();
+            Node fromNode = nodeMap.get(from);
+            Node toNode = nodeMap.get(to);
             int weight = getValue(string[1]);
-            System.out.println("GHe");
-            System.out.println(nodeMap.get(from));
-            System.out.println(nodeMap.get(to));
-            nodeMap.get(from).addEdge(nodeMap.get(to), weight);
-            startNodes.remove(nodeMap.get(to));
+            fromNode.addOutgoingEdge(toNode, weight);
+            toNode.addIncomingEdge(fromNode, weight);
+            startNodes.remove(nodeMap.get(to).getName());
         }
 
         graph.setStart(new ArrayList<Node>(startNodes.values()));
+
         graph.setNodes(new ArrayList<Node>(nodeMap.values()));
 
         return graph;

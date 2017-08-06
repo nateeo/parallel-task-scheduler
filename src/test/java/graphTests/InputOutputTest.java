@@ -1,14 +1,14 @@
 package graphTests;
 
-import algorithm.PSManager;
 import graph.Graph;
+import graph.Node;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import static dotParser.Parser.parseDotFile;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by nateeo on 1/08/17.
@@ -23,11 +23,9 @@ public class InputOutputTest {
      */
     public void parseInput() {
        Graph graph = parseDotFile(exampleDotFile);
-        HashMap<String, Integer> stuff = PSManager.bottomLevelCalculator(graph);
-
-        for (Map.Entry<String, Integer> e : stuff.entrySet()) {
-            System.out.println(e.getKey() + " blw is " + e.getValue());
-        }
+       assertEquals("example", graph.getName());
+       assertTrue(graph.getStart().contains(new Node("a", 2)));
+       assertEquals(1, graph.getStart().size());
     }
 
 

@@ -9,7 +9,9 @@ public class Edge {
     Node _to;
     Node _from;
 
-    public Edge(Node to, int weight) {
+    public Edge(Node from, Node to, int weight) {
+        _from = from;
+        _to = to;
         _weight = weight;
     }
 

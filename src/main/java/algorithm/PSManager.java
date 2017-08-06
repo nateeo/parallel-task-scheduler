@@ -17,9 +17,12 @@ public class PSManager {
     private HashSet<Integer> _bottomLevels;
     private Graph _graph;
     private int _numberOfProcessors;
+    private HashMap<String, Integer> _bottomLevelWork;
 
-    public PSManager(int processors){
+    public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
+        _graph = graph;
+        _bottomLevelWork = bottomLevelCalculator(graph);
     }
 
     public PriorityQueue<PartialSolution> initialise() {
@@ -84,8 +87,6 @@ public class PSManager {
                     }
                 }
             }
-            System.out.println("node: "+currentNode.getName());
-            System.out.println("ingoing nodes: "+currentNode.getIngoing().size());
             bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
             if (!currentNode.getIngoing().isEmpty()) {
                 for (Edge predecessors : currentNode.getIngoing()) {
