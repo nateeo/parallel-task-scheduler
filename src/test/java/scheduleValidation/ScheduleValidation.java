@@ -1,7 +1,9 @@
 package scheduleValidation;
 
+import java.util.Collections;
+
 /**
- * Class that can be leverage to check if a solution is valid based on an input graph
+ * Class that can be leveraged to check if a solution is valid based on an input graph
  */
 public class ScheduleValidation {
 
@@ -23,14 +25,22 @@ public class ScheduleValidation {
 
 
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
-        ArrayList<ProcessorSlot> sortedProcessorSlots = new ArrayList<ProcessorSlot>();
+        //Topological sort
+        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
 
-        // For every processor
-        for(int i = 0; i < ps._processors.length; i++){
-            // for every node
-            for(int j = 0; j < ps._)
+        // if a node is scheduled before its dependencies -eli
+        Boolean test1 = SOMEFUNCTIONNAMEHERE();
 
-        }
+        //if a length of task is not equal to the weight of a node
+        Boolean test2 = xihaosfunctionName();
+
+        // switching time not correct (sounds hard)
+        Boolean test3 = lol();
+
+        //only one task is active on every processor
+        Boolean test4 = lol123();
+
+
 
 
 
@@ -40,11 +50,29 @@ public class ScheduleValidation {
     }
 
     /**
-     * 
-     * @param psIn
+     *
+     * @param psIn, an array of ProcessorSlot ArrayLists representing all the tasks in our schedule we wish to sort
      * @return
      */
-    public ArrayList<ProcessorSlot> sortPartialSolutionNodes(ArrayList<ProcessorSlot>[] psIn){
+    private static ArrayList<ProcessorSlot> sortPartialSolutionNodes(ArrayList<ProcessorSlot>[] psIn){
 
+        ArrayList<ProcessorSlot> sortedProcessorList = new ArrayList<ProcessorSlot>();
+
+        // For every processor
+        for(int i = 0; i < psIn.length; i++){
+            // for every node
+            for(int j = 0; j < psIn._processors[i].length(); j++){
+                sortedProcessorList.add(psIn._processor[i].get(j));
+            }
+        }
+
+        Collections.sort(sortedProcessorList, new Comparator<ProcessorSlot>() {
+            @Override
+            public int compare(ProcessorSlot p1, ProcessorSlot p2){
+                return p1.
+            }
+        } );
+
+        return sortedProcessorList;
     }
 }
