@@ -1,29 +1,19 @@
 package scheduler;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
+
 import logger.Logger;
+
+import java.security.spec.ECField;
 
 /**
  * Entry point to the scheduling algorithm
  */
 public class Scheduler {
-
-    @Parameter(names="INPUT.dot", required = true)
     private static String _inputFile;
-
-    @Parameter(names="P", required = true)
     private static int _processors;
-
-    @Parameter(names = "-p", description = "Number of cores")
     private static int _cores = 1;
-
-    @Parameter(names = "-v", description = "Visualize scheduling")
     private static boolean _visualize = false;
-
-    @Parameter(names = "-o", description = "Output filename")
     private static String _outputFile = "INPUT-output.dot";
-
 
 
     /**
@@ -39,18 +29,46 @@ public class Scheduler {
             System.out.println();
             e.printStackTrace();
 
+        } catch (Exception e){
+            System.out.println("Invalid input");
+            e.printStackTrace();
         }
 
         Logger.endTiming();
     }
 
-    private static void parseConsole(String[] args) throws InvalidInputException{
-        if((2<args.length)||(args.length>5)){
+    private static void parseConsole(String[] args) throws InvalidInputException, Exception {
+        int argLength = args.length;
+        if((argLength<2)||(argLength>7)){
             throw new InvalidInputException("Invalid number of arguments.");
         }
-        JCommander.newBuilder().addObject(args).build().parse(args);
+        _inputFile = args[0];
+        if (!_inputFile.endsWith(".dot")){
+            throw new InvalidInputException("Input file must be dot");
+        }
+        _processors = Integer.valueOf(args[1]);
 
-        System.out.println(_inputFile+ _cores+ _outputFile+ _processors+ _visualize);
+
+        for (int i = 2; i < argLength; i++){
+            switch (args[i]) {
+                case "-p":
+                    _cores = Integer.valueOf(args[i+1]);
+
+                    break;
+                case "-v":
+                    _visualize = true;
+                    break;
+                case "-o":
+                        _outputFile = args[i+1];
+                        if (!_outputFile.endsWith(".dot")){
+                            throw new InvalidInputException("output file must be dot");
+                        }
+
+            }
+        }
+
     }
+
+
 
 }
