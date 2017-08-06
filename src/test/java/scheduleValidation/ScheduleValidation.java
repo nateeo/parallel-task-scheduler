@@ -29,16 +29,16 @@ public class ScheduleValidation {
         ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
 
         // if a node is scheduled before its dependencies -eli
-        Boolean test1 = SOMEFUNCTIONNAMEHERE();
+        boolean test1 = SOMEFUNCTIONNAMEHERE();
 
         //if a length of task is not equal to the weight of a node
-        Boolean test2 = xihaosfunctionName();
+        boolean test2 = checkWeight();
 
         // switching time not correct (sounds hard)
-        Boolean test3 = lol();
+        boolean test3 = lol();
 
         //only one task is active on every processor
-        Boolean test4 = lol123();
+        boolean test4 = lol123();
 
 
 
@@ -74,5 +74,11 @@ public class ScheduleValidation {
         } );
 
         return sortedProcessorList;
+    }
+
+
+    private static boolean checkWeight() {
+
+
     }
 }
