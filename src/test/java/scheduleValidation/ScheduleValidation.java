@@ -1,5 +1,10 @@
 package scheduleValidation;
 
+import graph.Graph;
+import algorithm.PartialSolution;
+import algorithm.ProcessorSlot;
+
+import java.util.ArrayList;
 import java.util.Collections;
 
 /**
