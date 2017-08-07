@@ -206,7 +206,7 @@ public class PSManager {
         } else { // predecessor constraint is there, we can schedule at earliest maxSlot.finishTime + maxEdge
             int maxSuccessorProcessor = maxSlot.getProcessor();
             for (int i = 0; i < _numberOfProcessors; i++) {
-                int totalTime = i == maxSuccessorProcessor ? maxTime : maxTime + maxEdgeTime;
+                int totalTime = i == maxSuccessorProcessor ? parentPS._latestSlots[i].getFinish() : maxTime;
                 ProcessorSlot finalSlot = parentPS._latestSlots[i];
                 int finalSlotTime = 0;
                 if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
