@@ -3,6 +3,7 @@ package scheduleValidation;
 import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
+import graph.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,8 @@ public class ScheduleValidation {
 
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
+
+
         ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
 
         // if a node is scheduled before its dependencies -eli
@@ -82,8 +85,36 @@ public class ScheduleValidation {
     }
 
 
-    private static boolean checkWeight() {
+    private static boolean checkWeight(ArrayList<ProcessorSlot>[] processors, Graph graph) {
 
+        boolean valid = true;
+
+        for (ArrayList<ProcessorSlot> singleProcessor : processors) {
+            for (ProcessorSlot slot : singleProcessor) {
+                for (Node node : graph.getNodes()) {
+                    if (slot.getNode().equals(node)) {
+
+                        int slotTime = slot.getFinish() - slot.getStart();
+                        int nodeWeight = node.getWeight();
+
+                        if (slotTime != nodeWeight) {
+                            valid = false;
+
+                            System.out.println("the weight of task: " + node.toString() + " does not match the time the task runs");
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return valid;
 
     }
+
+    public boolean checkOneActive(ArrayList<ProcessorSlot> processors) {
+
+    }
+
 }
