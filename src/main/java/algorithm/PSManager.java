@@ -43,6 +43,8 @@ public class PSManager {
      * @return
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
+        Logger.info("GENERATING FRM THIS");
+        System.out.println(parentPS);
 
         List<Node> freeNodes = getFreeNodes(parentPS);
         //for every free node, create the partial solutions that can be generated
@@ -56,6 +58,8 @@ public class PSManager {
                 PartialSolution partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
                 calculateUnderestimate(partialSolution);
+                Logger.info("adding partial solution to queue with underestimate " + partialSolution._cost);
+                System.out.println(partialSolution.toString());
                 queue.add(partialSolution);
             }
         }
@@ -130,24 +134,24 @@ public class PSManager {
         ps._cost = Math.max(ps._cost, Math.max(idleTimeHeuristic, bottomLevelWork));
     }
 
-    private List<Node> getFreeNodes(PartialSolution parentPS){
+    private List<Node> getFreeNodes(PartialSolution parentPS) {
         List<Node> freeNodes = new ArrayList<Node>();
         List<Node> nodes = _graph.getNodes();
-
         //get all the free variables from list of all nodes in graph
-        List<Edge> predecessorEdges;
-        allNodes: for (Node node : nodes){
-            predecessorEdges = node.getIncoming();
-            //check each predecessor of the node to see if it's in schedule already
-            predecessors: for (Edge trialEdge : predecessorEdges) {
-                if (!contains(parentPS, trialEdge.getFrom())){
-                    continue allNodes;
+        for (Node node : nodes) {
+            if (parentPS._nodes.contains(node.toString())) {
+            } else {
+                boolean hasMissingSuccessor = false;
+                for (Edge e : node.getIncoming()) {
+                    if (!parentPS._nodes.contains(e.getFrom().getName())) {
+                        hasMissingSuccessor = true;
+                    }
+                }
+                if (!hasMissingSuccessor) {
+                    freeNodes.add(node);
                 }
             }
-            //add to list of free nodes if all predecessors in schedule
-            freeNodes.add(node);
         }
-
         return freeNodes;
     }
 
@@ -162,32 +166,50 @@ public class PSManager {
         int[] earliestTimes = new int[_numberOfProcessors];
         ArrayList<Node> parents = freeNode.getParentNodes();
         int maxTime = 0;
+        int maxEdgeTime = 0;
         ProcessorSlot maxSlot = null;
+        // iterate through each processor and check for successor nodes. Find the maximum time and edge time (for transfer)
         for (int i = 0; i < _numberOfProcessors; i++) {
             ArrayList<ProcessorSlot> processor = parentPS._processors[i];
             for (int j = processor.size() - 1; j >= 0; j--) {
                 ProcessorSlot slot = processor.get(j);
                 if (slot.getFinish() >= maxTime) {
                     if (parents.contains(slot.getNode())) {
-                        maxTime = slot.getFinish();
-                        maxSlot = slot;
+                        Edge parentEdge = _graph.getEdge(new Edge(slot.getNode(), freeNode, 0));
+                        int parentTime = parentEdge.getWeight() + slot.getFinish();
+                        if (parentTime > maxTime) {
+                            maxTime = parentTime;
+                            maxEdgeTime = parentEdge.getWeight();
+                            maxSlot = slot;
+                            Logger.info("maximum dependency found for " + freeNode + " successor: " + slot.getNode() + " time: " + maxTime + " edgeTime: " + maxEdgeTime);
+                        }
                     }
-                } else {
-                    break;
                 }
             }
         }
 
         //DEBUG
-        if (maxSlot == null) Logger.error("maxSlot not found (earliestTimeOnProcessors)");
-
-        int maxTimeWithProcessorTransfer = maxSlot.getFinish() + _graph.getEdge(new Edge(maxSlot.getNode(), freeNode, 0)).getWeight();
-        for (int k = 0; k < _numberOfProcessors; k++) {
-            earliestTimes[k] = Math.max(maxTimeWithProcessorTransfer, parentPS._latestSlots[k].getFinish());
+        if (maxSlot == null) { // no predecessor constraints, we can schedule as early as possible on each processor based on their last slot
+            for (int i = 0; i < _numberOfProcessors; i++) {
+                ProcessorSlot latestSlot = parentPS._latestSlots[i];
+                if (latestSlot == null) {
+                    earliestTimes[i] = 0; // there is no slot on the processor, we can start at 0
+                } else {
+                    earliestTimes[i] = latestSlot.getFinish();
+                }
+            }
+            return earliestTimes;
+        } else { // predecessor constraint is there, we can schedule at earliest maxSlot.finishTime + maxEdge
+            int maxSuccessorProcessor = maxSlot.getProcessor();
+            for (int i = 0; i < _numberOfProcessors; i++) {
+                int totalTime = i == maxSuccessorProcessor ? maxTime : maxTime + maxEdgeTime;
+                ProcessorSlot finalSlot = parentPS._latestSlots[i];
+                int finalSlotTime = 0;
+                if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
+                earliestTimes[i] = Math.max(finalSlotTime, totalTime);
+            }
+            return earliestTimes;
         }
-        // earliest time on the processor with the latest successor has no processor transfer time
-        earliestTimes[maxSlot.getProcessor()] = Math.max(maxTime, parentPS._latestSlots[maxSlot.getProcessor()].getFinish());
-        return earliestTimes;
     }
 
     /**
@@ -209,13 +231,21 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        int prevSlotFinishTime = ps._latestSlots[slot.getProcessor()].getFinish();
+        if (slot == null) Logger.error("Slot is null");
+        ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
+        int prevSlotFinishTime;
+        if (latestSlot == null) {
+            prevSlotFinishTime = 0;
+        } else {
+            prevSlotFinishTime = latestSlot.getFinish();
+        }
         int processor = slot.getProcessor();
         ps._processors[processor].add(slot);
-        ps._idleTime += slot.getStart() - prevSlotFinishTime;
-        ps._latestSlots[processor] = slot;
+        ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
+        ps._latestSlots[processor] = slot; // the newest slot becomes the latest
+        ps._nodes += slot.getNode().getName(); // add node to node string
         if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
-            ps._latestSlot = slot;
+            ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }
     }
 }

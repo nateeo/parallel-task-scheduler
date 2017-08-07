@@ -16,6 +16,7 @@ public class PSPriorityQueue {
     private int _totalNodes;
     private int _processors;
     private PartialSolution _currentPartialSolution;
+    private PSManager _psManager;
 
     public PSPriorityQueue(Graph graph, int processors) {
         _graph = graph;
@@ -23,6 +24,7 @@ public class PSPriorityQueue {
         _processors = processors;
         // TODO: capacity heuristic
         _queue = new PriorityQueue<PartialSolution>(graph.getNodes().size() * processors * 5);
+        _psManager = new PSManager(processors, graph);
         initialise();
     }
 
@@ -33,7 +35,8 @@ public class PSPriorityQueue {
         for (Node node : _graph.getStart()) {
             for (int i = 0; i < _processors; i++) {
                 PartialSolution ps = new PartialSolution(_processors);
-                ps._processors[i].add(new ProcessorSlot(node, 0, i));
+                ProcessorSlot slot = new ProcessorSlot(node, 0, i);
+                _psManager.addSlot(ps, slot);
                 _queue.add(ps);
             }
         }
@@ -43,17 +46,18 @@ public class PSPriorityQueue {
      * Loads the next PartialSolution and returns true if it is complete
      * @return
      */
-    public boolean isFinished() {
+    public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
-        return _currentPartialSolution._nodeCount == _totalNodes;
+        if (_queue.isEmpty()) return false;
+        return _currentPartialSolution._nodeCount != _totalNodes;
     }
 
     /**
-     * Returns the current PartialSolution (loaded by the isFinished method)
+     * Returns the current PartialSolution (loaded by the hasNext method)
      * @return
      */
     public PartialSolution getCurrentPartialSolution() {
-        return _queue.poll();
+        return _currentPartialSolution;
     }
 
     public void add(PartialSolution e) {

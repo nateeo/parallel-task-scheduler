@@ -56,7 +56,7 @@ public class Graph {
         return _totalMinimumWork;
     }
 
-    // TODO
+    // TODO string representation for duplicate state removal
     @Override
     public String toString() {
         String nodes = "";

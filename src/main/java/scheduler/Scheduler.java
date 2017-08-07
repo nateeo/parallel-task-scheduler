@@ -1,19 +1,26 @@
 package scheduler;
 
 
+import algorithm.PSManager;
+import algorithm.PSPriorityQueue;
+import algorithm.PartialSolution;
+import dotParser.Parser;
+import graph.Graph;
 import logger.Logger;
 
-import java.security.spec.ECField;
+import java.io.File;
 
 /**
  * Entry point to the scheduling algorithm
  */
 public class Scheduler {
-    private static String _inputFile;
+    private static String _inputFileName;
     private static int _processors;
     private static int _cores = 1;
     private static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
+    private static File _inputFile;
+    private static Graph _graph;
 
 
     /**
@@ -42,10 +49,11 @@ public class Scheduler {
         if((argLength<2)||(argLength>7)){
             throw new InvalidInputException("Invalid number of arguments.");
         }
-        _inputFile = args[0];
-        if (!_inputFile.endsWith(".dot")){
+        _inputFileName = args[0];
+        if (!_inputFileName.endsWith(".dot")){
             throw new InvalidInputException("Input file must be dot");
         }
+        _inputFile = new File(_inputFileName);
         _processors = Integer.valueOf(args[1]);
 
 
@@ -66,7 +74,28 @@ public class Scheduler {
 
             }
         }
+        _graph = Parser.parseDotFile(_inputFile);
 
+        PartialSolution ps = solution();
+        System.out.println("======= DONE =======");
+        System.out.println(ps);
+    }
+    
+    private static  PartialSolution solution() {
+        // Priority queue containing generated states
+        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+
+        // PSManager instance to perform calculations and generate states from existing Partial Solutions
+        PSManager psManager = new PSManager(_processors, _graph);
+        while(priorityQueue.hasNext()) {
+            PartialSolution ps = priorityQueue.getCurrentPartialSolution();
+            psManager.generateChildren(ps, priorityQueue);
+        }
+
+        // we're done, this is our solution
+        Logger.info("DONE");
+        PartialSolution solution = priorityQueue.getCurrentPartialSolution();
+        return solution;
     }
 
 
