@@ -122,11 +122,15 @@ public class PSManager {
     private void calculateUnderestimate(PartialSolution ps) {
 
         // get bottom level work
-        int bottomLevelWork = _bottomLevelWork.get(ps._latestSlot.getNode().getName());
+        int bottomLevelWork = 0;
+        ProcessorSlot lastSlot = ps._latestSlot;
+        if (lastSlot == null) {
+            bottomLevelWork = _bottomLevelWork.get(lastSlot.getNode().getName()) + lastSlot.getFinish();
+        }
+
 
         // update idle time heuristic TODO: optimise
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
-
 
         // update estimate
         ps._cost = Math.max(ps._cost, Math.max(idleTimeHeuristic, bottomLevelWork));
@@ -244,7 +248,7 @@ public class PSManager {
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes += slot.getNode().getName(); // add node to node string
-        if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
+        if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }
     }
