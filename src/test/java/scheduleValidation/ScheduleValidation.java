@@ -17,7 +17,7 @@ public class ScheduleValidation {
      * @param graphIn, the input .dot file represented as a Graph object.
      * @param ps, the PartialSolution object representing the schedule we wish to validate
      * @return boolean, true: iff the schedule is a valid schedule based on the input graph graphIn, false: otherwise
-     * @author Eli Salter
+     * @author Eli Salter, Zihao Yang
      */
     public static boolean scheduleIsValid(Graph graphIn, PartialSolution ps){
         //TO DELETE LATER
