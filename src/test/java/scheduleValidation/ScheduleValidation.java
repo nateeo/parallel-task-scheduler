@@ -7,6 +7,7 @@ import graph.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Class that can be leveraged to check if a solution is valid based on an input graph
@@ -29,15 +30,14 @@ public class ScheduleValidation {
         //ProcessorSlot _processorSlot (represents a task that is on the processor)
         //contains(Node node)
 
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
 
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
-
-
-        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
+        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(processors);
 
         // if a node is scheduled before its dependencies -eli
-        boolean test1 = SOMEFUNCTIONNAMEHERE();
+        boolean test1 = checkOrder();
 
         //if a length of task is not equal to the weight of a node
         boolean test2 = checkWeight();
@@ -47,12 +47,6 @@ public class ScheduleValidation {
 
         //only one task is active on every processor
         boolean test4 = lol123();
-
-
-
-
-
-
 
         return false;
     }
@@ -66,18 +60,19 @@ public class ScheduleValidation {
 
         ArrayList<ProcessorSlot> sortedProcessorList = new ArrayList<ProcessorSlot>();
 
-        // For every processor
+        // For every processor in the array
         for(int i = 0; i < psIn.length; i++){
-            // for every node
-            for(int j = 0; j < psIn._processors[i].length(); j++){
-                sortedProcessorList.add(psIn._processor[i].get(j));
+
+            // for every node in the processor
+            for(int j = 0; j < psIn[i].size(); j++){
+                sortedProcessorList.add(psIn[i].get(j));
             }
         }
 
         Collections.sort(sortedProcessorList, new Comparator<ProcessorSlot>() {
             @Override
             public int compare(ProcessorSlot p1, ProcessorSlot p2){
-                return p1.get
+                return p1.getStart() - p2.getStart();
             }
         } );
 
