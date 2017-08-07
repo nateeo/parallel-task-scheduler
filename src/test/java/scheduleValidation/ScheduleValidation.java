@@ -69,7 +69,7 @@ public class ScheduleValidation {
         Collections.sort(sortedProcessorList, new Comparator<ProcessorSlot>() {
             @Override
             public int compare(ProcessorSlot p1, ProcessorSlot p2){
-                return p1.
+                return p1.get
             }
         } );
 
