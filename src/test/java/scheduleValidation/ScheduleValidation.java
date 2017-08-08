@@ -131,7 +131,7 @@ public class ScheduleValidation {
                 }
 
             }
-            
+
         }
         return true;
     }
