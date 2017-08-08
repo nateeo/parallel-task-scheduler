@@ -2,6 +2,7 @@ package algorithm;
 
 import graph.Graph;
 import graph.Node;
+import logger.Logger;
 
 import java.util.PriorityQueue;
 
@@ -37,6 +38,7 @@ public class PSPriorityQueue {
                 PartialSolution ps = new PartialSolution(_processors);
                 ProcessorSlot slot = new ProcessorSlot(node, 0, i);
                 _psManager.addSlot(ps, slot);
+                _psManager.calculateUnderestimate(ps);
                 _queue.add(ps);
             }
         }
@@ -48,7 +50,12 @@ public class PSPriorityQueue {
      */
     public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
-        if (_queue.isEmpty()) return false;
+        Logger.info("current is");
+        System.out.println(_currentPartialSolution);
+        if (_queue.isEmpty()) {
+         Logger.info("QUEUE FINISHED");
+         return false;
+        }
         return _currentPartialSolution._nodeCount != _totalNodes;
     }
 

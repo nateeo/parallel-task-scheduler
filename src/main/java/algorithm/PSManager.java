@@ -43,8 +43,6 @@ public class PSManager {
      * @return
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
-        Logger.info("GENERATING FRM THIS");
-        System.out.println(parentPS);
 
         List<Node> freeNodes = getFreeNodes(parentPS);
         //for every free node, create the partial solutions that can be generated
@@ -90,13 +88,13 @@ public class PSManager {
             currentNode = queuedNodes.remove();
             if (!currentNode.getOutgoing().isEmpty()) {
                 for (Edge successors : currentNode.getOutgoing()) {
-                    currentNodeBL = bottomLevels.get(successors.getTo().getName());
+                    currentNodeBL = bottomLevels.get(successors.getTo().getName()) + successors.getTo().getWeight();
                     if (currentNodeBL > maxBottomLevel) {
                         maxBottomLevel = currentNodeBL;
                     }
                 }
             }
-            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
+            bottomLevels.put(currentNode.getName(),maxBottomLevel);
             if (!currentNode.getIncoming().isEmpty()) {
                 for (Edge predecessors : currentNode.getIncoming()) {
                     predecessorNode = predecessors.getFrom();
@@ -119,12 +117,12 @@ public class PSManager {
      * Function to calculate and update the work for a partialSolution
      * @param ps a partial solution
      */
-    private void calculateUnderestimate(PartialSolution ps) {
+    public void calculateUnderestimate(PartialSolution ps) {
 
         // get bottom level work
         int bottomLevelWork = 0;
         ProcessorSlot lastSlot = ps._latestSlot;
-        if (lastSlot == null) {
+        if (lastSlot != null) { // TODO: fix
             bottomLevelWork = _bottomLevelWork.get(lastSlot.getNode().getName()) + lastSlot.getFinish();
         }
 

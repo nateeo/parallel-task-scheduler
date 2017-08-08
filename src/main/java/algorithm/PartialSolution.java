@@ -48,7 +48,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     }
 
     public int compareTo(PartialSolution o) {
-        return this._cost - o._cost;
+        return - (this._cost - o._cost);
     }
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
