@@ -30,6 +30,9 @@ public class ScheduleValidation {
         //contains(Node node)
 
 
+        // nodes in the partial solution, in their respective processors according the the array
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
 
@@ -40,13 +43,13 @@ public class ScheduleValidation {
         boolean test1 = SOMEFUNCTIONNAMEHERE();
 
         //if a length of task is not equal to the weight of a node
-        boolean test2 = checkWeight();
+        boolean test2 = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
         boolean test3 = lol();
 
         //only one task is active on every processor
-        boolean test4 = lol123();
+        boolean test4 = checkOneActive(processors);
 
 
 
@@ -113,8 +116,26 @@ public class ScheduleValidation {
 
     }
 
-    public boolean checkOneActive(ArrayList<ProcessorSlot> processors) {
+    public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
+        boolean valid = true;
+
+        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            for (ProcessorSlot slot: singleProcessor) {
+                for (ProcessorSlot slot2: singleProcessor) {
+                    if (!slot.getNode().equals(slot2.getNode())) {
+                        if ((slot2.getStart() > slot.getStart()) && (slot2.getFinish() < slot.getFinish())) {
+                            valid = false;
+
+                            System.out.println(slot.getNode().getName() + " is active at the same time as " + slot2.getNode().getName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return valid;
     }
 
 }
