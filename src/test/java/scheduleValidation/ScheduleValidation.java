@@ -1,5 +1,6 @@
 package scheduleValidation;
 
+import graph.Edge;
 import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
@@ -37,7 +38,7 @@ public class ScheduleValidation {
         ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(processors);
 
         // if a node is scheduled before its dependencies -eli
-        boolean test1 = checkOrder();
+        boolean test1 = checkOrder(graphIn, sortedProcessorSlots);
 
         //if a length of task is not equal to the weight of a node
         boolean test2 = checkWeight();
@@ -106,6 +107,45 @@ public class ScheduleValidation {
 
         return valid;
 
+    }
+
+    private static boolean checkOrder(Graph gIn, ArrayList<ProcessorSlot> sortedProcessorSlots){
+        //For every Node in the graph
+        for(Node n : gIn.getNodes()){
+            //check that for all its predecessors, the index for which they're in the sortedProcessorsSlots array
+            // is not greater than the index of the current node
+
+            int positionOfCurrentNode = getNodeIndex(sortedProcessorSlots, n);
+
+            // if the current node is in the sortedProcessorSlots array generated from the partial solution
+            if(positionOfCurrentNode != -1){
+                // for all the predecessors
+                for(Edge incoming : n.getIncoming()){
+                    int positionOfPredecessor = getNodeIndex(sortedProcessorSlots, incoming.getFrom());
+
+                    //if the position of the predecessor is greater than the position of the current node, i.e
+                    //the node has started before its predecessor, then return false
+                    if(positionOfPredecessor > positionOfCurrentNode){
+                        return false;
+                    }
+                }
+
+            }
+            
+        }
+        return true;
+    }
+
+    private static int getNodeIndex(ArrayList<ProcessorSlot> sortedProcessorSlots, Node n){
+        // this finds the index of the current node in the sortedProcessorSlots array
+        for(int i = 0; i<sortedProcessorSlots.size(); i++){
+            if(sortedProcessorSlots.get(i).getNode().equals(n)){
+                return i;
+            }
+        }
+
+        //match not found, so return the index -1
+        return -1;
     }
 
     public boolean checkOneActive(ArrayList<ProcessorSlot> processors) {
