@@ -41,25 +41,29 @@ public class ScheduleValidation {
 
         ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
 
+        boolean[] individualResults = new boolean[4];
+
         // if a node is scheduled before its dependencies -eli
-        boolean test1 = SOMEFUNCTIONNAMEHERE();
+        individualResults[0] = SOMEFUNCTIONNAMEHERE();
 
         //if a length of task is not equal to the weight of a node
-        boolean test2 = checkWeight(processors, graphIn);
+        individualResults[1] = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
-        boolean test3 = checkSwitchingTime(processors, graphIn);
+        individualResults[2] = checkSwitchingTime(processors, graphIn);
 
         //only one task is active on every processor
-        boolean test4 = checkOneActive(processors);
+        individualResults[3] = checkOneActive(processors);
 
 
 
+        for (int i =0; i < individualResults.length; i++) {
+            if (individualResults[i] == false) {
+                return false
+            }
+        }
 
-
-
-
-        return false;
+        return true;
     }
 
     /**
