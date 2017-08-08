@@ -153,7 +153,6 @@ public class PSManager {
             }
         }
         for (Node node : freeNodes) {
-            System.out.println("adding freeNodes: " + node);
         }
         return freeNodes;
     }
@@ -168,21 +167,22 @@ public class PSManager {
     private int[] earliestTimeOnProcessors(PartialSolution parentPS, Node freeNode) {
         int[] earliestTimes = new int[_numberOfProcessors];
         ArrayList<Node> parents = freeNode.getParentNodes();
+        int[] maxPredecessorTime = new int[_numberOfProcessors];
         int maxTime = 0;
-        int maxEdgeTime = 0;
         ProcessorSlot maxSlot = null;
         // iterate through each processor and check for successor nodes. Find the maximum time and edge time (for transfer)
         for (int i = 0; i < _numberOfProcessors; i++) {
             ArrayList<ProcessorSlot> processor = parentPS._processors[i];
             for (int j = processor.size() - 1; j >= 0; j--) {
                 ProcessorSlot slot = processor.get(j);
-                if (slot.getFinish() >= maxTime) {
-                    if (parents.contains(slot.getNode())) {
-                        Edge parentEdge = _graph.getEdge(new Edge(slot.getNode(), freeNode, 0));
-                        int parentTime = parentEdge.getWeight() + slot.getFinish();
+                if (parents.contains(slot.getNode())) { // slot contains a predecessor
+                    int slotProcessor = slot.getProcessor();
+                    Edge parentEdge = _graph.getEdge(new Edge(slot.getNode(), freeNode, 0));
+                    int parentTime = parentEdge.getWeight() + slot.getFinish();
+                    if (parentTime > maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
+                        maxPredecessorTime[slotProcessor] = parentTime;
                         if (parentTime > maxTime) {
                             maxTime = parentTime;
-                            maxEdgeTime = parentEdge.getWeight();
                             maxSlot = slot;
                         }
                     }
@@ -202,14 +202,25 @@ public class PSManager {
             }
             return earliestTimes;
         } else { // predecessor constraint is there, we can schedule at earliest maxSlot.finishTime + maxEdge
+            // we need to find the second maxSlot for predecessor constraints on the maxSlotProcessor
             int maxSuccessorProcessor = maxSlot.getProcessor();
+            int secondMaxSuccessorTime = 0;
+            ProcessorSlot finalSlot;
+            int finalSlotTime = 0;
             for (int i = 0; i < _numberOfProcessors; i++) {
-                int totalTime = i == maxSuccessorProcessor ? parentPS._latestSlots[i].getFinish() : maxTime;
-                ProcessorSlot finalSlot = parentPS._latestSlots[i];
-                int finalSlotTime = 0;
+                finalSlot = parentPS._latestSlots[i];
+                finalSlotTime = 0;
                 if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-                earliestTimes[i] = Math.max(finalSlotTime, totalTime);
+                earliestTimes[i] = Math.max(finalSlotTime, maxTime);
+                if (maxPredecessorTime[i] > secondMaxSuccessorTime && i != maxSuccessorProcessor) {
+                    secondMaxSuccessorTime = maxPredecessorTime[i];
+                }
             }
+            // we need to check predecessor constraints on other processors for the maxSuccessorProcessor slot
+            finalSlot = parentPS._latestSlots[maxSuccessorProcessor];
+            finalSlotTime = 0;
+            if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
+            earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
             return earliestTimes;
         }
     }
