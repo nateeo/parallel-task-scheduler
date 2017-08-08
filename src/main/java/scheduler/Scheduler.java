@@ -74,7 +74,6 @@ public class Scheduler {
         _graph = Parser.parseDotFile(_inputFile);
 
         PartialSolution ps = solution();
-        System.out.println("======= DONE =======");
         System.out.println(ps);
         return ps;
     }

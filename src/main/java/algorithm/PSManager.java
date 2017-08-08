@@ -220,7 +220,6 @@ public class PSManager {
             finalSlot = parentPS._latestSlots[maxSuccessorProcessor];
             finalSlotTime = 0;
             if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-            Logger.info("" + Math.max(secondMaxSuccessorTime, finalSlotTime));
             earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
             return earliestTimes;
         }
