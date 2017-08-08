@@ -75,7 +75,8 @@ public class Scheduler {
 
         PartialSolution ps = solution();
         System.out.println(ps);
-        return ps;
+        parseOutput(ps); // output to file
+        return ps; // for testing
     }
 
     private static PartialSolution solution() {
@@ -92,5 +93,9 @@ public class Scheduler {
         }
         Logger.endTiming();
         return ps;
+    }
+
+    private static void parseOutput(PartialSolution ps){
+        Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
 }
