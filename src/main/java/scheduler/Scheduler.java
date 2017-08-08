@@ -29,8 +29,6 @@ public class Scheduler {
      * @param args
      */
     public static void main(String[] args) {
-        Logger.startTiming();
-        System.out.println("Hello world");
         try {
             parseConsole(args);
         } catch (InvalidInputException e) {
@@ -41,11 +39,9 @@ public class Scheduler {
             System.out.println("Invalid input");
             e.printStackTrace();
         }
-
-        Logger.endTiming();
     }
 
-    private static void parseConsole(String[] args) throws InvalidInputException, Exception {
+    private static PartialSolution parseConsole(String[] args) throws InvalidInputException, Exception {
         int argLength = args.length;
         if ((argLength < 2) || (argLength > 7)) {
             throw new InvalidInputException("Invalid number of arguments.");
@@ -78,11 +74,13 @@ public class Scheduler {
         _graph = Parser.parseDotFile(_inputFile);
 
         PartialSolution ps = solution();
-        System.out.println("======= DONE =======");
         System.out.println(ps);
+        parseOutput(ps); // output to file
+        return ps; // for testing
     }
 
     private static PartialSolution solution() {
+        Logger.startTiming();
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
 
@@ -93,12 +91,11 @@ public class Scheduler {
             ps = priorityQueue.getCurrentPartialSolution();
             psManager.generateChildren(ps, priorityQueue);
         }
-
-        Logger.info("last thing");
-        Logger.info(ps + "");
-
-        // we're done, this is our solution
-        Logger.info("DONE");
+        Logger.endTiming();
         return ps;
+    }
+
+    private static void parseOutput(PartialSolution ps){
+        Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
 }
