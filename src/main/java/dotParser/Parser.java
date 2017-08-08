@@ -93,7 +93,7 @@ public class Parser {
     }
 
     /**
-     * Outputs a graph to a .dot file
+     * Outputs a graph to a .dot file of the specified outputFile parameter.
      *
      */
     public static void outputGraphToFile(PartialSolution finalSolution, String outputFile, File inputFile) {
@@ -103,19 +103,27 @@ public class Parser {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        //store the input file into a string arraylist of lines.
         ArrayList<String> outputArray = new ArrayList<String>();
         StringBuilder output = new StringBuilder();
 
         try {
 
             String line = br.readLine();
+            //read first line, which contains the name of the digraph.
+            //modify the first line to append output to the front of the digraph name, as well as
+            //capitalize the first letter of the name of the digraph.
             String[] firstLineArray = line.split(" ");
             firstLineArray[2] = "\"output"+firstLineArray[2].substring(1,2).toUpperCase()+firstLineArray[2].substring(2);
             output.append("digraph " + firstLineArray[2] +" {\n");
 
+            //populate the array with lines of the input
             while (!(line = br.readLine()).equals("}")) {
                 outputArray.add(line);
             }
+            //for each line, if it is a task, then check the PartialSolution to obtain the process number and ProcessSlots
+            //to find the start time for that task.
+            //if it is an edge, then output it directly without any modifications.
             for (String outputLine : outputArray){
                 String[] splitLine = outputLine.split("\\[");
                 String taskName = splitLine[0].trim();
@@ -142,7 +150,8 @@ public class Parser {
             output.append("}\n");
 
             try {
-                PrintWriter writer = new PrintWriter("output/"+outputFile, "UTF-8");
+                //output to file
+                PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
                 writer.print(output.toString());
                 writer.close();
             } catch (IOException e) {
