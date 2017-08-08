@@ -29,20 +29,5 @@
         <scope>test</scope>
     </dependency>
 
-    <dependency>
-        <groupId>org.jgrapht</groupId>
-        <artifactId>jgrapht-core</artifactId>
-        <version>1.0.1</version>
-    </dependency>
-
-    <dependency>
-        <groupId>com.beust</groupId>
-        <artifactId>jcommander</artifactId>
-        <version>1.72</version>
-    </dependency>
-
-
-
 </dependencies>
-
 </project>
