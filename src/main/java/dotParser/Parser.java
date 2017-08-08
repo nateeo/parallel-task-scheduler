@@ -1,10 +1,16 @@
 package dotParser;
 
+import algorithm.PartialSolution;
+import algorithm.ProcessorSlot;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,6 +20,8 @@ import java.util.HashMap;
  * generate .dot files from a JGraph data structure
  */
 public class Parser {
+
+    Boolean[] inputFlagArray;
 
     /**
      * Parses .dot file and returns a JGraph representation.
@@ -86,9 +94,65 @@ public class Parser {
 
     /**
      * Outputs a graph to a .dot file
-     * @param name name of output file
+     *
      */
-    public static void outputGraphToFile(String name) {
+    public static void outputGraphToFile(PartialSolution finalSolution, String outputFile, File inputFile) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(inputFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> outputArray = new ArrayList<String>();
+        StringBuilder output = new StringBuilder();
+
+        try {
+
+            String line = br.readLine();
+            String[] firstLineArray = line.split(" ");
+            firstLineArray[2] = "\"output"+firstLineArray[2].substring(1,2).toUpperCase()+firstLineArray[2].substring(2);
+            output.append("digraph " + firstLineArray[2] +" {\n");
+
+            while (!(line = br.readLine()).equals("}")) {
+                outputArray.add(line);
+            }
+            for (String outputLine : outputArray){
+                String[] splitLine = outputLine.split("\\[");
+                String taskName = splitLine[0].trim();
+                String right = splitLine[1];
+                int weight;
+
+                if (splitLine[0].trim().length() == 1) {
+                    weight = getValue(right);
+                    for (ArrayList<ProcessorSlot> processor: finalSolution.getProcessors()){
+                        for (ProcessorSlot processorSlot: processor){
+                            if (processorSlot.getNode().getName().equals(taskName)){
+                                String taskOutput = "\t"+taskName+"\t\t\t\t"+"[ Weight ="+weight
+                                        +",Start ="+processorSlot.getStart()
+                                        +",Processor ="+(processorSlot.getProcessor()+1)+"];\n";
+                                output.append(taskOutput);
+                            }
+                        }
+                    }
+
+                } else { // add arc to queue for processing at the end
+                    output.append(outputLine+"\n");
+                }
+            }
+            output.append("}\n");
+
+            try {
+                PrintWriter writer = new PrintWriter("output/"+outputFile, "UTF-8");
+                writer.print(output.toString());
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("Invalid outout file name. ");
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

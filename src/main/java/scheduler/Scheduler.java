@@ -80,6 +80,7 @@ public class Scheduler {
         PartialSolution ps = solution();
         System.out.println("======= DONE =======");
         System.out.println(ps);
+        parseOutput(ps);
     }
 
     private static PartialSolution solution() {
@@ -100,5 +101,9 @@ public class Scheduler {
         // we're done, this is our solution
         Logger.info("DONE");
         return ps;
+    }
+
+    private static void parseOutput(PartialSolution ps){
+        Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
 }
