@@ -1,10 +1,12 @@
 package scheduleValidation;
 
+import graph.Edge;
 import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
 import graph.Node;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -46,7 +48,7 @@ public class ScheduleValidation {
         boolean test2 = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
-        boolean test3 = lol();
+        boolean test3 = checkSwitchingTime(processors, graphIn);
 
         //only one task is active on every processor
         boolean test4 = checkOneActive(processors);
@@ -133,6 +135,37 @@ public class ScheduleValidation {
                     }
                 }
             }
+        }
+
+        return valid;
+    }
+
+    public static boolean checkSwitchingTime(ArrayList<ProcessorSlot>[] processors, Graph graph) {
+
+        boolean valid = true;
+
+        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            for (ProcessorSlot slot : singleProcessor) {
+               ArrayList<Node> parentNodes = slot.getNode().getParentNodes();
+                for (ArrayList<ProcessorSlot> singleProcessor1: processors) {
+                    for (ProcessorSlot parentSlot : singleProcessor) {
+                        if (parentSlot.getProcessor() != slot.getProcessor()) {
+                            Node node = parentSlot.getNode();
+                            if (parentNodes.contains(node)) {
+                                int wait = slot.getStart() - parentSlot.getFinish();
+                                int edge = graph.getEdge(new Edge(node, slot.getNode(), 0)).getWeight();
+
+                                if (wait > edge) {
+                                    valid = false;
+                                    System.out.println("the switching time between " + parentSlot.getNode().getName() + " and " + slot.getNode().getName() + "is incorrect");
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
         }
 
         return valid;
