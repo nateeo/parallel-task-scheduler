@@ -94,8 +94,8 @@ public class Scheduler {
             psManager.generateChildren(ps, priorityQueue);
         }
 
-        Logger.info("last thing");
-        Logger.info(ps + "");
+        ps = priorityQueue.getCurrentPartialSolution();
+
 
         // we're done, this is our solution
         Logger.info("DONE");

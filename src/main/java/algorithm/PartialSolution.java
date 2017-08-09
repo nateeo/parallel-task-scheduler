@@ -12,7 +12,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
     protected int _idleTime; // total idle time (between slots)
     protected int _cost; // overall cost heuristic
     protected int _currentFinishTime; // the finish time of the lowest node in the schedule
-    protected int _nodeCount;
     protected ProcessorSlot _latestSlot;
     protected ProcessorSlot[] _latestSlots;
     protected ArrayList<ProcessorSlot>[] _processors;
@@ -39,7 +38,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
         _idleTime = ps._idleTime;
         _cost = ps._cost;
         _nodes = ps._nodes;
-        _nodeCount = ps._nodeCount;
         _currentFinishTime = ps._currentFinishTime;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
@@ -48,7 +46,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     }
 
     public int compareTo(PartialSolution o) {
-        return - (this._cost - o._cost);
+        return this._cost - o._cost;
     }
 
     public ArrayList<ProcessorSlot>[] getProcessors() {

@@ -2,7 +2,6 @@ package algorithm;
 
 import graph.Graph;
 import graph.Node;
-import logger.Logger;
 
 import java.util.PriorityQueue;
 
@@ -50,13 +49,10 @@ public class PSPriorityQueue {
      */
     public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
-        Logger.info("current is");
-        System.out.println(_currentPartialSolution);
         if (_queue.isEmpty()) {
-         Logger.info("QUEUE FINISHED");
          return false;
         }
-        return _currentPartialSolution._nodeCount != _totalNodes;
+        return _currentPartialSolution._nodes.length() != _totalNodes;
     }
 
     /**
