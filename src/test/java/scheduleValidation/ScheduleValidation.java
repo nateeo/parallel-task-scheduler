@@ -6,6 +6,7 @@ import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
 import graph.Node;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,7 +32,11 @@ public class ScheduleValidation {
         //ProcessorSlot _processorSlot (represents a task that is on the processor)
         //contains(Node node)
 
+        // nodes in the partial solution, in their respective processors according the the array
         ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+
+
+
 
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
@@ -41,13 +46,13 @@ public class ScheduleValidation {
         boolean test1 = checkOrder(graphIn, sortedProcessorSlots);
 
         //if a length of task is not equal to the weight of a node
-        boolean test2 = checkWeight();
+        boolean test2 = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
-        boolean test3 = lol();
+        boolean test3 = checkSwitchingTime(processors, graphIn);
 
         //only one task is active on every processor
-        boolean test4 = lol123();
+        boolean test4 = checkOneActive(processors);
 
         return false;
     }
@@ -109,6 +114,7 @@ public class ScheduleValidation {
 
     }
 
+
     private static boolean checkOrder(Graph gIn, ArrayList<ProcessorSlot> sortedProcessorSlots){
         //For every Node in the graph
         for(Node n : gIn.getNodes()){
@@ -148,8 +154,59 @@ public class ScheduleValidation {
         return -1;
     }
 
-    public boolean checkOneActive(ArrayList<ProcessorSlot> processors) {
 
+    public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
+
+        boolean valid = true;
+
+        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            for (ProcessorSlot slot: singleProcessor) {
+                for (ProcessorSlot slot2: singleProcessor) {
+                    if (!slot.getNode().equals(slot2.getNode())) {
+                        if ((slot2.getStart() > slot.getStart()) && (slot2.getFinish() < slot.getFinish())) {
+                            valid = false;
+
+                            System.out.println(slot.getNode().getName() + " is active at the same time as " + slot2.getNode().getName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    public static boolean checkSwitchingTime(ArrayList<ProcessorSlot>[] processors, Graph graph) {
+
+        boolean valid = true;
+
+        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            for (ProcessorSlot slot : singleProcessor) {
+               ArrayList<Node> parentNodes = slot.getNode().getParentNodes();
+                for (ArrayList<ProcessorSlot> singleProcessor1: processors) {
+                    for (ProcessorSlot parentSlot : singleProcessor) {
+                        if (parentSlot.getProcessor() != slot.getProcessor()) {
+                            Node node = parentSlot.getNode();
+                            if (parentNodes.contains(node)) {
+                                int wait = slot.getStart() - parentSlot.getFinish();
+                                int edge = graph.getEdge(new Edge(node, slot.getNode(), 0)).getWeight();
+
+                                if (wait > edge) {
+                                    valid = false;
+                                    System.out.println("the switching time between " + parentSlot.getNode().getName() + " and " + slot.getNode().getName() + "is incorrect");
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+        }
+
+        return valid;
     }
 
 }
