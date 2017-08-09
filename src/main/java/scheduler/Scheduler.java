@@ -91,6 +91,7 @@ public class Scheduler {
             ps = priorityQueue.getCurrentPartialSolution();
             psManager.generateChildren(ps, priorityQueue);
         }
+        ps = priorityQueue.getCurrentPartialSolution();
         Logger.endTiming();
         return ps;
     }
