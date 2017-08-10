@@ -38,7 +38,7 @@ public class ValidationTest {
 
         try {
 
-            String inputFileName = "src/test/resources/example.dot";
+            String inputFileName = "src/test/resources/exampleLarge.dot";
             if (!inputFileName.endsWith(".dot")) {
                 throw new InvalidInputException("Input file must be dot");
             }
@@ -121,7 +121,7 @@ public class ValidationTest {
         invalidSolution._processors[0] = processor1;
         invalidSolution._processors[1] = processor2;
 
-        System.out.println("0 and 3 should fail");
+        System.out.println("0 and 3 (and 2) should fail");
         assertFalse(ScheduleValidation.scheduleIsValid(_graph, invalidSolution));
     }
 

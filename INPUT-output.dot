@@ -1,10 +1,27 @@
-digraph "outputExample" {
-	a				[ Weight =2,Start =0,Processor =1];
-	b				[ Weight =3,Start =3,Processor =2];
-    a -> b          [ Weight =1];
-	c				[ Weight =3,Start =2,Processor =1];
-    a -> c          [ Weight =2];
-	d				[ Weight =2,Start =6,Processor =2];
-    b -> d          [ Weight =2];
-    c -> d          [ Weight =1];
+digraph "outputExampleLarge" {
+	a				[ Weight =2,Start =0,Processor =2];
+	b				[ Weight =4,Start =7,Processor =2];
+	c				[ Weight =4,Start =4,Processor =1];
+	d				[ Weight =5,Start =2,Processor =2];
+	e				[ Weight =4,Start =8,Processor =1];
+	f				[ Weight =3,Start =11,Processor =2];
+	g				[ Weight =2,Start =17,Processor =2];
+	h				[ Weight =5,Start =12,Processor =1];
+	i				[ Weight =4,Start =17,Processor =1];
+	j				[ Weight =3,Start =14,Processor =2];
+	k				[ Weight =2,Start =20,Processor =2];
+    a -> b      [ Weight =6];
+    a -> c      [ Weight =2];
+    a -> d      [ Weight =3];
+    a -> e      [ Weight =4];
+    b -> f      [ Weight =4];
+    b -> j      [ Weight =6];
+    c -> g      [ Weight =2];
+    d -> h      [ Weight =4];
+    e -> h      [ Weight =2];
+    e -> i      [ Weight =3];
+    f -> j      [ Weight =4];
+    g -> k      [ Weight =2];
+    h -> k      [ Weight =3];
+    j -> k      [ Weight =6];
 }

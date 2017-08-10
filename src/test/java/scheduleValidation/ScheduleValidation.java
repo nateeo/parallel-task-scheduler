@@ -172,27 +172,6 @@ public class ScheduleValidation {
     public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
         boolean valid = true;
-        /*
-        // for every processor
-        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
-            // for every slot in the processor
-            for (ProcessorSlot slot: singleProcessor) {
-                for (ProcessorSlot slot2: singleProcessor) {
-                    if (!slot.getNode().equals(slot2.getNode())) {
-                        if ((slot2.getStart() > slot.getStart()) && (slot2.getFinish() < slot.getFinish()) || ) {
-                            valid = false;
-
-                            System.out.println(slot.getNode().getName() + " is active at the same time as " + slot2.getNode().getName());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        */
-
-
-
 
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {
             int maxTimeSeen = 0;
