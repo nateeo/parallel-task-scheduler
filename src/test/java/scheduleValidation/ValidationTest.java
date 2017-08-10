@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static scheduler.Scheduler.parseConsole;
 
@@ -92,13 +93,13 @@ public class ValidationTest {
         Node nodeC = null;
         Node nodeD = null;
         for (Node node: nodes) {
-            if (node.getName() == "a") {
+            if (node.getName().equals("a")) {
                 nodeA = node;
-            } else if (node.getName() == "b") {
+            } else if (node.getName().equals("b")) {
                 nodeB = node;
-            } else if (node.getName() == "c") {
+            } else if (node.getName().equals("c")) {
                 nodeC = node;
-            } else if (node.getName() == "d") {
+            } else if (node.getName().equals("d")) {
                 nodeD = node;
             }
         }
@@ -121,11 +122,12 @@ public class ValidationTest {
         invalidSolution._processors[1] = processor2;
 
 
-        assertTrue(ScheduleValidation.scheduleIsValid(_graph, invalidSolution));
+        assertFalse(ScheduleValidation.scheduleIsValid(_graph, invalidSolution));
     }
 
     @Test
     public void testScheduleValidity() {
+
         assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
     }
 }

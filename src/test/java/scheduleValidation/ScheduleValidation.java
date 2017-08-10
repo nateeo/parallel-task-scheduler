@@ -58,7 +58,7 @@ public class ScheduleValidation {
         for (int i = 0; i < valid.length; i++) {
 
             if (valid[i] == false) {
-                System.out.println("method " + i + " failed");
+                System.out.println("method" + i + " failed");
                 fail_count++;
             } else {
                 System.out.println("method" + i + " success");
