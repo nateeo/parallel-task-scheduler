@@ -57,6 +57,7 @@ public class ScheduleValidation {
 
             if (valid[i] == false) {
                 System.out.println("method " + i + " failed");
+
             } else {
                 System.out.println("method" + i + " success");
             }
