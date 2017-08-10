@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static scheduler.Scheduler.parseConsole;
 
@@ -124,7 +124,58 @@ public class ValidationTest {
 
         assertFalse(ScheduleValidation.scheduleIsValid(_graph, invalidSolution));
     }
+    @Test
+    public void runInvalid1and2Algorithm(){
 
+        String[] args = new String[2];
+
+        try {
+
+            String inputFileName = "src/test/resources/testInvalid.dot";
+            if (!inputFileName.endsWith(".dot")) {
+                throw new InvalidInputException("Input file must be dot");
+            }
+            args[0] = inputFileName;
+            File inputFile = new File(inputFileName);
+
+            args[1] = "2";
+
+            _graph = Parser.parseDotFile(inputFile);
+            PartialSolution _invalidSolution = new PartialSolution(2);
+            ArrayList<ProcessorSlot> ps1 = new ArrayList<>();
+            ArrayList<ProcessorSlot> ps2 = new ArrayList<>();
+            _invalidSolution._processors[0] = ps1;
+            _invalidSolution._processors[1] = ps2;
+
+            List<Node> nodes = new ArrayList<>(_graph.getNodes());
+            for (int i = 0; i < nodes.size(); i++){
+                if (nodes.get(i).equals(new Node("a", 2))){
+                    ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 0, 1, 1);
+                    _invalidSolution._processors[0].add(0,pslot);
+                } else if (nodes.get(i).equals(new Node("b", 3))) {
+                    ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 4, 7, 2);
+                    _invalidSolution._processors[1].add(0,pslot);
+                } else if (nodes.get(i).equals(new Node("c", 3))) {
+                    ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 7, 10, 2);
+                    _invalidSolution._processors[1].add(1, pslot);
+                } else {
+                    ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 10, 12, 1);
+                    _invalidSolution._processors[0].add(1, pslot);
+                }
+            }
+
+            assertFalse(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
+
+
+        } catch (InvalidInputException e) {
+            System.out.println();
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Something went wrong with your input");
+            e.printStackTrace();
+        }
+
+    }
     @Test
     public void testScheduleValidity() {
 

@@ -1,7 +1,7 @@
 digraph  "testInvalid" {
     a               [ Weight =2];
     b               [ Weight =3];
-    a -> b          [ Weight =1];
+    a -> b          [ Weight =5];
     c               [ Weight =3];
     a -> c          [ Weight =2];
     d               [ Weight =2];
