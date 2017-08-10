@@ -42,7 +42,7 @@ public class PSManager {
      * @param queue the queue to add the children to
      * @return
      */
-    public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
+    public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue, ArrayList<PartialSolution> closed) {
 
         List<Node> freeNodes = getFreeNodes(parentPS);
         //for every free node, create the partial solutions that can be generated
@@ -56,7 +56,7 @@ public class PSManager {
                 PartialSolution partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
                 calculateUnderestimate(partialSolution);
-                queue.add(partialSolution);
+                checkAndAdd(partialSolution, queue, closed);
             }
         }
     }
@@ -237,6 +237,30 @@ public class PSManager {
         return false;
     }
 
+    private void checkAndAdd(PartialSolution ps, PSPriorityQueue queue, ArrayList<PartialSolution> closed) {
+        if (!closed.contains(ps) && !queue.contains(ps)) {
+            queue.add(ps);
+        } else {
+            System.out.println("not adding");
+            System.out.println(ps);
+            System.out.println(closed.contains(ps));
+            System.out.println(queue.contains(ps));
+            Iterator<PartialSolution> i = queue.iterator();
+            while (i.hasNext()) {
+                PartialSolution other = i.next();
+                if (other.equals(ps)) {
+                    Logger.info("queue");
+                    System.out.println(other);
+                    break;
+                }
+            }
+            if (closed.indexOf(ps) != -1) {
+                Logger.info("closed");
+                System.out.println(closed.get(closed.indexOf(ps)));
+            }
+        }
+    }
+
     /**
      * Add a slot to a processor, updating latestSlots, latestSlot and idleTime as necessary
      * @param slot
@@ -252,6 +276,7 @@ public class PSManager {
         }
         int processor = slot.getProcessor();
         ps._processors[processor].add(slot);
+        ps._unique.add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string

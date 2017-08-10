@@ -9,6 +9,7 @@ import graph.Graph;
 import logger.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Entry point to the scheduling algorithm
@@ -86,13 +87,14 @@ public class Scheduler {
         Logger.startTiming();
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+        ArrayList<PartialSolution> closed = new ArrayList<>();
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         while (priorityQueue.hasNext()) {
             ps = priorityQueue.getCurrentPartialSolution();
-            psManager.generateChildren(ps, priorityQueue);
+            psManager.generateChildren(ps, priorityQueue, closed);
         }
         ps = priorityQueue.getCurrentPartialSolution();
         Logger.endTiming();

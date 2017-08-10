@@ -7,7 +7,7 @@ import graph.Node;
  * Author: Sam Li, Edison Rho and Nathan Hur.
  */
 
-public class ProcessorSlot {
+public class ProcessorSlot implements Comparable<ProcessorSlot> {
     private Node _node;
     private int _start;
     private int _finish;
@@ -41,4 +41,26 @@ public class ProcessorSlot {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ProcessorSlot) {
+            ProcessorSlot other = (ProcessorSlot)o;
+            if (_start == other._start) {
+                return _node.getName().equals(other._node.getName());
+            }
+        }
+        return false;
+    }
+
+    public boolean equals(ProcessorSlot other) {
+        if (_start == other._start) {
+            return _node.getName().equals(other._node.getName());
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(ProcessorSlot o) {
+        return (_start + "x" + _node.getName()).compareTo(o._start + "x" + o._node.getName());
+    }
 }

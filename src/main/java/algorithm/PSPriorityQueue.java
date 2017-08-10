@@ -3,6 +3,7 @@ package algorithm;
 import graph.Graph;
 import graph.Node;
 
+import java.util.Iterator;
 import java.util.PriorityQueue;
 
 /**
@@ -33,13 +34,11 @@ public class PSPriorityQueue {
      */
     public void initialise() {
         for (Node node : _graph.getStart()) {
-            for (int i = 0; i < _processors; i++) {
-                PartialSolution ps = new PartialSolution(_processors);
-                ProcessorSlot slot = new ProcessorSlot(node, 0, i);
-                _psManager.addSlot(ps, slot);
-                _psManager.calculateUnderestimate(ps);
-                _queue.add(ps);
-            }
+            PartialSolution ps = new PartialSolution(_processors);
+            ProcessorSlot slot = new ProcessorSlot(node, 0, 0);
+            _psManager.addSlot(ps, slot);
+            _psManager.calculateUnderestimate(ps);
+            _queue.add(ps);
         }
     }
 
@@ -50,6 +49,14 @@ public class PSPriorityQueue {
     public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
         return _currentPartialSolution._nodes.size() != _totalNodes;
+    }
+
+    public boolean contains(PartialSolution ps) {
+        return _queue.contains(ps);
+    }
+
+    public Iterator<PartialSolution> iterator() {
+        return _queue.iterator();
     }
 
     /**

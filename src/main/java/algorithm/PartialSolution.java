@@ -1,6 +1,7 @@
 package algorithm;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  *  This class creates temporary representations of the schedules being used to find the optimal schedule.
@@ -16,6 +17,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     protected ProcessorSlot[] _latestSlots;
     protected ArrayList<ProcessorSlot>[] _processors;
     protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    protected TreeSet<ProcessorSlot> _unique = new TreeSet<>();
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
@@ -65,5 +67,18 @@ public class PartialSolution implements Comparable<PartialSolution> {
         s+= "cost estimate: " + _cost;
         s += "\n===========================\n";
         return s;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof PartialSolution) {
+            PartialSolution o = (PartialSolution) other;
+            return _unique.equals(o._unique);
+        }
+        return false;
+    }
+
+    public boolean equals(PartialSolution other) {
+        return _unique.equals(other._unique);
     }
 }
