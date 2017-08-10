@@ -53,17 +53,22 @@ public class ScheduleValidation {
         //only one task is active on every processor
         valid[3] = checkOneActive(processors);
 
+        int fail_count = 0;
+
         for (int i = 0; i < valid.length; i++) {
 
             if (valid[i] == false) {
                 System.out.println("method " + i + " failed");
-
+                fail_count++;
             } else {
                 System.out.println("method" + i + " success");
             }
         }
 
-        return true;
+        if(fail_count == 0){
+            return true;
+        }
+        return false;
 
     }
 
