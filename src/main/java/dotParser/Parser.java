@@ -7,10 +7,6 @@ import graph.Graph;
 import graph.Node;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -113,9 +109,9 @@ public class Parser {
             //read first line, which contains the name of the digraph.
             //modify the first line to append output to the front of the digraph name, as well as
             //capitalize the first letter of the name of the digraph.
-            String[] firstLineArray = line.split(" ");
-            firstLineArray[2] = "\"output"+firstLineArray[2].substring(1,2).toUpperCase()+firstLineArray[2].substring(2);
-            output.append("digraph " + firstLineArray[2] +" {\n");
+            String[] firstLineArray = line.split("\"");
+            firstLineArray[1] = "\"output"+firstLineArray[1].substring(0,1).toUpperCase()+firstLineArray[1].substring(1);
+            output.append("digraph " + firstLineArray[1] +"\" {\n");
 
             //populate the array with lines of the input
             while (!(line = br.readLine()).equals("}")) {
