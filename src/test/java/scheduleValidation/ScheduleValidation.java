@@ -9,6 +9,7 @@ import graph.Node;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Class that can be leveraged to check if a solution is valid based on an input graph
@@ -20,7 +21,7 @@ public class ScheduleValidation {
      * @param graphIn, the input .dot file represented as a Graph object.
      * @param ps, the PartialSolution object representing the schedule we wish to validate
      * @return boolean, true: iff the schedule is a valid schedule based on the input graph graphIn, false: otherwise
-     * @author Eli Salter
+     * @author Eli Salter, Zihao Yang
      */
     public static boolean scheduleIsValid(Graph graphIn, PartialSolution ps){
         //TO DELETE LATER
@@ -31,39 +32,29 @@ public class ScheduleValidation {
         //ProcessorSlot _processorSlot (represents a task that is on the processor)
         //contains(Node node)
 
-
         // nodes in the partial solution, in their respective processors according the the array
         ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
 
+
+
+
         // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
         //Topological sort
-
-
-        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(ps._processors);
-
-        boolean[] individualResults = new boolean[4];
+        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(processors);
 
         // if a node is scheduled before its dependencies -eli
-        individualResults[0] = SOMEFUNCTIONNAMEHERE();
+        boolean test1 = checkOrder(graphIn, sortedProcessorSlots);
 
         //if a length of task is not equal to the weight of a node
-        individualResults[1] = checkWeight(processors, graphIn);
+        boolean test2 = checkWeight(processors, graphIn);
 
         // switching time not correct (sounds hard)
-        individualResults[2] = checkSwitchingTime(processors, graphIn);
+        boolean test3 = checkSwitchingTime(processors, graphIn);
 
         //only one task is active on every processor
-        individualResults[3] = checkOneActive(processors);
+        boolean test4 = checkOneActive(processors);
 
-
-
-        for (int i =0; i < individualResults.length; i++) {
-            if (individualResults[i] == false) {
-                return false
-            }
-        }
-
-        return true;
+        return false;
     }
 
     /**
@@ -75,18 +66,19 @@ public class ScheduleValidation {
 
         ArrayList<ProcessorSlot> sortedProcessorList = new ArrayList<ProcessorSlot>();
 
-        // For every processor
+        // For every processor in the array
         for(int i = 0; i < psIn.length; i++){
-            // for every node
-            for(int j = 0; j < psIn._processors[i].length(); j++){
-                sortedProcessorList.add(psIn._processor[i].get(j));
+
+            // for every node in the processor
+            for(int j = 0; j < psIn[i].size(); j++){
+                sortedProcessorList.add(psIn[i].get(j));
             }
         }
 
         Collections.sort(sortedProcessorList, new Comparator<ProcessorSlot>() {
             @Override
             public int compare(ProcessorSlot p1, ProcessorSlot p2){
-                return p1.get
+                return p1.getStart() - p2.getStart();
             }
         } );
 
@@ -121,6 +113,47 @@ public class ScheduleValidation {
         return valid;
 
     }
+
+
+    private static boolean checkOrder(Graph gIn, ArrayList<ProcessorSlot> sortedProcessorSlots){
+        //For every Node in the graph
+        for(Node n : gIn.getNodes()){
+            //check that for all its predecessors, the index for which they're in the sortedProcessorsSlots array
+            // is not greater than the index of the current node
+
+            int positionOfCurrentNode = getNodeIndex(sortedProcessorSlots, n);
+
+            // if the current node is in the sortedProcessorSlots array generated from the partial solution
+            if(positionOfCurrentNode != -1){
+                // for all the predecessors
+                for(Edge incoming : n.getIncoming()){
+                    int positionOfPredecessor = getNodeIndex(sortedProcessorSlots, incoming.getFrom());
+
+                    //if the position of the predecessor is greater than the position of the current node, i.e
+                    //the node has started before its predecessor, then return false
+                    if(positionOfPredecessor > positionOfCurrentNode){
+                        return false;
+                    }
+                }
+
+            }
+
+        }
+        return true;
+    }
+
+    private static int getNodeIndex(ArrayList<ProcessorSlot> sortedProcessorSlots, Node n){
+        // this finds the index of the current node in the sortedProcessorSlots array
+        for(int i = 0; i<sortedProcessorSlots.size(); i++){
+            if(sortedProcessorSlots.get(i).getNode().equals(n)){
+                return i;
+            }
+        }
+
+        //match not found, so return the index -1
+        return -1;
+    }
+
 
     public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
@@ -169,6 +202,7 @@ public class ScheduleValidation {
                     }
                 }
             }
+
 
         }
 
