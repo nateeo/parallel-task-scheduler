@@ -5,6 +5,7 @@ import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
 import graph.Node;
+import sun.jvm.hotspot.debugger.cdbg.ProcessControl;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -173,12 +174,13 @@ public class ScheduleValidation {
     public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
         boolean valid = true;
-
+        // for every processor
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            // for every slot in the processor
             for (ProcessorSlot slot: singleProcessor) {
                 for (ProcessorSlot slot2: singleProcessor) {
                     if (!slot.getNode().equals(slot2.getNode())) {
-                        if ((slot2.getStart() > slot.getStart()) && (slot2.getFinish() < slot.getFinish())) {
+                        if ((slot2.getStart() > slot.getStart()) && (slot2.getFinish() < slot.getFinish()) || ) {
                             valid = false;
 
                             System.out.println(slot.getNode().getName() + " is active at the same time as " + slot2.getNode().getName());
@@ -188,6 +190,35 @@ public class ScheduleValidation {
                 }
             }
         }
+
+        int maxTimeSeen = 0;
+
+
+        for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+
+            Collections.sort(singleProcessor, new Comparator<ProcessorSlot>() {
+                @Override
+                public int compare(ProcessorSlot p1, ProcessorSlot p2){
+                    return p1.getStart() - p2.getStart();
+                }
+            } );
+
+            for (ProcessorSlot slot : singleProcessor) {
+                if (slot.getStart() < maxTimeSeen) {
+                    System.out.println("Task " + slot.getNode().getName() + "is colliding with another task in processor " + slot.getProcessor());
+                    valid = false;
+                }
+
+                if (slot.getFinish() > maxTimeSeen) {
+                    maxTimeSeen = slot.getFinish();
+                }
+            }
+
+        }
+
+
+
+
 
         return valid;
     }
