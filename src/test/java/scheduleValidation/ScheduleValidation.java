@@ -200,7 +200,7 @@ public class ScheduleValidation {
             for (ProcessorSlot slot : singleProcessor) {
                ArrayList<Node> parentNodes = slot.getNode().getParentNodes();
                 for (ArrayList<ProcessorSlot> singleProcessor1: processors) {
-                    for (ProcessorSlot parentSlot : singleProcessor) {
+                    for (ProcessorSlot parentSlot : singleProcessor1) {
                         if (parentSlot.getProcessor() != slot.getProcessor()) {
                             Node node = parentSlot.getNode();
                             if (parentNodes.contains(node)) {
