@@ -3,7 +3,6 @@ package graphTests;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  * Testing input and output file processing
  * Author: Nathan Hur, Sueyeon Lee
  */
-public class InputOutputTest {
+public class InputTest {
     private File exampleDotFile = new File("src/test/resources/exampleSmall.dot");
     private File exampleDot2File = new File("src/test/resources/exampleLarge.dot");
     private Node a = new Node("a", 2);
@@ -73,18 +72,4 @@ public class InputOutputTest {
         assertTrue("Incorrect edge", edges.contains(new Edge(b, d, 2)));
         assertTrue("Incorrect edge", edges.contains(new Edge(c, d, 1)));
     }
-
-
-
-    @Test
-    /**
-     * Test if the output is executing correctly
-     */
-    public void writeOutput() {
-
-    }
-
-
-
-
 }
