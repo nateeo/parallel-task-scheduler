@@ -4,6 +4,15 @@
 
 Parallel processor task scheduling application with visualisation.
 
+## Team Hi-5
+
+- Edison Rho   (@OurEdds)
+- Eli Salter   (@elisalter)
+- Samule Li    (@sli473)
+- Zihao Yang   (@zihao123yang)
+- Sueyeon Lee  (@sy133)
+- Nathan Hur   (@Nateeo)
+
 This project uses Java, Maven and JGraph.
 
 **Command-line usage**
@@ -27,12 +36,3 @@ This project uses Java, Maven and JGraph.
 4. Run Maven target 'install'
 
 5. Build will be in `/target` folder
-
-## Team Hi-5
-
-- Edison Rho
-- Eli Salter
-- Samule Li
-- Zihao Yang
-- Sueyeon Lee
-- Nathan Hur

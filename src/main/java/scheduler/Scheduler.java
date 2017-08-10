@@ -25,79 +25,78 @@ public class Scheduler {
 
     /**
      * Command line entry for the algorithm
+     *
      * @param args
      */
     public static void main(String[] args) {
-        Logger.startTiming();
-        System.out.println("Hello world");
         try {
             parseConsole(args);
         } catch (InvalidInputException e) {
             System.out.println();
             e.printStackTrace();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Invalid input");
             e.printStackTrace();
         }
-
-        Logger.endTiming();
     }
 
-    private static void parseConsole(String[] args) throws InvalidInputException, Exception {
+    private static PartialSolution parseConsole(String[] args) throws InvalidInputException, Exception {
         int argLength = args.length;
-        if((argLength<2)||(argLength>7)){
+        if ((argLength < 2) || (argLength > 7)) {
             throw new InvalidInputException("Invalid number of arguments.");
         }
         _inputFileName = args[0];
-        if (!_inputFileName.endsWith(".dot")){
+        if (!_inputFileName.endsWith(".dot")) {
             throw new InvalidInputException("Input file must be dot");
         }
         _inputFile = new File(_inputFileName);
         _processors = Integer.valueOf(args[1]);
 
 
-        for (int i = 2; i < argLength; i++){
+        for (int i = 2; i < argLength; i++) {
             switch (args[i]) {
                 case "-p":
-                    _cores = Integer.valueOf(args[i+1]);
+                    _cores = Integer.valueOf(args[i + 1]);
 
                     break;
                 case "-v":
                     _visualize = true;
                     break;
                 case "-o":
-                        _outputFile = args[i+1];
-                        if (!_outputFile.endsWith(".dot")){
-                            throw new InvalidInputException("output file must be dot");
-                        }
+                    _outputFile = args[i + 1];
+                    if (!_outputFile.endsWith(".dot")) {
+                        throw new InvalidInputException("output file must be dot");
+                    }
 
             }
         }
         _graph = Parser.parseDotFile(_inputFile);
 
         PartialSolution ps = solution();
-        System.out.println("======= DONE =======");
         System.out.println(ps);
+        parseOutput(ps); // output to file
+        return ps; // for testing
     }
-    
-    private static  PartialSolution solution() {
+
+    private static PartialSolution solution() {
+        Logger.startTiming();
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
+        PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
-        while(priorityQueue.hasNext()) {
-            PartialSolution ps = priorityQueue.getCurrentPartialSolution();
+        while (priorityQueue.hasNext()) {
+            ps = priorityQueue.getCurrentPartialSolution();
             psManager.generateChildren(ps, priorityQueue);
         }
-
-        // we're done, this is our solution
-        Logger.info("DONE");
-        PartialSolution solution = priorityQueue.getCurrentPartialSolution();
-        return solution;
+        ps = priorityQueue.getCurrentPartialSolution();
+        Logger.endTiming();
+        return ps;
     }
 
-
-
+    private static void parseOutput(PartialSolution ps){
+        Parser.outputGraphToFile(ps,_outputFile,_inputFile);
+    }
 }
