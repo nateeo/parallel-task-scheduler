@@ -54,6 +54,15 @@ public class PartialSolution implements Comparable<PartialSolution> {
         return _processors;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PartialSolution) {
+            PartialSolution other = (PartialSolution) o;
+            return _id.equals(other._id);
+        }
+        return false;
+    }
+
     @Override // TODO: remove when working
     public String toString() {
         String s = "===========================\nPARTIAL SOLUTION contains: " + _nodes + "\n";
