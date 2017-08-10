@@ -254,7 +254,7 @@ public class PSManager {
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
-        ps._nodes += slot.getNode().getName(); // add node to node string
+        ps._nodes.add(slot.getNode().getName()); // add node to node string
         if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }
