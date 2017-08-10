@@ -16,6 +16,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     protected ProcessorSlot[] _latestSlots;
     protected ArrayList<ProcessorSlot>[] _processors;
     protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    protected String _id = "";
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
