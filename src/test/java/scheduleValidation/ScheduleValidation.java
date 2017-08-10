@@ -5,9 +5,7 @@ import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
 import graph.Node;
-import sun.jvm.hotspot.debugger.cdbg.ProcessControl;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -118,7 +116,7 @@ public class ScheduleValidation {
                             valid = false;
 
                             System.out.println("the weight of task: " + node.toString() + " does not match the time the task runs");
-                            break;
+
                         }
                     }
                 }
@@ -174,6 +172,7 @@ public class ScheduleValidation {
     public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
         boolean valid = true;
+        /*
         // for every processor
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {
             // for every slot in the processor
@@ -190,11 +189,13 @@ public class ScheduleValidation {
                 }
             }
         }
+        */
 
-        int maxTimeSeen = 0;
+
 
 
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {
+            int maxTimeSeen = 0;
 
             Collections.sort(singleProcessor, new Comparator<ProcessorSlot>() {
                 @Override
@@ -205,7 +206,7 @@ public class ScheduleValidation {
 
             for (ProcessorSlot slot : singleProcessor) {
                 if (slot.getStart() < maxTimeSeen) {
-                    System.out.println("Task " + slot.getNode().getName() + "is colliding with another task in processor " + slot.getProcessor());
+                    System.out.println("Task " + slot.getNode().getName() + " is colliding with another task in processor " + slot.getProcessor());
                     valid = false;
                 }
 
@@ -238,9 +239,9 @@ public class ScheduleValidation {
                                 int wait = slot.getStart() - parentSlot.getFinish();
                                 int edge = graph.getEdge(new Edge(node, slot.getNode(), 0)).getWeight();
 
-                                if (wait > edge) {
+                                if (wait < edge) {
                                     valid = false;
-                                    System.out.println("the switching time between " + parentSlot.getNode().getName() + " and " + slot.getNode().getName() + "is incorrect");
+                                    System.out.println("the switching time between " + parentSlot.getNode().getName() + " and " + slot.getNode().getName() + " is incorrect");
                                 }
                             }
                         }

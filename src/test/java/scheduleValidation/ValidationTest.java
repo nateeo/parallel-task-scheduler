@@ -63,7 +63,7 @@ public class ValidationTest {
     }
 
     @Test
-    public void makeInvalid0and3() {
+    public void testInvalid0and3() {
         String[] args = new String[2];
 
         try {
@@ -121,9 +121,10 @@ public class ValidationTest {
         invalidSolution._processors[0] = processor1;
         invalidSolution._processors[1] = processor2;
 
-
+        System.out.println("0 and 3 should fail");
         assertFalse(ScheduleValidation.scheduleIsValid(_graph, invalidSolution));
     }
+
     @Test
     public void runInvalid1and2Algorithm(){
 
@@ -163,7 +164,7 @@ public class ValidationTest {
                     _invalidSolution._processors[0].add(1, pslot);
                 }
             }
-
+            System.out.println("1 and 2 should fail");
             assertFalse(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
 
 
@@ -176,9 +177,10 @@ public class ValidationTest {
         }
 
     }
+
     @Test
     public void testScheduleValidity() {
-
+        System.out.println("should all be success");
         assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
     }
 }
