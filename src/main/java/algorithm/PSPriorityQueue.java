@@ -49,10 +49,7 @@ public class PSPriorityQueue {
      */
     public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
-        if (_queue.isEmpty()) {
-         return false;
-        }
-        return _currentPartialSolution._nodes.length() != _totalNodes;
+        return _currentPartialSolution._nodes.size() != _totalNodes;
     }
 
     /**

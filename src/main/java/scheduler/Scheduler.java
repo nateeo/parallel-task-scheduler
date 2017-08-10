@@ -74,6 +74,9 @@ public class Scheduler {
         _graph = Parser.parseDotFile(_inputFile);
 
         PartialSolution ps = solution();
+        if (ps == null) {
+            Logger.error("null solution. Are you sure this is a valid task graph?");
+        }
         System.out.println(ps);
         parseOutput(ps); // output to file
         return ps; // for testing

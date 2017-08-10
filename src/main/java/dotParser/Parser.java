@@ -51,7 +51,7 @@ public class Parser {
                 String right = splitLine[1];
                 int weight;
 
-                if (splitLine[0].trim().length() == 1) { // add single vertex to graph and hashmap, as well as weight to min work
+                if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
                     weight = getValue(right);
                     Node newVertex = new Node(left, weight);
                     totalMinimumWork += weight;
