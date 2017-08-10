@@ -131,7 +131,7 @@ public class PSManager {
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
 
         // update estimate
-        ps._cost = Math.max(ps._latestSlot.getFinish(), 0);
+        ps._cost = Math.max(bottomLevelWork, Math.max(_idleConstantHeuristic, ps._cost));
     }
 
     private List<Node> getFreeNodes(PartialSolution parentPS) {
