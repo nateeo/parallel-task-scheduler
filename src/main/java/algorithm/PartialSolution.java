@@ -15,7 +15,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     protected ProcessorSlot _latestSlot;
     protected ProcessorSlot[] _latestSlots;
     protected ArrayList<ProcessorSlot>[] _processors;
-    protected String _nodes = ""; //trialing string to show nodes in solution;
+    protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
@@ -37,7 +37,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         }
         _idleTime = ps._idleTime;
         _cost = ps._cost;
-        _nodes = ps._nodes;
+        _nodes = (ArrayList)ps._nodes.clone();
         _currentFinishTime = ps._currentFinishTime;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
