@@ -6,13 +6,14 @@ import graph.Graph;
 import org.junit.Before;
 import org.junit.Test;
 import scheduler.InvalidInputException;
-import scheduler.Scheduler;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
+import static org.junit.Assert.assertTrue;
 import static scheduler.Scheduler.parseConsole;
 
 /**
@@ -31,21 +32,16 @@ public class ValidationTest {
         String[] args = new String[2];
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            System.out.println("Please provide the .dot file");
-            args[0]  = reader.readLine();
-
-            String inputFileName = args[0];
+            String inputFileName = "example2.dot";
             if (!inputFileName.endsWith(".dot")) {
                 throw new InvalidInputException("Input file must be dot");
             }
+            args[0] = inputFileName;
             File inputFile = new File(inputFileName);
 
 
-
-            System.out.println("how many processors?");
-            args[1] = reader.readLine();
+            args[1] = "2";
 
             _solution = parseConsole(args);
             _graph = Parser.parseDotFile(inputFile);
@@ -63,7 +59,6 @@ public class ValidationTest {
 
     @Test
     public void testScheduleValidity() {
-
-        ScheduleValidation.scheduleIsValid(_graph, _solution);
+        assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
     }
 }

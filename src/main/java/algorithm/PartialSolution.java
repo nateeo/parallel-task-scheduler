@@ -14,7 +14,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     protected int _currentFinishTime; // the finish time of the lowest node in the schedule
     protected ProcessorSlot _latestSlot;
     protected ProcessorSlot[] _latestSlots;
-    protected ArrayList<ProcessorSlot>[] _processors;
+    public ArrayList<ProcessorSlot>[] _processors;
     protected String _nodes = ""; //trialing string to show nodes in solution;
 
     public PartialSolution(int numberOfProcessors) {
