@@ -41,7 +41,7 @@ public class Scheduler {
         }
     }
 
-    private static PartialSolution parseConsole(String[] args) throws InvalidInputException, Exception {
+    public static PartialSolution parseConsole(String[] args) throws InvalidInputException, Exception {
         int argLength = args.length;
         if ((argLength < 2) || (argLength > 7)) {
             throw new InvalidInputException("Invalid number of arguments.");
@@ -102,4 +102,5 @@ public class Scheduler {
     private static void parseOutput(PartialSolution ps){
         Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
+
 }
