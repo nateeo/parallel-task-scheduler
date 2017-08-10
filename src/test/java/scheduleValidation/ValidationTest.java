@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static scheduler.Scheduler.parseConsole;
 
 /**
+ *
  * Created by zihaoyang on 8/08/17.
  */
 public class ValidationTest {
@@ -32,14 +32,12 @@ public class ValidationTest {
 
 
 
-    @Test
+    @Before
     public void runAlgorithm() {
 
         String[] args = new String[2];
 
         try {
-
-            System.out.println("HELLO START TEST 1");
 
             String inputFileName = "example2.dot";
             if (!inputFileName.endsWith(".dot")) {
@@ -53,8 +51,6 @@ public class ValidationTest {
 
             _solution = parseConsole(args);
             _graph = Parser.parseDotFile(inputFile);
-
-            assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,8 +69,6 @@ public class ValidationTest {
         String[] args = new String[2];
 
         try {
-
-            System.out.println("HELLLLOOOOOO START TEST 2");
 
             String inputFileName = "src/test/resources/testInvalid.dot";
             if (!inputFileName.endsWith(".dot")) {
@@ -109,7 +103,7 @@ public class ValidationTest {
                 }
             }
 
-        assertTrue(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
+        assertFalse(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
 
 
         } catch (InvalidInputException e) {
@@ -121,10 +115,10 @@ public class ValidationTest {
         }
 
     }
-//
-//    @Test
-//    public void testScheduleValidity() {
-//        assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
-//    }
+
+    @Test
+    public void testScheduleValidity() {
+        assertTrue(ScheduleValidation.scheduleIsValid(_graph, _solution));
+    }
 
 }
