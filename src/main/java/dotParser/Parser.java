@@ -20,7 +20,7 @@ public class Parser {
     Boolean[] inputFlagArray;
 
     /**
-     * Parses .dot file and returns a JGraph representation.
+     * Parses .dot file and returns a Graph Object representation.
      * @param file
      * @return Graph, null if there was an error reading the file
      * @throws IOException
@@ -41,23 +41,28 @@ public class Parser {
         String line;
         String[] splitLine;
         ArrayList<String[]> arcQueue = new ArrayList<String[]>();
+        String left;
+        String right;
         try {
             String graphName = br.readLine().split("\"")[1];
             graph = new Graph(graphName);
 
             while (!(line = br.readLine()).equals("}")) {
                 splitLine = line.split("\\[");
-                String left = splitLine[0].trim();
-                String right = splitLine[1];
-                int weight;
 
-                if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
-                    weight = getValue(right);
-                    Node newVertex = new Node(left, weight);
-                    totalMinimumWork += weight;
-                    nodeMap.put(left, newVertex);
-                } else { // add arc to queue for processing at the end
-                    arcQueue.add(new String[]{left, right});
+                if (splitLine.length == 2 && splitLine[1].contains("Weight")) {
+                    left = splitLine[0].trim();
+                    right = splitLine[1];
+                    int weight;
+
+                    if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
+                        weight = getValue(right);
+                        Node newVertex = new Node(left, weight);
+                        totalMinimumWork += weight;
+                        nodeMap.put(left, newVertex);
+                    } else { // add arc to queue for processing at the end
+                        arcQueue.add(new String[]{left, right});
+                    }
                 }
             }
         } catch (IOException e) {
