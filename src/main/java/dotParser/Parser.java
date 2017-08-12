@@ -49,7 +49,6 @@ public class Parser {
 
             while (!(line = br.readLine()).equals("}")) {
                 splitLine = line.split("\\[");
-
                 if (splitLine.length == 2 && splitLine[1].contains("Weight")) {
                     left = splitLine[0].trim();
                     right = splitLine[1];
@@ -120,7 +119,10 @@ public class Parser {
 
             //populate the array with lines of the input
             while (!(line = br.readLine()).equals("}")) {
-                outputArray.add(line);
+                String[] splitLine = line.split("\\[");
+                if(splitLine.length == 2 && splitLine[1].contains("Weight")) {
+                    outputArray.add(line);
+                }
             }
             //for each line, if it is a task, then check the PartialSolution to obtain the process number and ProcessSlots
             //to find the start time for that task.
