@@ -13,7 +13,7 @@ Parallel processor task scheduling application with visualisation.
 - Sueyeon Lee  (@sy133)
 - Nathan Hur   (@Nateeo)
 
-This project uses Java, Maven and JGraph.
+This project uses Java and Maven.
 
 **Command-line usage**
 
@@ -24,6 +24,10 @@ This project uses Java, Maven and JGraph.
 - `[OPTION]`
     * `-v` visualise search
     * `-o` specify output file (default is `INPUT-output.dot`)
+
+**Building from source**
+
+execute the maven goal: `clean compile assembly:single`
 
 **IntelliJ setup:**
 
