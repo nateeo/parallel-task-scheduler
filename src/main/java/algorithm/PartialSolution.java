@@ -17,6 +17,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] _processors;
     protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    protected String _id = "";
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
@@ -52,6 +53,15 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
         return _processors;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PartialSolution) {
+            PartialSolution other = (PartialSolution) o;
+            return _id.equals(other._id);
+        }
+        return false;
     }
 
     @Override // TODO: remove when working

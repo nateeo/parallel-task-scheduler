@@ -56,7 +56,7 @@ public class PSManager {
                 PartialSolution partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
                 calculateUnderestimate(partialSolution);
-                queue.add(partialSolution);
+                checkAndAdd(partialSolution, queue);
             }
         }
     }
@@ -251,12 +251,19 @@ public class PSManager {
             prevSlotFinishTime = latestSlot.getFinish();
         }
         int processor = slot.getProcessor();
+        ps._id += slot.getNode().toString() + "-" + slot.getStart();
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
         if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
+        }
+    }
+
+    public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
+        if (!queue.contains(ps)) {
+            queue.add(ps);
         }
     }
 }
