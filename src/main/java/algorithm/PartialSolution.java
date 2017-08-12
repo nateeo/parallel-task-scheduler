@@ -33,18 +33,19 @@ public class PartialSolution implements Comparable<PartialSolution> {
      * @param ps
      */
     public PartialSolution(PartialSolution ps) {
-        _processors = new ArrayList[ps._processors.length];
-        for (int i = 0; i < _processors.length; i++) {
-            _processors[i] = new ArrayList<>(ps._processors[i]);
-        }
         _idleTime = ps._idleTime;
         _cost = ps._cost;
-        _nodes = (ArrayList)ps._nodes.clone();
         _currentFinishTime = ps._currentFinishTime;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
             _latestSlots[i] = ps._latestSlots[i];
         }
+        _processors = new ArrayList[ps._processors.length];
+        for (int i = 0; i < _processors.length; i++) {
+            _processors[i] = new ArrayList<>(ps._processors[i]);
+        }
+        _nodes = (ArrayList)ps._nodes.clone();
+        _id = ps._id;
     }
 
     public int compareTo(PartialSolution o) {
