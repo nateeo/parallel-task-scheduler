@@ -1,15 +1,15 @@
 digraph "outputExampleLarge" {
-	a				[ Weight =2,Start =0,Processor =2];
-	b				[ Weight =4,Start =7,Processor =2];
-	c				[ Weight =4,Start =4,Processor =1];
-	d				[ Weight =5,Start =2,Processor =2];
-	e				[ Weight =4,Start =8,Processor =1];
-	f				[ Weight =3,Start =11,Processor =2];
-	g				[ Weight =2,Start =17,Processor =2];
-	h				[ Weight =5,Start =12,Processor =1];
-	i				[ Weight =4,Start =17,Processor =1];
-	j				[ Weight =3,Start =14,Processor =2];
-	k				[ Weight =2,Start =20,Processor =2];
+	a				[ Weight =2,Start =0,Processor =1];
+	b				[ Weight =4,Start =7,Processor =1];
+	c				[ Weight =4,Start =4,Processor =2];
+	d				[ Weight =5,Start =2,Processor =1];
+	e				[ Weight =4,Start =8,Processor =2];
+	f				[ Weight =3,Start =11,Processor =1];
+	g				[ Weight =2,Start =17,Processor =1];
+	h				[ Weight =5,Start =12,Processor =2];
+	i				[ Weight =4,Start =17,Processor =2];
+	j				[ Weight =3,Start =14,Processor =1];
+	k				[ Weight =2,Start =20,Processor =1];
     a -> b      [ Weight =6];
     a -> c      [ Weight =2];
     a -> d      [ Weight =3];

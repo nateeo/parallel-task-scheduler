@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class PartialSolution implements Comparable<PartialSolution> {
 
     protected int _idleTime; // total idle time (between slots)
-    protected int _cost; // overall cost heuristic
+    public int _cost; // overall cost heuristic
     protected int _currentFinishTime; // the finish time of the lowest node in the schedule
     protected ProcessorSlot _latestSlot;
     protected ProcessorSlot[] _latestSlots;
