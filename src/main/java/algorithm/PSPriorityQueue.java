@@ -60,6 +60,10 @@ public class PSPriorityQueue {
         return _currentPartialSolution;
     }
 
+    public boolean contains(PartialSolution ps) {
+       return _queue.contains(ps);
+    }
+
     public void add(PartialSolution e) {
         _queue.add(e);
     }
