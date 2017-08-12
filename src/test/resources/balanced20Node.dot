@@ -1,14 +1,14 @@
-digraph "outputBalanced20Node" {
-	0				[ Weight =5,Start =0,Processor =1];
-	1				[ Weight =4,Start =5,Processor =1];
-	2				[ Weight =3,Start =9,Processor =1];
-	3				[ Weight =4,Start =19,Processor =1];
-	4				[ Weight =5,Start =12,Processor =1];
-	5				[ Weight =6,Start =15,Processor =2];
-	6				[ Weight =4,Start =23,Processor =1];
-	7				[ Weight =5,Start =31,Processor =1];
-	8				[ Weight =3,Start =42,Processor =1];
-	9				[ Weight =4,Start =30,Processor =2];
+digraph  "balanced20Node" {
+    0           [ Weight=5];
+    1           [ Weight=4];
+    2           [ Weight=3];
+    3           [ Weight=4];
+    4           [ Weight=5];
+    5           [ Weight=6];
+    6           [ Weight=4];
+    7           [ Weight=5];
+    8           [ Weight=3];
+    9           [ Weight=4];
     10          [ Weight=2];
     11          [ Weight=4];
     12          [ Weight=5];

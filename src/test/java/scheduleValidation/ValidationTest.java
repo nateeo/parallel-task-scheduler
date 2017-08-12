@@ -38,7 +38,7 @@ public class ValidationTest {
 
         try {
 
-            String inputFileName = "src/test/resources/exampleLarge.dot";
+            String inputFileName = "src/test/resources/exampleSmall.dot";
             if (!inputFileName.endsWith(".dot")) {
                 throw new InvalidInputException("Input file must be dot");
             }
