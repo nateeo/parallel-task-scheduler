@@ -45,8 +45,8 @@ public class PSManager {
      * @return
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
-        boolean partialExpansionBreak = false;
         List<Node> freeNodes = getFreeNodes(parentPS);
+        PartialSolution partialSolution = null;
         //for every free node, create the partial solutions that can be generated
         for (Node freeNode: freeNodes) {
             //calculate latest time to put on (dependency)
@@ -55,9 +55,9 @@ public class PSManager {
             //free variable to that processor. Calculate the new cost and add it to the priority queue.
             for (int i = 0; i < _numberOfProcessors; i++) {
                 ProcessorSlot slot = new ProcessorSlot(freeNode, earliestTimeOnProcessor[i], i);
-                PartialSolution partialSolution = new PartialSolution(parentPS);
+                partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
-                int childCost = calculateUnderestimate(partialSolution);
+                calculateUnderestimate(partialSolution);
                 checkAndAdd(partialSolution, queue);
             }
         }
