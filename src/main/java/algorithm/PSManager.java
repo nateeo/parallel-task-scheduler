@@ -23,6 +23,8 @@ public class PSManager {
     //cache the constant portion of the idle time heuristic (total work / processors)
     private int _idleConstantHeuristic;
 
+    private ArrayList<PartialSolution> _closed = new ArrayList<>();
+
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
@@ -43,8 +45,8 @@ public class PSManager {
      * @return
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
-
         List<Node> freeNodes = getFreeNodes(parentPS);
+        PartialSolution partialSolution = null;
         //for every free node, create the partial solutions that can be generated
         for (Node freeNode: freeNodes) {
             //calculate latest time to put on (dependency)
@@ -53,12 +55,13 @@ public class PSManager {
             //free variable to that processor. Calculate the new cost and add it to the priority queue.
             for (int i = 0; i < _numberOfProcessors; i++) {
                 ProcessorSlot slot = new ProcessorSlot(freeNode, earliestTimeOnProcessor[i], i);
-                PartialSolution partialSolution = new PartialSolution(parentPS);
+                partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
                 calculateUnderestimate(partialSolution);
                 checkAndAdd(partialSolution, queue);
             }
         }
+        _closed.add(parentPS);
     }
 
     /**
@@ -117,7 +120,7 @@ public class PSManager {
      * Function to calculate and update the work for a partialSolution aka the cost function f(s)
      * @param ps a partial solution
      */
-    public void calculateUnderestimate(PartialSolution ps) {
+    public int calculateUnderestimate(PartialSolution ps) {
 
         // get bottom level work
         int bottomLevelWork = 0;
@@ -131,7 +134,8 @@ public class PSManager {
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
 
         // update estimate
-        ps._cost = Math.max(bottomLevelWork, Math.max(_idleConstantHeuristic, ps._cost));
+        ps._cost = Math.max(bottomLevelWork, Math.max(idleTimeHeuristic, ps._cost));
+        return ps._cost;
     }
 
     /**
@@ -270,7 +274,7 @@ public class PSManager {
             prevSlotFinishTime = latestSlot.getFinish();
         }
         int processor = slot.getProcessor();
-        ps._id += slot.getNode().toString() + "-" + slot.getStart();
+        ps._id[processor] += slot.getNode() + "-";
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
@@ -281,6 +285,9 @@ public class PSManager {
     }
 
     public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
+        if (_closed.contains(ps)) {
+            return;
+        }
         if (!queue.contains(ps)) {
             queue.add(ps);
         }
