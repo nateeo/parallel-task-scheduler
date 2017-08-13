@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class InputTest {
     private File exampleDotFile = new File("src/test/resources/exampleSmall.dot");
     private File exampleDot2File = new File("src/test/resources/exampleLarge.dot");
+    private File nodes10RandomFile = new File("src/test/resources/Nodes_10_Random.dot");
     private Node a = new Node("a", 2);
     private Node b = new Node("b", 3);
     private Node c = new Node("c", 3);
@@ -49,11 +50,22 @@ public class InputTest {
 
     @Test
     /**
+     * Test if parser ignores lines in incorrect format.
+     */
+    public void graph10() {
+        Graph graph = parseDotFile(nodes10RandomFile);
+        assertEquals("Random_Nodes_10_Density_1.90_CCR_10.00_WeightType_Random", graph.getName());
+        assertEquals("Incorrect number of nodes",graph.getNodes().size(), 10);
+        assertEquals("Incorrect number of edges",graph.getEdges().size(), 19);
+    }
+
+    @Test
+    /**
      * Test if the correct nodes have been parsed
      */
     public void correctNodes(){
         Graph graph = parseDotFile(exampleDotFile);
-        ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
+        ArrayList<Node> nodes = new ArrayList<Node>(graph.getNodes());
         assertTrue("Incorrect node", nodes.contains(a));
         assertTrue("Incorrect node", nodes.contains(b));
         assertTrue("Incorrect node", nodes.contains(c));
@@ -66,7 +78,7 @@ public class InputTest {
      */
     public  void correctEdges(){
         Graph graph = parseDotFile(exampleDotFile);
-        ArrayList<Edge> edges = new ArrayList<>(graph.getEdges());
+        ArrayList<Edge> edges = new ArrayList<Edge>(graph.getEdges());
         assertTrue("Incorrect edge", edges.contains(new Edge(a, b, 4)));
         assertTrue("Incorrect edge", edges.contains(new Edge(a, c, 2)));
         assertTrue("Incorrect edge", edges.contains(new Edge(b, d, 2)));
