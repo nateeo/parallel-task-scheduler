@@ -86,7 +86,7 @@ public class Scheduler {
         _graph = Parser.parseDotFile(_inputFile);
         //if user did not define an output file name, make a default one based on graph name.
         if (!customOutput){
-            _outputFile = _graph.getName()+"output.dot";//generate output based on graph name
+            _outputFile = _graph.getName()+"-output.dot";//generate output based on graph name
         }
         Logger.startTiming();
         System.out.println(_consolePrefix + "Processing the graph...");
