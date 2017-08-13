@@ -114,7 +114,7 @@ public class PSManager {
     }
 
     /**
-     * Function to calculate and update the work for a partialSolution
+     * Function to calculate and update the work for a partialSolution aka the cost function f(s)
      * @param ps a partial solution
      */
     public void calculateUnderestimate(PartialSolution ps) {
@@ -132,6 +132,25 @@ public class PSManager {
 
         // update estimate
         ps._cost = Math.max(bottomLevelWork, Math.max(_idleConstantHeuristic, ps._cost));
+    }
+
+    /**
+     * Third component of the proposed cost function f(s)
+     * calculates the data ready time (DRT) of a node n_j on processor p
+     * @return
+     */
+    public int calculateDataReadyTime(PartialSolution ps){
+
+        List<Node> freeNodesOfps = getFreeNodes(ps);
+
+        for(Node freeNode : freeNodesOfps){
+            int minDrt = -1;
+            int blw_n = _bottomLevelWork.get(freeNode.getName());
+            
+
+        }
+        //for all pred n_i of n_j
+        return 0;
     }
 
     private List<Node> getFreeNodes(PartialSolution parentPS) {
