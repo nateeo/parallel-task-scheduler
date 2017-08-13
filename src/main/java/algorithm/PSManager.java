@@ -23,6 +23,8 @@ public class PSManager {
     //cache the constant portion of the idle time heuristic (total work / processors)
     private int _idleConstantHeuristic;
 
+    private ArrayList<PartialSolution> _closed = new ArrayList<>();
+
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
@@ -43,8 +45,8 @@ public class PSManager {
      * @return
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
-
         List<Node> freeNodes = getFreeNodes(parentPS);
+        PartialSolution partialSolution = null;
         //for every free node, create the partial solutions that can be generated
         for (Node freeNode: freeNodes) {
             //calculate latest time to put on (dependency)
@@ -53,12 +55,13 @@ public class PSManager {
             //free variable to that processor. Calculate the new cost and add it to the priority queue.
             for (int i = 0; i < _numberOfProcessors; i++) {
                 ProcessorSlot slot = new ProcessorSlot(freeNode, earliestTimeOnProcessor[i], i);
-                PartialSolution partialSolution = new PartialSolution(parentPS);
+                partialSolution = new PartialSolution(parentPS);
                 addSlot(partialSolution, slot);
                 calculateUnderestimate(partialSolution);
                 checkAndAdd(partialSolution, queue);
             }
         }
+        _closed.add(parentPS);
     }
 
     /**
@@ -84,17 +87,17 @@ public class PSManager {
         }
 
         while(!queuedNodes.isEmpty()) {
-            maxBottomLevel = 0;
             currentNode = queuedNodes.remove();
+            maxBottomLevel = 0;
             if (!currentNode.getOutgoing().isEmpty()) {
                 for (Edge successors : currentNode.getOutgoing()) {
-                    currentNodeBL = bottomLevels.get(successors.getTo().getName()) + successors.getTo().getWeight();
+                    currentNodeBL = bottomLevels.get(successors.getTo().getName());
                     if (currentNodeBL > maxBottomLevel) {
                         maxBottomLevel = currentNodeBL;
                     }
                 }
             }
-            bottomLevels.put(currentNode.getName(),maxBottomLevel);
+            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
             if (!currentNode.getIncoming().isEmpty()) {
                 for (Edge predecessors : currentNode.getIncoming()) {
                     predecessorNode = predecessors.getFrom();
@@ -114,24 +117,45 @@ public class PSManager {
     }
 
     /**
-     * Function to calculate and update the work for a partialSolution
+     * Function to calculate and update the work for a partialSolution aka the cost function f(s)
      * @param ps a partial solution
      */
     public void calculateUnderestimate(PartialSolution ps) {
-
-        // get bottom level work
-        int bottomLevelWork = 0;
-        ProcessorSlot lastSlot = ps._latestSlot;
-        if (lastSlot != null) { // TODO: fix
-            bottomLevelWork = _bottomLevelWork.get(lastSlot.getNode().getName()) + lastSlot.getFinish();
-        }
 
 
         // update idle time heuristic TODO: optimise
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
 
+        // data ready time heuristic
+        int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
+
         // update estimate
-        ps._cost = Math.max(bottomLevelWork, Math.max(_idleConstantHeuristic, ps._cost));
+        ps._cost = Math.max(Math.max(Math.max(dataReadyTimeHeuristic, ps._cost), idleTimeHeuristic), ps._bottomLevelWork);
+    }
+
+    /**
+     * Third component of the proposed cost function f(s)
+     * calculates the data ready time (DRT) of a node n_j on processor p
+     * @return
+     */
+    public int calculateDataReadyTime(PartialSolution ps){
+
+        List<Node> freeNodeList = getFreeNodes(ps);
+        int maximumDRT = 0;
+
+        for(Node freeNode : freeNodeList){
+            // get minimum drt on each processor
+            int minDrt = -1;
+            int blw = _bottomLevelWork.get(freeNode.getName());
+            for (int i : earliestTimeOnProcessors(ps, freeNode)) {
+                if (i < minDrt || minDrt == -1) {
+                    minDrt = i;
+                }
+            }
+            int dataReadyFinish = blw + minDrt;
+            if (dataReadyFinish > maximumDRT) maximumDRT = dataReadyFinish;
+        }
+        return maximumDRT;
     }
 
     private List<Node> getFreeNodes(PartialSolution parentPS) {
@@ -251,9 +275,10 @@ public class PSManager {
             prevSlotFinishTime = latestSlot.getFinish();
         }
         int processor = slot.getProcessor();
-        ps._id += slot.getNode().toString() + "-" + slot.getStart();
+        ps._id[processor] += slot.getNode() + "-";
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
+        ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
         if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
@@ -262,6 +287,9 @@ public class PSManager {
     }
 
     public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
+        if (_closed.contains(ps)) {
+            return;
+        }
         if (!queue.contains(ps)) {
             queue.add(ps);
         }
