@@ -122,15 +122,6 @@ public class PSManager {
      */
     public void calculateUnderestimate(PartialSolution ps) {
 
-        // get bottom level work
-        int bottomLevelWork = 0;
-        ProcessorSlot lastSlot = ps._latestSlot;
-        if (lastSlot != null) { // TODO: fix
-            bottomLevelWork = _bottomLevelWork.get(lastSlot.getNode().getName()) + lastSlot.getFinish();
-        }
-
-        bottomLevelWork = 0;
-
 
         // update idle time heuristic TODO: optimise
         int idleTimeHeuristic = _idleConstantHeuristic + ps._idleTime / _numberOfProcessors;
@@ -139,7 +130,7 @@ public class PSManager {
         int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
 
         // update estimate
-        ps._cost = Math.max(Math.max(Math.max(dataReadyTimeHeuristic, ps._cost), idleTimeHeuristic), bottomLevelWork);
+        ps._cost = Math.max(Math.max(Math.max(dataReadyTimeHeuristic, ps._cost), idleTimeHeuristic), ps._bottomLevelWork);
     }
 
     /**
@@ -287,6 +278,7 @@ public class PSManager {
         ps._id[processor] += slot.getNode() + "-";
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
+        ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
         if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
