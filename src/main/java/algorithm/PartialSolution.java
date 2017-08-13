@@ -9,16 +9,16 @@ import java.util.ArrayList;
 
 public class PartialSolution implements Comparable<PartialSolution> {
 
-    protected int _idleTime; // total idle time (between slots)
+    public int _idleTime; // total idle time (between slots)
     public int _cost; // overall cost heuristic
     public int _bottomLevelWork;
     public int _currentFinishTime; // the finish time of the lowest node in the schedule
-    protected ProcessorSlot _latestSlot;
-    protected ProcessorSlot[] _latestSlots;
+    public ProcessorSlot _latestSlot;
+    public ProcessorSlot[] _latestSlots;
 
     public ArrayList<ProcessorSlot>[] _processors;
-    protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    protected String[] _id;
+    public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    public String[] _id;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
@@ -39,6 +39,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         _cost = ps._cost;
         _bottomLevelWork = ps._bottomLevelWork;
         _currentFinishTime = ps._currentFinishTime;
+        _latestSlot = ps._latestSlot;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
             _latestSlots[i] = ps._latestSlots[i];

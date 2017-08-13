@@ -82,7 +82,7 @@ public class Scheduler {
             Logger.error("null solution. Are you sure this is a valid task graph?");
         }
         System.out.println(_consolePrefix + "Found a schedule to " + _graph.getName() + " (" + _graph.getNodes().size() + " nodes) in " + totalTime + "ms.");
-        System.out.println(_consolePrefix + "End time of this schedule is " + ps._cost + ".");
+        System.out.println(_consolePrefix + "End time of this schedule is " + ps._latestSlot.getFinish() + ".");
         System.out.println(_consolePrefix + "Outputting to file \"" + _outputFile + "\"...");
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");

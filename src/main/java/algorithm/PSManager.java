@@ -3,7 +3,6 @@ package algorithm;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import logger.Logger;
 
 import java.util.*;
 
@@ -266,7 +265,6 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        if (slot == null) Logger.error("Slot is null");
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
         if (latestSlot == null) {
@@ -281,7 +279,7 @@ public class PSManager {
         ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
-        if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
+        if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }
     }
