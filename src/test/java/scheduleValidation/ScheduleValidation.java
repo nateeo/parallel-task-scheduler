@@ -23,33 +23,23 @@ public class ScheduleValidation {
      * @author Eli Salter, Zihao Yang
      */
     public static boolean scheduleIsValid(Graph graphIn, PartialSolution ps){
-        //TO DELETE LATER
-        //:PartialSolution
-        //int _idleTime
-        //int _cost
-        //ArrayList<ProcessorSlot>[] _processors (array of array lists, length no. processors)
-        //ProcessorSlot _processorSlot (represents a task that is on the processor)
-        //contains(Node node)
 
-        // nodes in the partial solution, in their respective processors according the the array
+        // get the processors used in the solution, containing tasks
         ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
 
+        // if all values in the array is true at the end, then schedule is valid
         boolean[] valid = new boolean[4];
 
-        // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
-        //Topological sort
-        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(processors);
+        // Tests whether nodes appear after all their dependencies
+        valid[0] = checkOrder(graphIn, processors);
 
-        // if a node is scheduled before its dependencies -eli
-        valid[0] = checkOrder(graphIn, sortedProcessorSlots);
-
-        //if a length of task is not equal to the weight of a node
+        // Tests if a length of tasks is equal to the weights of their respective nodes
         valid[1] = checkWeight(processors, graphIn);
 
-        // switching time not correct (sounds hard)
+        // Tests if switching time is the same as edge weights
         valid[2] = checkSwitchingTime(processors, graphIn);
 
-        //only one task is active on every processor
+        // Tests that only one task is active on a processor at any given time
         valid[3] = checkOneActive(processors);
 
         int fail_count = 0;
@@ -74,7 +64,7 @@ public class ScheduleValidation {
     /**
      *
      * @param psIn, an array of ProcessorSlot ArrayLists representing all the tasks in our schedule we wish to sort
-     * @return
+     * @return ArrayList of ProcessorSlot, sorted by time
      */
     private static ArrayList<ProcessorSlot> sortPartialSolutionNodes(ArrayList<ProcessorSlot>[] psIn){
 
@@ -100,6 +90,12 @@ public class ScheduleValidation {
     }
 
 
+    /**
+     * Tests whether the runtime of tasks are the same as the node weights
+     * @param processors list of processors containing all the scheduled tasks
+     * @param graph input graph to be scheduled
+     * @return
+     */
     private static boolean checkWeight(ArrayList<ProcessorSlot>[] processors, Graph graph) {
 
         boolean valid = true;
@@ -129,7 +125,18 @@ public class ScheduleValidation {
     }
 
 
-    private static boolean checkOrder(Graph gIn, ArrayList<ProcessorSlot> sortedProcessorSlots){
+    /**
+     *
+     * @param gIn graph of input tasks to be scheduled
+     * @param processors processors containing the scheduled tasks
+     * @return
+     */
+    private static boolean checkOrder(Graph gIn, ArrayList<ProcessorSlot>[] processors){
+
+        // Generate a list of ProcessorSlot objects and sort based on their start times in the proposed schedule
+        //Topological sort
+        ArrayList<ProcessorSlot> sortedProcessorSlots = sortPartialSolutionNodes(processors);
+
         //For every Node in the graph
         for(Node n : gIn.getNodes()){
             //check that for all its predecessors, the index for which they're in the sortedProcessorsSlots array
@@ -168,7 +175,11 @@ public class ScheduleValidation {
         return -1;
     }
 
-
+    /**
+     * Check if there is only one active task on each processor at any time
+     * @param processors processors containing the scheduled tasks
+     * @return
+     */
     public static boolean checkOneActive(ArrayList<ProcessorSlot>[] processors) {
 
         boolean valid = true;
@@ -203,6 +214,12 @@ public class ScheduleValidation {
         return valid;
     }
 
+    /**
+     * Checks if the switching times between the tasks in different processors are valid
+     * @param processors processors containing the scheduled tasks
+     * @param graph input graph of tasks to be scheduled
+     * @return
+     */
     public static boolean checkSwitchingTime(ArrayList<ProcessorSlot>[] processors, Graph graph) {
 
         boolean valid = true;
