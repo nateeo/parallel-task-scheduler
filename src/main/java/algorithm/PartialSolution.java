@@ -17,15 +17,16 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] _processors;
     protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    protected String _id = "";
+    protected String[] _id;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
+        _id = new String[numberOfProcessors];
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
+            _id[i] = "";
         }
         _latestSlots = new ProcessorSlot[numberOfProcessors];
-
     }
 
     /**
@@ -45,11 +46,14 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _processors[i] = new ArrayList<>(ps._processors[i]);
         }
         _nodes = (ArrayList)ps._nodes.clone();
-        _id = ps._id;
+        _id = ps._id.clone();
     }
 
     public int compareTo(PartialSolution o) {
-        return this._cost - o._cost;
+        if (_cost == o._cost) {
+            return o._nodes.size() - _nodes.size();
+        }
+        return _cost - o._cost;
     }
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
@@ -60,7 +64,18 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public boolean equals(Object o) {
         if (o instanceof PartialSolution) {
             PartialSolution other = (PartialSolution) o;
-            return _id.equals(other._id);
+            if (_id[0].equals(other._id[0])) {
+                for (int i = 1; i < _processors.length; i++) {
+                    boolean found = false;
+                    for (int j = 1; j < _processors.length; j++) {
+                        if (other._id[j].equals(_id[i])) found = true;
+                    }
+                    if (!found) return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
         }
         return false;
     }
