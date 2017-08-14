@@ -146,7 +146,7 @@ public class PSManager {
         for(Node freeNode : freeNodesOfps){
             int minDrt = -1;
             int blw_n = _bottomLevelWork.get(freeNode.getName());
-            
+
 
         }
         //for all pred n_i of n_j
