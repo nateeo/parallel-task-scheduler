@@ -5,19 +5,24 @@ import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
 import graph.Graph;
+import logger.Logger;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static scheduleValidation.ScheduleValidation.scheduleIsValid;
 
 /**
+ * Tests that the algorithm correctly calculates an optimal schedule for all of the
+ * client input test cases, as well as (rough) timing results.
  * Created by edisonrho on 12/08/17.
  */
 public class RegressionTest {
@@ -71,15 +76,29 @@ public class RegressionTest {
                 PSPriorityQueue priorityQueue = new PSPriorityQueue(graph, processorNumber);
                 PartialSolution ps = null;
                 PSManager psManager = new PSManager(processorNumber, graph);
-                //find the optimal partial solution
+                //find the optimal partial solution, and time the execution
+                Logger.startTiming();
                 while (priorityQueue.hasNext()) {
                     ps = priorityQueue.getCurrentPartialSolution();
                     psManager.generateChildren(ps, priorityQueue);
                 }
                 ps = priorityQueue.getCurrentPartialSolution();
+                long timeTaken = Logger.endTiming();
 
                 int testCost = ps._cost;
-                assertEquals(expectedCost, testCost);
+                boolean isValid = scheduleIsValid(graph, ps);
+                System.out.println("\n================\n\n[PROCESSORS: " + processorNumber + "] GRAPH: " + graph.getName()  +
+                        "\nexpectedCost: " + expectedCost + "\tactualCost: " + testCost + "\tisValid: " + isValid + "\ttimeTaken: " + timeTaken + "ms" +
+                        "\n\n================");
+
+
+                // check solution has an optimal finish time, and that this is equal to the final cost estimate
+                assertEquals("Cost of graph " + graph.getName() + " on " + processorNumber + " processors should be " + expectedCost,
+                        expectedCost, testCost);
+                assertEquals("Cost should equal finish time", testCost, ps._latestSlot.getFinish());
+
+                // check solution is a valid schedule
+                assertTrue("The produced schedule should be valid", isValid);
 
                 processorNumber++;//update processor number
 

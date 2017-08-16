@@ -33,7 +33,7 @@ public class ValidationTest {
      */
     @Before
     public void runAlgorithm() {
-
+        System.out.println("\n=================VALIDATION TEST");
         String[] args = new String[2];
 
         try {
@@ -210,7 +210,7 @@ public class ValidationTest {
                     _invalidSolution._processors[0].add(1, pslot);
                 }
             }
-            System.out.println("1 and 2 should fail");
+            System.out.println("scheduleIsValid fail case:");
             assertFalse(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
 
     }
