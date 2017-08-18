@@ -93,7 +93,9 @@ public class Parser {
     }
 
     /**
-     * Outputs a graph to a .dot file of the specified outputFile parameter.
+     * Outputs a graph to a .dot file of the specified outputFile parameter
+     * using a BufferedReader in combination with a StringBuilder.
+     * Certain assumptions have been made as to the style of the command line input.
      *
      */
     public static void outputGraphToFile(PartialSolution finalSolution, String outputFile, File inputFile) {

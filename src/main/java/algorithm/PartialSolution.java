@@ -9,23 +9,25 @@ import java.util.ArrayList;
 
 public class PartialSolution implements Comparable<PartialSolution> {
 
-    protected int _idleTime; // total idle time (between slots)
-    protected int _cost; // overall cost heuristic
-    protected int _currentFinishTime; // the finish time of the lowest node in the schedule
-    protected ProcessorSlot _latestSlot;
-    protected ProcessorSlot[] _latestSlots;
+    public int _idleTime; // total idle time (between slots)
+    public int _cost; // overall cost heuristic
+    public int _bottomLevelWork;
+    public int _currentFinishTime; // the finish time of the lowest node in the schedule
+    public ProcessorSlot _latestSlot;
+    public ProcessorSlot[] _latestSlots;
 
     public ArrayList<ProcessorSlot>[] _processors;
-    protected ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    protected String _id = "";
+    public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    public String[] _id;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
+        _id = new String[numberOfProcessors];
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
+            _id[i] = "";
         }
         _latestSlots = new ProcessorSlot[numberOfProcessors];
-
     }
 
     /**
@@ -33,22 +35,28 @@ public class PartialSolution implements Comparable<PartialSolution> {
      * @param ps
      */
     public PartialSolution(PartialSolution ps) {
-        _processors = new ArrayList[ps._processors.length];
-        for (int i = 0; i < _processors.length; i++) {
-            _processors[i] = new ArrayList<>(ps._processors[i]);
-        }
         _idleTime = ps._idleTime;
         _cost = ps._cost;
-        _nodes = (ArrayList)ps._nodes.clone();
+        _bottomLevelWork = ps._bottomLevelWork;
         _currentFinishTime = ps._currentFinishTime;
+        _latestSlot = ps._latestSlot;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
             _latestSlots[i] = ps._latestSlots[i];
         }
+        _processors = new ArrayList[ps._processors.length];
+        for (int i = 0; i < _processors.length; i++) {
+            _processors[i] = new ArrayList<>(ps._processors[i]);
+        }
+        _nodes = (ArrayList)ps._nodes.clone();
+        _id = ps._id.clone();
     }
 
     public int compareTo(PartialSolution o) {
-        return this._cost - o._cost;
+        if (_cost == o._cost) {
+            return o._nodes.size() - _nodes.size();
+        }
+        return _cost - o._cost;
     }
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
@@ -59,7 +67,18 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public boolean equals(Object o) {
         if (o instanceof PartialSolution) {
             PartialSolution other = (PartialSolution) o;
-            return _id.equals(other._id);
+            if (_id[0].equals(other._id[0])) {
+                for (int i = 1; i < _processors.length; i++) {
+                    boolean found = false;
+                    for (int j = 1; j < _processors.length; j++) {
+                        if (other._id[j].equals(_id[i])) found = true;
+                    }
+                    if (!found) return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
         }
         return false;
     }

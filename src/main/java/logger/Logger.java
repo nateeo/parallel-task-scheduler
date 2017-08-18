@@ -11,11 +11,10 @@ public class Logger {
 
     public static void startTiming() {
         startTime = System.currentTimeMillis();
-        print("===== Started timing execution...");
     }
 
-    public static void endTiming() {
-        print("===== Finished timing. Total time: " + (System.currentTimeMillis() - startTime) + " ms");
+    public static long endTiming() {
+        return (System.currentTimeMillis() - startTime);
     }
 
     public static void info(String message) {
