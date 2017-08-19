@@ -18,7 +18,7 @@ public class PSManager {
 
     //calculate all bottom level work values and cache them for the cost function
     private HashMap<String, Integer> _bottomLevelWork;
-    private HashMap<Integer, ArrayList<PartialSolution>> _cache = new HashMap<>();
+    private Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
     private int _idleConstantHeuristic;
@@ -30,6 +30,7 @@ public class PSManager {
         _graph = graph;
         _idleConstantHeuristic = graph.totalMinimumWork() / processors;
         _bottomLevelWork = bottomLevelCalculator(graph);
+        _cache = new Cache(processors);
     }
 
     //BFS of  children of partial solution
@@ -61,7 +62,7 @@ public class PSManager {
                 checkAndAdd(partialSolution, queue);
             }
         }
-        addCache(parentPS);
+        _cache.add(parentPS);
     }
 
     /**
@@ -295,21 +296,9 @@ public class PSManager {
         }
     }
 
-    private void addCache(PartialSolution ps) {
-        if (_cache.containsKey(ps._cost)) {
-
-        } else {
-            _cache.put(ps._cost, new ArrayList<>());
-        }
-        _cache.get(ps._cost).add(ps);
-    }
-
     public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
-        ArrayList list = _cache.get(ps._cost);
-        if (list != null && list.contains(ps)) {
-        } else {
+        if (_cache.add(ps)) {
             queue.add(ps);
-            addCache(ps);
         }
     }
 }
