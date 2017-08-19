@@ -83,6 +83,10 @@ public class PartialSolution implements Comparable<PartialSolution> {
         return false;
     }
 
+    public int getCurrentFinshTime(){
+        return _currentFinishTime;
+    }
+
     @Override // TODO: remove when working
     public String toString() {
         String s = "===========================\nPARTIAL SOLUTION contains: " + _nodes + "\n";

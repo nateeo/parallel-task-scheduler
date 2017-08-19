@@ -2,6 +2,7 @@ package algorithm;
 
 import graph.Graph;
 import graph.Node;
+import parallelization.PSPriorityQueueChild;
 
 import java.util.PriorityQueue;
 
@@ -11,11 +12,11 @@ import java.util.PriorityQueue;
  * priority PartialSolution while initialising it with an estimated length.
  */
 public class PSPriorityQueue {
-    private PriorityQueue<PartialSolution> _queue;
-    private Graph _graph;
+    protected PriorityQueue<PartialSolution> _queue;
+    protected Graph _graph;
     private int _totalNodes;
     private int _processors;
-    private PartialSolution _currentPartialSolution;
+    protected PartialSolution _currentPartialSolution;
     private PSManager _psManager;
 
     public PSPriorityQueue(Graph graph, int processors) {
@@ -46,8 +47,13 @@ public class PSPriorityQueue {
      * @return
      */
     public boolean hasNext() {
-        _currentPartialSolution = _queue.poll();
-        return _currentPartialSolution._nodes.size() != _totalNodes;
+        if (!_queue.isEmpty()) {
+            _currentPartialSolution = _queue.poll();
+            return _currentPartialSolution._nodes.size() != _totalNodes;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -64,5 +70,34 @@ public class PSPriorityQueue {
 
     public void add(PartialSolution e) {
         _queue.add(e);
+    }
+
+    public int size() {
+        return _queue.size();
+    }
+
+    public PSPriorityQueueChild[] splitQueue(int cores){
+        PriorityQueue<PartialSolution>[] queues = new PriorityQueue[4];
+        for (int i = 0; i < cores; i++) {
+            queues[i] = new PriorityQueue<PartialSolution>();
+
+        }
+
+        int counter = 0;
+        for (int i = 0; i < _queue.size(); i++) {
+            queues[counter].add(_queue.poll());
+
+            counter++;
+            if (counter == cores){
+                counter = 0;
+            }
+        }
+
+        PSPriorityQueueChild[] childQueues = new PSPriorityQueueChild[cores];
+        for (int i = 0; i < cores; i++) {
+            childQueues[i] = new PSPriorityQueueChild(_graph, _processors, i, queues[i]);
+        }
+
+        return childQueues;
     }
 }
