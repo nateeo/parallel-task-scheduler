@@ -15,29 +15,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TitleController implements Initializable {
+public class SplashScreen implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-    }
-
-    @FXML
-    public void handleNextButtonClick(ActionEvent actionEvent) throws Exception {
-        changeScene("src/main/java/frontend/LoadingPage.fxml",actionEvent);
-    }
-
-    @FXML
-    public void handleCloseButton() {
-        Boolean closeOperation = DialogBox.displayConfirmDialogBox("Exit","Are you sure you want to close?");
-        if (closeOperation) {
-            Platform.exit();
-        }
-    }
-
-    @FXML
-    public void handleSettingsButton(ActionEvent actionEvent) throws Exception{
-        changeScene("src/main/java/frontend/Settings.fxml",actionEvent);
     }
 
     public void changeScene(String filePathToXML, ActionEvent actionEvent) throws Exception{
