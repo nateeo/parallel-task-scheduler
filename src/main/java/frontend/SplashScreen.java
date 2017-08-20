@@ -2,6 +2,7 @@ package frontend;
 
 import graph.Edge;
 import graph.Graph;
+import graph.Node;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,10 +19,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class SplashScreen implements Initializable {
@@ -49,7 +47,9 @@ public class SplashScreen implements Initializable {
 
     public void drawGraph(Graph graph) {
         List<graph.Node> nodes = graph.getNodes();
+        List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = graph.getEdges();
+        List<Node> source = graph.getStart();
         int increment = 10;
 
         for(graph.Node node: nodes) {
@@ -69,4 +69,34 @@ public class SplashScreen implements Initializable {
             increment = increment + 40;
         }
     }
+
+    public List<List<Node>> calculateLevels(List<Node> nodes, List<Edge> edges, List<Node> source) {
+        Queue<Node> queuedNodes = new LinkedList<Node>();
+        List<List<Node>> returnList = new ArrayList<>();
+        //HashMap<Node,>
+        returnList.add(source);
+        Node currentNode;
+        int level;
+        int currentLevel;
+
+        // Adds all the source nodes into the Queue.
+        for(Node node: source) {
+            queuedNodes.add(node);
+        }
+
+        while(!queuedNodes.isEmpty()) {
+            currentNode = queuedNodes.remove();
+            level = 0;
+            // If there are incoming edges on the node, this is for not source
+            if(!currentNode.getIncoming().isEmpty()) {
+                for(Edge predecessors: currentNode.getIncoming()) {
+                    //currentLevel =
+                }
+            }
+        }
+        return returnList;
+    }
+
 }
+
+
