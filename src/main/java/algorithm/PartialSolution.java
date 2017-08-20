@@ -1,6 +1,7 @@
 package algorithm;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  *  This class creates temporary representations of the schedules being used to find the optimal schedule.
@@ -18,14 +19,13 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] _processors;
     public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    public String[] _id;
+    public TreeMap<Integer, Integer> _id; // node id -> array int
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
-        _id = new String[numberOfProcessors];
+        _id = new TreeMap<>();
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
-            _id[i] = "";
         }
         _latestSlots = new ProcessorSlot[numberOfProcessors];
     }
@@ -49,7 +49,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _processors[i] = new ArrayList<>(ps._processors[i]);
         }
         _nodes = (ArrayList)ps._nodes.clone();
-        _id = ps._id.clone();
+        _id = (TreeMap)ps._id.clone();
     }
 
     public int compareTo(PartialSolution o) {
@@ -61,26 +61,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
         return _processors;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof PartialSolution) {
-            PartialSolution other = (PartialSolution) o;
-            if (_id[0].equals(other._id[0])) {
-                for (int i = 1; i < _processors.length; i++) {
-                    boolean found = false;
-                    for (int j = 1; j < _processors.length; j++) {
-                        if (other._id[j].equals(_id[i])) found = true;
-                    }
-                    if (!found) return false;
-                }
-            } else {
-                return false;
-            }
-            return true;
-        }
-        return false;
     }
 
     @Override // TODO: remove when working

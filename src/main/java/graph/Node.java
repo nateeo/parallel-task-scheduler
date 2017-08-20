@@ -7,12 +7,15 @@ import java.util.ArrayList;
  * Class to represent the weighted node
  */
 public class Node {
+    static int _idCounter = 0;
     String _name;
+    int _id;
     int _weight;
     ArrayList<Edge> _outgoing;
     ArrayList<Edge> _incoming;
 
     public Node(String name, int weight) {
+        _id = _idCounter++;
         _name = name;
         _weight = weight;
         _outgoing = new ArrayList<Edge>();
@@ -41,6 +44,10 @@ public class Node {
             parents.add(e._from);
         }
         return parents;
+    }
+
+    public int getId() {
+        return _id;
     }
 
     public String getName() {

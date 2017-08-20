@@ -279,13 +279,13 @@ public class PSManager {
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
-        if (latestSlot == null) {
+        if (latestSlot == null) { // this is the first slot in the processor
+            ps._id.put(slot.getNode().getId(), slot.getProcessor());
             prevSlotFinishTime = 0;
         } else {
             prevSlotFinishTime = latestSlot.getFinish();
         }
         int processor = slot.getProcessor();
-        ps._id[processor] += slot.getNode() + "-";
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
