@@ -210,7 +210,7 @@ public class PSManager {
                 ProcessorSlot slot = processor.get(j);
                 if (parents.contains(slot.getNode())) { // slot contains a predecessor
                     int slotProcessor = slot.getProcessor();
-                    Edge parentEdge = _graph.getEdge(new Edge(slot.getNode(), freeNode, 0));
+                    Edge parentEdge = _graph.getEdge(slot.getNode().getId(), freeNode.getId());
                     int parentTime = parentEdge.getWeight() + slot.getFinish();
                     if (parentTime > maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
                         maxPredecessorTime[slotProcessor] = parentTime;

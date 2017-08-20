@@ -26,6 +26,7 @@ public class Parser {
      * @throws IOException
      */
     public static Graph parseDotFile (File file) {
+        idCounter = 0;
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
         HashMap startNodes;
         Graph graph;
@@ -56,7 +57,7 @@ public class Parser {
 
                     if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
                         weight = getValue(right);
-                        Node newVertex = new Node(left, weight);
+                        Node newVertex = new Node(idCounter++, left, weight);
                         idCounter++;
                         totalMinimumWork += weight;
                         nodeMap.put(left, newVertex);

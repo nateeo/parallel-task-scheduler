@@ -7,19 +7,20 @@ import java.util.ArrayList;
  * Class to represent the weighted node
  */
 public class Node {
-    static int _idCounter = 0;
     String _name;
     int _id;
     int _weight;
     ArrayList<Edge> _outgoing;
     ArrayList<Edge> _incoming;
+    ArrayList<Node> _parents;
 
-    public Node(String name, int weight) {
-        _id = _idCounter++;
+    public Node(int id, String name, int weight) {
+        _id = id;
         _name = name;
         _weight = weight;
         _outgoing = new ArrayList<Edge>();
         _incoming = new ArrayList<Edge>();
+        _parents = new ArrayList<Node>();
     }
 
     public void addOutgoingEdge(Node to, int weight) {
@@ -28,6 +29,7 @@ public class Node {
 
     public void addIncomingEdge(Node from, int weight) {
         _incoming.add(new Edge(from, this, weight));
+        _parents.add(from);
     }
 
     public ArrayList<Edge> getOutgoing() {
@@ -39,11 +41,7 @@ public class Node {
     }
 
     public ArrayList<Node> getParentNodes() {
-        ArrayList<Node> parents = new ArrayList<Node>();
-        for (Edge e : _incoming) {
-            parents.add(e._from);
-        }
-        return parents;
+        return _parents;
     }
 
     public int getId() {

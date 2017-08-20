@@ -1,9 +1,9 @@
 package scheduleValidation;
 
-import graph.Edge;
-import graph.Graph;
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
+import graph.Edge;
+import graph.Graph;
 import graph.Node;
 
 import java.util.ArrayList;
@@ -220,6 +220,8 @@ public class ScheduleValidation {
      */
     public static boolean checkSwitchingTime(ArrayList<ProcessorSlot>[] processors, Graph graph) {
 
+        System.out.println(graph.getName());
+
         boolean valid = true;
 
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {
@@ -231,8 +233,7 @@ public class ScheduleValidation {
                             Node node = parentSlot.getNode();
                             if (parentNodes.contains(node)) {
                                 int wait = slot.getStart() - parentSlot.getFinish();
-                                int edge = graph.getEdge(new Edge(node, slot.getNode(), 0)).getWeight();
-
+                                int edge = graph.getEdge(node.getId(), slot.getNode().getId()).getWeight();
                                 if (wait < edge) {
                                     valid = false;
                                     System.out.println("the switching time between " + parentSlot.getNode().getName() + " and " + slot.getNode().getName() + " is incorrect");
