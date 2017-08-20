@@ -137,7 +137,7 @@ public class Parser {
                 String right = splitLine[1];
                 int weight;
 
-                if (splitLine[0].trim().length() == 1) {
+                if (!splitLine[0].contains("->")) {
                     weight = getValue(right);
                     for (ArrayList<ProcessorSlot> processor: finalSolution.getProcessors()){
                         for (ProcessorSlot processorSlot: processor){
