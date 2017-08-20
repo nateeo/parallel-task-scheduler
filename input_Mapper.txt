@@ -3,4 +3,5 @@ Nodes_7_OutTree.dot:0,28,0,22
 Nodes_8_Random.dot:0,581,0,581
 Nodes_9_SeriesParallel.dot:0,55,0,55
 Nodes_10_Random.dot:0,50,0,50
+Nodes_10_Fork_Join.dot:0,499,0,342
 Nodes_11_OutTree.dot:0,350,0,227

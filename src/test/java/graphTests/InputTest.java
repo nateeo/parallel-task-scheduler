@@ -20,10 +20,10 @@ public class InputTest {
     private File exampleDotFile = new File("src/test/resources/exampleSmall.dot");
     private File exampleDot2File = new File("src/test/resources/exampleLarge.dot");
     private File nodes10RandomFile = new File("src/test/resources/Nodes_10_Random.dot");
-    private Node a = new Node("a", 2);
-    private Node b = new Node("b", 3);
-    private Node c = new Node("c", 3);
-    private Node d = new Node("d", 2);
+    private Node a = new Node(0, "a", 2);
+    private Node b = new Node(1, "b", 3);
+    private Node c = new Node(2, "c", 3);
+    private Node d = new Node(3, "d", 2);
 
 
     @Test
@@ -33,7 +33,7 @@ public class InputTest {
     public void parseInput() {
        Graph graph = parseDotFile(exampleDotFile);
        assertEquals("exampleSmall", graph.getName());
-       assertTrue(graph.getStart().contains(new Node("a", 2)));
+       assertTrue(graph.getStart().contains(new Node(0, "a", 2)));
        assertEquals(1, graph.getStart().size());
     }
 

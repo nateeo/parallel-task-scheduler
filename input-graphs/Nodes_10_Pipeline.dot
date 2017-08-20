@@ -1,0 +1,32 @@
+digraph "Pipeline_Nodes_10_CCR_0.10_WeightType_Random" {
+	graph [CCR=0.1,
+		Density=1.3,
+		"No of edges"=13,
+		"No of nodes"=10,
+		"Node concurrency"=2,
+		"Total sequential time"=700
+	];
+	0	 [Weight=70];
+	1	 [Weight=28];
+	0 -> 1	 [Weight=4];
+	2	 [Weight=28];
+	0 -> 2	 [Weight=9];
+	3	 [Weight=112];
+	1 -> 3	 [Weight=3];
+	2 -> 3	 [Weight=5];
+	4	 [Weight=70];
+	2 -> 4	 [Weight=4];
+	5	 [Weight=98];
+	3 -> 5	 [Weight=4];
+	4 -> 5	 [Weight=5];
+	6	 [Weight=42];
+	4 -> 6	 [Weight=2];
+	7	 [Weight=28];
+	5 -> 7	 [Weight=10];
+	6 -> 7	 [Weight=10];
+	8	 [Weight=84];
+	6 -> 8	 [Weight=3];
+	9	 [Weight=140];
+	7 -> 9	 [Weight=4];
+	8 -> 9	 [Weight=7];
+}
