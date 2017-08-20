@@ -33,7 +33,7 @@ public class ValidationTest {
      */
     @Before
     public void runAlgorithm() {
-
+        System.out.println("\n=================VALIDATION TEST");
         String[] args = new String[2];
 
         try {
@@ -196,13 +196,13 @@ public class ValidationTest {
 
             // Add nodes to processor slots and add to processor
             for (int i = 0; i < nodes.size(); i++){
-                if (nodes.get(i).equals(new Node("a", 2))){
+                if (nodes.get(i).equals(new Node(0, "a", 2))){
                     ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 0, 1, 1);
                     _invalidSolution._processors[0].add(0,pslot);
-                } else if (nodes.get(i).equals(new Node("b", 3))) {
+                } else if (nodes.get(i).equals(new Node(1, "b", 3))) {
                     ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 4, 7, 2);
                     _invalidSolution._processors[1].add(0,pslot);
-                } else if (nodes.get(i).equals(new Node("c", 3))) {
+                } else if (nodes.get(i).equals(new Node(2, "c", 3))) {
                     ProcessorSlot pslot = new ProcessorSlot(nodes.get(i), 7, 10, 2);
                     _invalidSolution._processors[1].add(1, pslot);
                 } else {
@@ -210,7 +210,7 @@ public class ValidationTest {
                     _invalidSolution._processors[0].add(1, pslot);
                 }
             }
-            System.out.println("1 and 2 should fail");
+            System.out.println("scheduleIsValid fail case:");
             assertFalse(ScheduleValidation.scheduleIsValid(_graph, _invalidSolution));
 
     }
