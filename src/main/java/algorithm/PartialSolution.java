@@ -52,7 +52,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
         if (ps._id.size() == ps._processors.length) {
             _id = ps._id;
         } else {
-            System.out.println(ps._id.size());
             _id = (TreeMap)ps._id.clone();
         }
     }
