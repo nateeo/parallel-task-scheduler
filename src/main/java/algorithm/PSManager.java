@@ -23,6 +23,10 @@ public class PSManager {
     //cache the constant portion of the idle time heuristic (total work / processors)
     private int _idleConstantHeuristic;
 
+    //lists for calculating earliest times
+    private int[] _maxPredecessorTime;
+    private int[] _earliestTimes;
+
     private ArrayList<PartialSolution> _closed = new ArrayList<>();
 
     public PSManager(int processors, Graph graph){
@@ -198,9 +202,9 @@ public class PSManager {
      * @return int[] index is the processor, value is the time
      */
     private int[] earliestTimeOnProcessors(PartialSolution parentPS, Node freeNode) {
-        int[] earliestTimes = new int[_numberOfProcessors];
+        _earliestTimes = new int[_numberOfProcessors];
+        _maxPredecessorTime = new int[_numberOfProcessors];
         ArrayList<Node> parents = freeNode.getParentNodes();
-        int[] maxPredecessorTime = new int[_numberOfProcessors];
         int maxTime = 0;
         ProcessorSlot maxSlot = null;
         // iterate through each processor and check for successor nodes. Find the maximum time and edge time (for transfer)
@@ -212,8 +216,8 @@ public class PSManager {
                     int slotProcessor = slot.getProcessor();
                     Edge parentEdge = _graph.getEdge(slot.getNode().getId(), freeNode.getId());
                     int parentTime = parentEdge.getWeight() + slot.getFinish();
-                    if (parentTime > maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
-                        maxPredecessorTime[slotProcessor] = parentTime;
+                    if (parentTime > _maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
+                        _maxPredecessorTime[slotProcessor] = parentTime;
                         if (parentTime > maxTime) {
                             maxTime = parentTime;
                             maxSlot = slot;
@@ -228,12 +232,12 @@ public class PSManager {
             for (int i = 0; i < _numberOfProcessors; i++) {
                 ProcessorSlot latestSlot = parentPS._latestSlots[i];
                 if (latestSlot == null) {
-                    earliestTimes[i] = 0; // there is no slot on the processor, we can start at 0
+                    _earliestTimes[i] = 0; // there is no slot on the processor, we can start at 0
                 } else {
-                    earliestTimes[i] = latestSlot.getFinish();
+                    _earliestTimes[i] = latestSlot.getFinish();
                 }
             }
-            return earliestTimes;
+            return _earliestTimes;
         } else { // predecessor constraint is there, we can schedule at earliest maxSlot.finishTime + maxEdge
             // we need to find the second maxSlot for predecessor constraints on the maxSlotProcessor
             int maxSuccessorProcessor = maxSlot.getProcessor();
@@ -244,17 +248,17 @@ public class PSManager {
                 finalSlot = parentPS._latestSlots[i];
                 finalSlotTime = 0;
                 if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-                earliestTimes[i] = Math.max(finalSlotTime, maxTime);
-                if (maxPredecessorTime[i] > secondMaxSuccessorTime && i != maxSuccessorProcessor) {
-                    secondMaxSuccessorTime = maxPredecessorTime[i];
+                _earliestTimes[i] = Math.max(finalSlotTime, maxTime);
+                if (_maxPredecessorTime[i] > secondMaxSuccessorTime && i != maxSuccessorProcessor) {
+                    secondMaxSuccessorTime = _maxPredecessorTime[i];
                 }
             }
             // we need to check predecessor constraints on other processors for the maxSuccessorProcessor slot
             finalSlot = parentPS._latestSlots[maxSuccessorProcessor];
             finalSlotTime = 0;
             if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-            earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
-            return earliestTimes;
+            _earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
+            return _earliestTimes;
         }
     }
 

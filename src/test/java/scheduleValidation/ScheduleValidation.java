@@ -219,9 +219,6 @@ public class ScheduleValidation {
      * @return
      */
     public static boolean checkSwitchingTime(ArrayList<ProcessorSlot>[] processors, Graph graph) {
-
-        System.out.println(graph.getName());
-
         boolean valid = true;
 
         for (ArrayList<ProcessorSlot> singleProcessor: processors) {

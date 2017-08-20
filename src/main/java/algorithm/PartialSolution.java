@@ -49,7 +49,12 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _processors[i] = new ArrayList<>(ps._processors[i]);
         }
         _nodes = (ArrayList)ps._nodes.clone();
-        _id = (TreeMap)ps._id.clone();
+        if (ps._id.size() == ps._processors.length) {
+            _id = ps._id;
+        } else {
+            System.out.println(ps._id.size());
+            _id = (TreeMap)ps._id.clone();
+        }
     }
 
     public int compareTo(PartialSolution o) {
