@@ -12,7 +12,7 @@ import java.util.*;
  * author: nhur714
  */
 public class Cache {
-    private TreeSet<PartialSolution> _treeSet;
+    private SortedSet<PartialSolution>  _treeSet;
     private int _processorCount;
     private int[] _firstNormalisedProcessors;
     private int[] _secondNormalisedProcessors;
@@ -76,7 +76,8 @@ public class Cache {
     };
 
     public Cache(int processorCount) {
-        _treeSet = new TreeSet<>(comparator);
+        TreeSet<PartialSolution> ts = new TreeSet<>(comparator);
+        _treeSet = Collections.synchronizedSortedSet(ts);
         _processorCount = processorCount;
         _firstNormalisedProcessors = new int[_processorCount];
         _secondNormalisedProcessors = new int [_processorCount];

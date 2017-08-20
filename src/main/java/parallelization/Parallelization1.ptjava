@@ -5,6 +5,7 @@ import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import graph.Graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -23,8 +24,7 @@ public class Parallelization1 {
     private int _processors;
     private int _cores;
     private PSPriorityQueueChild[] _childQueues;
-    private PartialSolution _solution;
-    private double _finalTime;
+    private ArrayList<PartialSolution> _solutions;
 
 
     public Parallelization1(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
@@ -32,8 +32,7 @@ public class Parallelization1 {
         _psManager = psManager;
         _cores = cores;
         _childQueues = new PSPriorityQueueChild[cores];
-        _solution = null;
-        _finalTime = Double.POSITIVE_INFINITY;
+        _solutions = new ArrayList<PartialSolution>();
 
         initialiseQueues();
 
@@ -54,11 +53,10 @@ public class Parallelization1 {
             ps = childQueue.getCurrentPartialSolution();
             _psManager.generateChildren(ps, childQueue);
         }
+        System.out.println("child queue size " + childQueue.size());
         ps = childQueue.getCurrentPartialSolution();
-        if (ps._currentFinishTime < _finalTime) {
-            _solution = ps;
-            _finalTime = ps.getCurrentFinshTime();
-        }
+        System.out.println("8====D adding\n" + ps);
+        _solutions.add(ps);
     }
 
     public PartialSolution findOptimal() throws ExecutionException, InterruptedException {
@@ -67,10 +65,20 @@ public class Parallelization1 {
         for (int i = 0; i < _cores; i++) {
             System.out.println("~~~~~ THread: " + i);
             TaskID id = threadQueue(_childQueues[i]);
+            System.out.println("THREAD ID: " + id);
             g.add(id);
             System.out.println("~~~~~ THread finished: " + i);
         }
         g.waitTillFinished();
-        return _solution;
+        PartialSolution solution = null;
+        int finalTime = -1;
+        for (int i = 0; i < _solutions.size(); i++) {
+            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();
+            if (finalTime == -1 || psFinishTime < finalTime) {
+                solution = _solutions.get(i);
+                finalTime = psFinishTime;
+            }
+        }
+        return solution;
     }
 }

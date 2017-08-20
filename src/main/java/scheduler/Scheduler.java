@@ -121,16 +121,17 @@ public class Scheduler {
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
 //            System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
-            if (priorityQueue.size() <= 10) {
+            if (priorityQueue.size() <= 10000000) {
                 System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
                 psManager.generateChildren(ps, priorityQueue);
+                ps = priorityQueue.getCurrentPartialSolution();
             } else {
                 System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                 Parallelization parallelize = new Parallelization(priorityQueue, psManager, _cores);
-                parallelize.findOptimal();
+                ps = parallelize.findOptimal();
                 break;
             }
 
@@ -138,8 +139,6 @@ public class Scheduler {
 
         }
 
-
-        ps = priorityQueue.getCurrentPartialSolution();
         return ps;
     }
 
