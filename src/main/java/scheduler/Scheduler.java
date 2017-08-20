@@ -102,6 +102,7 @@ public class Scheduler {
         System.out.println(_consolePrefix + "Outputting to file \"" + _outputFile + "\"...");
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
+        System.out.println(ps.toString());
         return ps; // for testing
     }
 
