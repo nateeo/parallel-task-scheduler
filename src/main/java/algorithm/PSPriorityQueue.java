@@ -79,17 +79,25 @@ public class PSPriorityQueue {
     public PSPriorityQueueChild[] splitQueue(int cores){
         PriorityQueue<PartialSolution>[] queues = new PriorityQueue[4];
         for (int i = 0; i < cores; i++) {
-            queues[i] = new PriorityQueue<PartialSolution>();
+            queues[i] = new PriorityQueue<>();
 
         }
 
+        int originalQueueSize = _queue.size();
         int counter = 0;
-        for (int i = 0; i < _queue.size(); i++) {
+        for (int i = 0; i < originalQueueSize; i++) {
             queues[counter].add(_queue.poll());
 
             counter++;
             if (counter == cores){
                 counter = 0;
+            }
+        }
+
+        for (int i = 0; i < cores; i++){
+            System.out.println("THIS QUEUE...:");
+            for (PartialSolution ps : queues[i]){
+                System.out.println(ps.toString());
             }
         }
 

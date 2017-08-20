@@ -10,6 +10,7 @@ import logger.Logger;
 import parallelization.Parallelization;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Entry point to the scheduling algorithm
@@ -109,7 +110,7 @@ public class Scheduler {
      * and the number of processors on which to schedule.
      * @return the valid optimal schedule
      */
-    private static PartialSolution solution() {
+    private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
 
@@ -118,12 +119,15 @@ public class Scheduler {
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-            if (priorityQueue.size() <= 100) {
+//            System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
+            if (priorityQueue.size() <= 10) {
+                System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
                 psManager.generateChildren(ps, priorityQueue);
             } else {
+                System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                 Parallelization parallelize = new Parallelization(priorityQueue, psManager, _cores);
                 parallelize.findOptimal();
                 break;

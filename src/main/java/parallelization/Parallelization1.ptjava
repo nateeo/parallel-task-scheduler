@@ -8,6 +8,7 @@ import graph.Graph;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by zihaoyang on 19/08/17.
@@ -26,7 +27,7 @@ public class Parallelization1 {
     private double _finalTime;
 
 
-    public Parallelization (PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
+    public Parallelization1(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
         _parentQueue = priorityQueue;
         _psManager = psManager;
         _cores = cores;
@@ -47,6 +48,7 @@ public class Parallelization1 {
     }
 
     TASK private void threadQueue(PSPriorityQueueChild childQueue) {
+          System.out.println("THREAD DOING SHIT");
         PartialSolution ps = null;
         while (childQueue.hasNext()){
             ps = childQueue.getCurrentPartialSolution();
@@ -59,12 +61,16 @@ public class Parallelization1 {
         }
     }
 
-    public PartialSolution findOptimal(){
+    public PartialSolution findOptimal() throws ExecutionException, InterruptedException {
         PartialSolution[] ps = new PartialSolution[_cores];
+        TaskIDGroup g = new TaskIDGroup(_cores);
         for (int i = 0; i < _cores; i++) {
-            threadQueue(_childQueues[i]);
+            System.out.println("~~~~~ THread: " + i);
+            TaskID id = threadQueue(_childQueues[i]);
+            g.add(id);
+            System.out.println("~~~~~ THread finished: " + i);
         }
+        g.waitTillFinished();
         return _solution;
     }
-
 }
