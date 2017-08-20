@@ -29,6 +29,7 @@ public class SplashScreen implements Initializable {
 
     @FXML
     private AnchorPane graphPane;
+    private double circleSize = 30;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,12 +48,20 @@ public class SplashScreen implements Initializable {
 
     public void drawGraph(Graph graph) {
         List<graph.Node> nodes = graph.getNodes();
-        List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
+        //List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = graph.getEdges();
         List<Node> source = graph.getStart();
-        int increment = 10;
+        double graphPaneX = graphPane.getPrefWidth();
+        double graphPaneY = graphPane.getPrefHeight();
+
+        System.out.println(graphPaneY);
 
         List<List<Node>> graphLevels = calculateLevels(nodes,edges,source);
+        int numberOfLevels = graphLevels.size();
+        double ySpacing = (graphPaneY - (numberOfLevels * circleSize)) / (numberOfLevels + 1);
+        double xSpacing;
+        double yCoordinate = 0;
+        double xCoordinate;
 
         for(int i = 0 ; i < graphLevels.size(); i++) {
             String printShit = "Level [" +i+"]";
@@ -62,14 +71,30 @@ public class SplashScreen implements Initializable {
             System.out.println(printShit);
         }
 
+        int i = 0;
 
+        for (List<Node> levels: graphLevels) {
+
+            yCoordinate += ySpacing;
+            System.out.println("ySpacing: " +ySpacing +" For level" + i);
+            i++;
+            System.out.println("Y Coordinate: "+yCoordinate);
+            xSpacing = (graphPaneX - (levels.size() * circleSize)) / (levels.size() + 1);
+            xCoordinate = 0;
+            for(Node circlesDrawn: levels) {
+                xCoordinate += xSpacing;
+                drawCircle(circlesDrawn, xCoordinate, yCoordinate);
+                xCoordinate += circleSize;
+            }
+            yCoordinate += circleSize;
+        }
     }
 
-    public void drawCircle(Node node,int layoutX, int layoutY) {
+    public void drawCircle(Node node,double layoutX, double layoutY) {
         Circle circle = new Circle();
-        circle.setCenterX(30);
-        circle.setCenterY(30);
-        circle.setRadius(15);
+        circle.setCenterX(circleSize);
+        circle.setCenterY(circleSize);
+        circle.setRadius(circleSize/2);
         circle.setFill(Color.WHITE);
         circle.setStroke(Color.BLACK);
         StackPane stackPane = new StackPane();
