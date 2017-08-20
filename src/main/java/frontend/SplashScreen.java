@@ -52,36 +52,50 @@ public class SplashScreen implements Initializable {
         List<Node> source = graph.getStart();
         int increment = 10;
 
-        for(graph.Node node: nodes) {
-            System.out.println(node.getName());
-            Circle circle = new Circle();
-            circle.setCenterX(30);
-            circle.setCenterY(30);
-            circle.setRadius(15);
-            circle.setFill(Color.WHITE);
-            circle.setStroke(Color.BLACK);
-            StackPane stackPane = new StackPane();
-            Text text = new Text(node.getName());
-            text.setBoundsType(TextBoundsType.VISUAL);
-            stackPane.getChildren().addAll(circle,text);
-            graphPane.getChildren().add(stackPane);
-            stackPane.setLayoutX(increment);
-            increment = increment + 40;
+        List<List<Node>> graphLevels = calculateLevels(nodes,edges,source);
+
+        for(int i = 0 ; i < graphLevels.size(); i++) {
+            String printShit = "Level [" +i+"]";
+            for(int j = 0 ; j < graphLevels.get(i).size(); j++) {
+                printShit += graphLevels.get(i).get(j);
+            }
+            System.out.println(printShit);
         }
+
+
+    }
+
+    public void drawCircle(Node node,int layoutX, int layoutY) {
+        Circle circle = new Circle();
+        circle.setCenterX(30);
+        circle.setCenterY(30);
+        circle.setRadius(15);
+        circle.setFill(Color.WHITE);
+        circle.setStroke(Color.BLACK);
+        StackPane stackPane = new StackPane();
+        Text text = new Text(node.getName());
+        text.setBoundsType(TextBoundsType.VISUAL);
+        stackPane.getChildren().addAll(circle,text);
+        graphPane.getChildren().add(stackPane);
+        stackPane.setLayoutX(layoutX);
+        stackPane.setLayoutY(layoutY);
     }
 
     public List<List<Node>> calculateLevels(List<Node> nodes, List<Edge> edges, List<Node> source) {
         Queue<Node> queuedNodes = new LinkedList<Node>();
         List<List<Node>> returnList = new ArrayList<>();
-        //HashMap<Node,>
+        Map<Integer,Integer> levelsMap = new HashMap<>();
         returnList.add(source);
         Node currentNode;
+        Node successorNode;
         int level;
         int currentLevel;
+        boolean allPredecessorsCalculated;
 
         // Adds all the source nodes into the Queue.
         for(Node node: source) {
             queuedNodes.add(node);
+            levelsMap.put(node.getId(),0);
         }
 
         while(!queuedNodes.isEmpty()) {
@@ -90,7 +104,39 @@ public class SplashScreen implements Initializable {
             // If there are incoming edges on the node, this is for not source
             if(!currentNode.getIncoming().isEmpty()) {
                 for(Edge predecessors: currentNode.getIncoming()) {
-                    //currentLevel =
+                    currentLevel = levelsMap.get(predecessors.getFrom().getId());
+                    if(currentLevel > level) {
+                        level = currentLevel;
+                    }
+                }
+                level = level + 1;
+                levelsMap.put(currentNode.getId(),level);
+
+                // if the level is higher or equal to the returnList size then create a new arrayList. This is
+                // adding the currentNode to the correct level array.
+                if(level >= returnList.size()) {
+                    List<Node> newNodeList = new ArrayList<>();
+                    newNodeList.add(currentNode);
+                    returnList.add(newNodeList);
+                }
+                else {
+                    returnList.get(level).add(currentNode);
+                }
+            }
+
+            if(!currentNode.getOutgoing().isEmpty()) {
+                for(Edge successors : currentNode.getOutgoing()) {
+                    successorNode = successors.getTo();
+                    allPredecessorsCalculated = true;
+
+                    for(Edge sPredecssors : successorNode.getIncoming()) {
+                        if(!levelsMap.containsKey(sPredecssors.getFrom().getId())) {
+                            allPredecessorsCalculated = false;
+                        }
+                    }
+                    if (allPredecessorsCalculated) {
+                        queuedNodes.add(successorNode);
+                    }
                 }
             }
         }
