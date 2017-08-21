@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -11,11 +12,13 @@ public class Graph {
     ArrayList<Node> _start;
     ArrayList<Node> _nodes;
     ArrayList<Edge> _edges;
+    HashMap<Integer, HashMap<Integer, Edge>> _edgeMap; // fromId => < toId, Edge >
     int _totalMinimumWork;
 
     public Graph(String name) {
         _name = name;
         _edges = new ArrayList<Edge>();
+        _edgeMap = new HashMap<>();
     }
 
     public void setStart(ArrayList<Node> start) {
@@ -32,6 +35,10 @@ public class Graph {
 
     public void addEdge(Edge e) {
         _edges.add(e);
+        if (!_edgeMap.containsKey(e.getFrom().getId())) {
+            _edgeMap.put(e.getFrom().getId(), new HashMap<>());
+        }
+        _edgeMap.get(e.getFrom().getId()).put(e.getTo().getId(), e);
     }
 
     public ArrayList<Node> getStart() {
@@ -44,8 +51,14 @@ public class Graph {
         return _edges;
     }
 
-    public Edge getEdge(Edge e) {
-        return _edges.get(_edges.indexOf(e));
+    public Edge getEdge(int fromId, int toId) {
+        if (!_edgeMap.containsKey(fromId)) {
+            System.out.println("no edge from " + fromId + "to " + toId + " in graph " + _name);
+            for (int i = 0; i < _edges.size(); i++) {
+                System.out.println(_edges.get(i)._from.getId() + " " +  _edges.get(i)._to.getId());
+            }
+        }
+        return _edgeMap.get(fromId).get(toId);
     }
 
     public String getName() {

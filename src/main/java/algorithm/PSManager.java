@@ -3,7 +3,6 @@ package algorithm;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import logger.Logger;
 
 import java.util.*;
 
@@ -19,9 +18,14 @@ public class PSManager {
 
     //calculate all bottom level work values and cache them for the cost function
     private HashMap<String, Integer> _bottomLevelWork;
+    private Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
     private int _idleConstantHeuristic;
+
+    //lists for calculating earliest times
+    private int[] _maxPredecessorTime;
+    private int[] _earliestTimes;
 
     private ArrayList<PartialSolution> _closed = new ArrayList<>();
 
@@ -30,6 +34,7 @@ public class PSManager {
         _graph = graph;
         _idleConstantHeuristic = graph.totalMinimumWork() / processors;
         _bottomLevelWork = bottomLevelCalculator(graph);
+        _cache = new Cache(processors);
     }
 
     //BFS of  children of partial solution
@@ -61,14 +66,17 @@ public class PSManager {
                 checkAndAdd(partialSolution, queue);
             }
         }
-        _closed.add(parentPS);
+        _cache.add(parentPS);
     }
 
     /**
-     * Calculates the bottomLevel value for all nodes in the graph, this only has to be run once in the initialization
-     * of the PSManager
-     * @param graph
-     * @return
+     * Calculates the bottomLevel value for all nodes in the graph, this only has to be run once in
+     * the initialization. The bottom level of a source node is the sum of all the weights of each individual
+     * node in the longest path originating from the source node. This function works backwards starting from
+     * the leaf nodes moving up towards the root nodes.
+     * @param graph the graph that contains all the nodes and edges parsed from an input .dot file
+     * @return HashMap<String, Integer> of bottomLevels. The String is the name of the node and the Integer
+     * is the bottom level value that is calculated.
      */
     private static HashMap<String,Integer> bottomLevelCalculator(Graph graph) {
         List<Node> allNodes = graph.getNodes();
@@ -80,30 +88,37 @@ public class PSManager {
         int currentNodeBL;
         boolean allSuccessorsCalculated;
 
+        // Looks for all leaf nodes.
         for(Node node: allNodes) {
             if(node.getOutgoing().isEmpty()) {
-                queuedNodes.add(node); // add the leaf nodes first
+                queuedNodes.add(node);
             }
         }
 
+        // Goes through the Queue of nodes and adds their bottom level to the hashmap.
         while(!queuedNodes.isEmpty()) {
             currentNode = queuedNodes.remove();
             maxBottomLevel = 0;
-            if (!currentNode.getOutgoing().isEmpty()) { // if the current node is not a leaf
-                for (Edge successors : currentNode.getOutgoing()) { // for all edges going out
+            if (!currentNode.getOutgoing().isEmpty()) {
+                // Grabs all successor nodes and calculates the bottom level based on the max value of all it's successors.
+                for (Edge successors : currentNode.getOutgoing()) {
                     currentNodeBL = bottomLevels.get(successors.getTo().getName());
-                    if (currentNodeBL > maxBottomLevel) { // ifcurrentNodeBL is greater than maxBottomLevel
-                        maxBottomLevel = currentNodeBL; //then update the maxBottomLevel to currentNodeBL
+                    if (currentNodeBL > maxBottomLevel) {
+                        maxBottomLevel = currentNodeBL;
                     }
                 }
             }
+
             bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
-            if (!currentNode.getIncoming().isEmpty()) { //  if the node has parents
+
+            // Grabs all predecessor nodes and checks if all their successor nodes have been calculated,
+            // if the node names exist on the hashmap. If true, adds node to the queue
+            if (!currentNode.getIncoming().isEmpty()) {
                 for (Edge predecessors : currentNode.getIncoming()) {
-                    predecessorNode = predecessors.getFrom(); // get parent
+                    predecessorNode = predecessors.getFrom();
                     allSuccessorsCalculated = true;
-                    for (Edge pSuccessors : predecessorNode.getOutgoing()) { // for all children
-                        if (!bottomLevels.containsKey(pSuccessors.getTo().getName())) { // if children blw not calculated
+                    for (Edge pSuccessors : predecessorNode.getOutgoing()) {
+                        if (!bottomLevels.containsKey(pSuccessors.getTo().getName())) {
                             allSuccessorsCalculated = false;
                         }
                     }
@@ -129,8 +144,8 @@ public class PSManager {
         // data ready time heuristic
         int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
 
-        // update estimate max(DRT, Parent Cost, IdleTimeHeuristic, BottomLevelWork);
-        ps._cost = Math.max(Math.max(Math.max(dataReadyTimeHeuristic, ps._cost), idleTimeHeuristic), ps._bottomLevelWork);
+        // update estimate
+        ps._cost = Math.max(Math.max(Math.max(ps._bottomLevelWork, ps._cost), idleTimeHeuristic), dataReadyTimeHeuristic);
     }
 
     /**
@@ -146,7 +161,6 @@ public class PSManager {
         for(Node freeNode : freeNodeList){
             // get minimum drt on each processor
             int minDrt = -1;
-
             int blw = _bottomLevelWork.get(freeNode.getName());
             for (int i : earliestTimeOnProcessors(ps, freeNode)) {
                 if (i < minDrt || minDrt == -1) {
@@ -155,7 +169,6 @@ public class PSManager {
             }
             int dataReadyFinish = blw + minDrt;
             if (dataReadyFinish > maximumDRT) maximumDRT = dataReadyFinish;
-
         }
         return maximumDRT;
     }
@@ -189,23 +202,22 @@ public class PSManager {
      * @return int[] index is the processor, value is the time
      */
     private int[] earliestTimeOnProcessors(PartialSolution parentPS, Node freeNode) {
-        int[] earliestTimes = new int[_numberOfProcessors];
+        _earliestTimes = new int[_numberOfProcessors];
+        _maxPredecessorTime = new int[_numberOfProcessors];
         ArrayList<Node> parents = freeNode.getParentNodes();
-        int[] maxPredecessorTime = new int[_numberOfProcessors];
         int maxTime = 0;
         ProcessorSlot maxSlot = null;
         // iterate through each processor and check for successor nodes. Find the maximum time and edge time (for transfer)
         for (int i = 0; i < _numberOfProcessors; i++) {
             ArrayList<ProcessorSlot> processor = parentPS._processors[i];
-            // for every node on that processor
             for (int j = processor.size() - 1; j >= 0; j--) {
                 ProcessorSlot slot = processor.get(j);
                 if (parents.contains(slot.getNode())) { // slot contains a predecessor
-                    int slotProcessor = slot.getProcessor(); // find out what processor the parent of the free node was on
-                    Edge parentEdge = _graph.getEdge(new Edge(slot.getNode(), freeNode, 0));
+                    int slotProcessor = slot.getProcessor();
+                    Edge parentEdge = _graph.getEdge(slot.getNode().getId(), freeNode.getId());
                     int parentTime = parentEdge.getWeight() + slot.getFinish();
-                    if (parentTime > maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
-                        maxPredecessorTime[slotProcessor] = parentTime;
+                    if (parentTime > _maxPredecessorTime[slotProcessor]) { // can only be max if it was at least greater than the prev one in processor
+                        _maxPredecessorTime[slotProcessor] = parentTime;
                         if (parentTime > maxTime) {
                             maxTime = parentTime;
                             maxSlot = slot;
@@ -220,12 +232,12 @@ public class PSManager {
             for (int i = 0; i < _numberOfProcessors; i++) {
                 ProcessorSlot latestSlot = parentPS._latestSlots[i];
                 if (latestSlot == null) {
-                    earliestTimes[i] = 0; // there is no slot on the processor, we can start at 0
+                    _earliestTimes[i] = 0; // there is no slot on the processor, we can start at 0
                 } else {
-                    earliestTimes[i] = latestSlot.getFinish();
+                    _earliestTimes[i] = latestSlot.getFinish();
                 }
             }
-            return earliestTimes;
+            return _earliestTimes;
         } else { // predecessor constraint is there, we can schedule at earliest maxSlot.finishTime + maxEdge
             // we need to find the second maxSlot for predecessor constraints on the maxSlotProcessor
             int maxSuccessorProcessor = maxSlot.getProcessor();
@@ -236,17 +248,17 @@ public class PSManager {
                 finalSlot = parentPS._latestSlots[i];
                 finalSlotTime = 0;
                 if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-                earliestTimes[i] = Math.max(finalSlotTime, maxTime);
-                if (maxPredecessorTime[i] > secondMaxSuccessorTime && i != maxSuccessorProcessor) { // if they're on diff processor to the max processor
-                    secondMaxSuccessorTime = maxPredecessorTime[i];
+                _earliestTimes[i] = Math.max(finalSlotTime, maxTime);
+                if (_maxPredecessorTime[i] > secondMaxSuccessorTime && i != maxSuccessorProcessor) {
+                    secondMaxSuccessorTime = _maxPredecessorTime[i];
                 }
             }
             // we need to check predecessor constraints on other processors for the maxSuccessorProcessor slot
             finalSlot = parentPS._latestSlots[maxSuccessorProcessor];
             finalSlotTime = 0;
             if (finalSlot != null) finalSlotTime = finalSlot.getFinish();
-            earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
-            return earliestTimes;
+            _earliestTimes[maxSuccessorProcessor] = Math.max(secondMaxSuccessorTime, finalSlotTime);
+            return _earliestTimes;
         }
     }
 
@@ -269,36 +281,27 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        if (slot == null) Logger.error("Slot is null");
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
-        if (latestSlot == null) {
+        if (latestSlot == null) { // this is the first slot in the processor
+            ps._id.put(slot.getNode().getId(), slot.getProcessor());
             prevSlotFinishTime = 0;
         } else {
             prevSlotFinishTime = latestSlot.getFinish();
         }
         int processor = slot.getProcessor();
-        ps._id[processor] += slot.getNode() + "-";
         ps._processors[processor].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
         ps._latestSlots[processor] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
-        if (ps._latestSlot == null || ps._latestSlot.getFinish() <= slot.getFinish()) {
+        if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }
     }
 
-    /**
-     * if the closed list contains the ps then don't add it to the queue or if the queue doesn't already contain the ps
-     * @param ps
-     * @param queue
-     */
     public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
-        if (_closed.contains(ps)) {
-            return;
-        }
-        if (!queue.contains(ps)) {
+        if (_cache.add(ps)) {
             queue.add(ps);
         }
     }

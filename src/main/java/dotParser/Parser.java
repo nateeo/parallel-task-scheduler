@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class Parser {
 
-    Boolean[] inputFlagArray;
+    static int idCounter = 0;
 
     /**
      * Parses .dot file and returns a Graph Object representation.
@@ -26,6 +26,7 @@ public class Parser {
      * @throws IOException
      */
     public static Graph parseDotFile (File file) {
+        idCounter = 0;
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
         HashMap startNodes;
         Graph graph;
@@ -56,7 +57,8 @@ public class Parser {
 
                     if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
                         weight = getValue(right);
-                        Node newVertex = new Node(left, weight);
+                        Node newVertex = new Node(idCounter++, left, weight);
+                        idCounter++;
                         totalMinimumWork += weight;
                         nodeMap.put(left, newVertex);
                     } else { // add arc to queue for processing at the end
@@ -93,7 +95,9 @@ public class Parser {
     }
 
     /**
-     * Outputs a graph to a .dot file of the specified outputFile parameter.
+     * Outputs a graph to a .dot file of the specified outputFile parameter
+     * using a BufferedReader in combination with a StringBuilder.
+     * Certain assumptions have been made as to the style of the command line input.
      *
      */
     public static void outputGraphToFile(PartialSolution finalSolution, String outputFile, File inputFile) {
@@ -133,7 +137,7 @@ public class Parser {
                 String right = splitLine[1];
                 int weight;
 
-                if (splitLine[0].trim().length() == 1) {
+                if (!splitLine[0].contains("->")) {
                     weight = getValue(right);
                     for (ArrayList<ProcessorSlot> processor: finalSolution.getProcessors()){
                         for (ProcessorSlot processorSlot: processor){
