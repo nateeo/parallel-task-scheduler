@@ -3,6 +3,8 @@ package frontend;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
@@ -31,7 +34,8 @@ import java.util.*;
 public class SplashScreen implements Initializable {
 
     Graph _graph;
-    Map<Integer, Circle> shapeMap = new HashMap<>();
+    Map<Integer, StackPane> shapeMap = new HashMap<>();
+    Map<Integer, Circle> circleMap = new HashMap<>();
 
     @FXML
     private AnchorPane graphPane;
@@ -111,6 +115,12 @@ public class SplashScreen implements Initializable {
             }
             yCoordinate += circleSize;
         }
+
+        for(Edge edge: edges) {
+            StackPane to = shapeMap.get(edge.getTo().getId());
+            StackPane from = shapeMap.get(edge.getFrom().getId());
+            drawEdges(from, to);
+        }
     }
 
     // Constant values to draw the circle. Set inside a stackPane in order to overlay text.
@@ -128,16 +138,42 @@ public class SplashScreen implements Initializable {
         graphPane.getChildren().add(stackPane);
         stackPane.setLayoutX(layoutX);
         stackPane.setLayoutY(layoutY);
-        shapeMap.put(node.getId(),circle);
+        shapeMap.put(node.getId(),stackPane);
+        circleMap.put(node.getId(),circle);
     }
 
-    public void drawEdges() {
+    public void drawEdges(StackPane from, StackPane to) {
+        double beginningOfLineX = from.getLayoutX() + circleSize/2;
+        double beginningOfLineY = from.getLayoutY() + circleSize/2;
+        double endOfLineX = to.getLayoutX() + circleSize/2;
+        double endOfLineY = to.getLayoutY(); //+ circleSize/2;
 
+        System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
+
+        Line line = new Line(beginningOfLineX,beginningOfLineY,endOfLineX,endOfLineY);
+        line.setStroke(Color.WHITE);
+        line.setStrokeWidth(1);
+        Line rightArrow = new Line(endOfLineX,endOfLineY,endOfLineX + 5,endOfLineY - 5);
+        rightArrow.setStroke(Color.WHITE);
+        Line leftArrow = new Line(endOfLineX,endOfLineY, endOfLineX - 5, endOfLineY - 5);
+        leftArrow.setStroke(Color.WHITE);
+        graphPane.getChildren().add(0,line);
+        graphPane.getChildren().add(0,rightArrow);
+        graphPane.getChildren().add(0,leftArrow);
     }
 
     public void handleColorChange(ActionEvent action) {
         System.out.println(shapeMap.keySet());
-        shapeMap.get(0).setFill(Color.RED);
+        circleMap.get(0).setFill(Color.RED);
+        //circleMap.get(16).setFill(Color.RED);
+        //circleMap.get(2).setFill(Color.RED);
+        //circleMap.get(18).setFill(Color.RED);
+        //circleMap.get(4).setFill(Color.RED);
+        //circleMap.get(6).setFill(Color.RED); // 9
+        //circleMap.get(8).setFill(Color.RED); // 1
+        //circleMap.get(10).setFill(Color.RED);
+        //circleMap.get(12).setFill(Color.RED);
+        //circleMap.get(14).setFill(Color.RED);
     }
 
     // This function is used to calculate the levels of each node, depending on the maximum level of it's parent

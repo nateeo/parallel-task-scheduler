@@ -23,7 +23,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // input the graph.
-        File testGraph = new File ("src/test/resources/exampleLarge.dot");
+        File testGraph = new File ("src/test/resources/Nodes_10_Random.dot");
         _graph = parseDotFile(testGraph);
         List<Node> listOfNodes = _graph.getNodes();
 
