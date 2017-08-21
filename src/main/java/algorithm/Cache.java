@@ -12,6 +12,7 @@ import java.util.*;
  * author: nhur714
  */
 public class Cache {
+
     private TreeSet<PartialSolution> _treeSet;
     private int _processorCount;
     private int[] _firstNormalisedProcessors;
@@ -19,13 +20,17 @@ public class Cache {
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
+
+        // if the PartialSolutions have the same cost
         if (costDiff == 0) {
             int nodeDiff = o1._nodes.size() - o2._nodes.size();
+            // same cost and same number of nodes
             if (nodeDiff == 0) {
                 // check keysets are same size
                 Set<Integer> firstSet = o1._id.keySet();
                 Set<Integer> secondSet = o2._id.keySet();
                 int setDiff = firstSet.size() - secondSet.size();
+                // same cost, same number of nodes, same keyset sides
                 if (setDiff == 0) {
                     // go through all normalised processors
                     Iterator<Integer> first = firstSet.iterator();
@@ -75,6 +80,10 @@ public class Cache {
         }
     };
 
+    /**
+     * constructs a cache object
+     * @param processorCount
+     */
     public Cache(int processorCount) {
         _treeSet = new TreeSet<>(comparator);
         _processorCount = processorCount;
