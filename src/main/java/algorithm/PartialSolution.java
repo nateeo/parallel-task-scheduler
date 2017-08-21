@@ -81,7 +81,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         for (int i = 0; i < _processors.length; i++) {
             s += "PROCESSOR " + (i+1) + "\n";
             for (ProcessorSlot slot : _processors[i]) {
-                s += "start: " + slot.getStart() + " finish: " + slot.getFinish() + " node: " + slot.getNode() + "\n";
+                s += "start: " + slot.getStart() + " finish: " + slot.getFinish() + " node: " + slot.getNode().getId() + "\n";
             }
         }
         s+= "cost estimate: " + _cost;

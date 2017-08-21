@@ -26,7 +26,7 @@ public class Parser {
      * @throws IOException
      */
     public static Graph parseDotFile (File file) {
-        idCounter = 0;
+        idCounter = 1;
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
         HashMap startNodes;
         Graph graph;

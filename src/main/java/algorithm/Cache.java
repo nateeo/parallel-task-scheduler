@@ -1,7 +1,5 @@
 package algorithm;
 
-import logger.Logger;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
@@ -18,7 +16,6 @@ import java.util.TreeSet;
 public class Cache {
     private TreeSet<PartialSolution> _treeSet;
     private int _processorCount;
-    private int same = 0;
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
@@ -53,7 +50,6 @@ public class Cache {
                         }
                     }
                 }
-                Logger.info("" + same++);
                 return 0;
             } else {
                 return nodeDiff;
