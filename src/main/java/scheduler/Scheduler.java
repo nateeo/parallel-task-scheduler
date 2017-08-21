@@ -22,6 +22,8 @@ public class Scheduler {
     private static File _inputFile;
     private static Graph _graph;
 
+    private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
+
 
     /**
      * Command line entry for the algorithm
@@ -72,30 +74,34 @@ public class Scheduler {
             }
         }
         _graph = Parser.parseDotFile(_inputFile);
-
+        Logger.startTiming();
+        System.out.println(_consolePrefix + "Processing the graph...");
         PartialSolution ps = solution();
+        long totalTime = Logger.endTiming();
         if (ps == null) {
             Logger.error("null solution. Are you sure this is a valid task graph?");
         }
-        System.out.println(ps);
+        System.out.println(_consolePrefix + "Found a schedule to " + _graph.getName() + " (" + _graph.getNodes().size() + " nodes) in " + totalTime + "ms.");
+        System.out.println(_consolePrefix + "End time of this schedule is " + ps._cost + ".");
+        System.out.println(_consolePrefix + "Outputting to file \"" + _outputFile + "\"...");
         parseOutput(ps); // output to file
+        System.out.println(_consolePrefix + "Finished!");
         return ps; // for testing
     }
 
     private static PartialSolution solution() {
-        Logger.startTiming();
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
+
         while (priorityQueue.hasNext()) {
             ps = priorityQueue.getCurrentPartialSolution();
             psManager.generateChildren(ps, priorityQueue);
         }
         ps = priorityQueue.getCurrentPartialSolution();
-        Logger.endTiming();
         return ps;
     }
 
