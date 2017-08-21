@@ -284,8 +284,9 @@ public class PSManager {
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
         if (latestSlot == null) { // this is the first slot in the processor
-            ps._id.put(slot.getNode().getId(), slot.getProcessor());
             prevSlotFinishTime = 0;
+            ps._zeroStarts--;
+            addToSorted(ps._startingNodes, slot.getNode().getId(), ps._startingNodeIndices, slot.getProcessor());
         } else {
             prevSlotFinishTime = latestSlot.getFinish();
         }
@@ -300,9 +301,26 @@ public class PSManager {
         }
     }
 
-    public void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
+    private void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
         if (_cache.add(ps)) {
             queue.add(ps);
+        }
+    }
+
+    private void addToSorted(int[] array, int value, int[] indicesArray, int index) {
+        for (int i = 0; i < array.length; i++) {
+            if (value < array[i]) {
+                for (int j = array.length-1; j > i; j--) {
+                    array[j] = array[j-1];
+                }
+                array[i] = value;
+                indicesArray[i] = index;
+                return;
+            } else if (array[i] == 0) {
+                array[i] = value;
+                indicesArray[i] = index;
+                return;
+            }
         }
     }
 }

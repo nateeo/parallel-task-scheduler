@@ -1,7 +1,6 @@
 package algorithm;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 /**
  *  This class creates temporary representations of the schedules being used to find the optimal schedule.
@@ -19,15 +18,20 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public ArrayList<ProcessorSlot>[] _processors;
     public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    public TreeMap<Integer, Integer> _id; // node id -> array int
+    //public TreeMap<Integer, Integer> _id; // node id -> array int
+    public int[] _startingNodes;
+    public int[] _startingNodeIndices;
+    public int _zeroStarts;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
-        _id = new TreeMap<>();
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
         }
         _latestSlots = new ProcessorSlot[numberOfProcessors];
+        _startingNodes = new int[numberOfProcessors];
+        _startingNodeIndices = new int[numberOfProcessors];
+        _zeroStarts = numberOfProcessors;
     }
 
     /**
@@ -49,10 +53,14 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _processors[i] = new ArrayList<>(ps._processors[i]);
         }
         _nodes = (ArrayList)ps._nodes.clone();
-        if (ps._id.size() == ps._processors.length) {
-            _id = ps._id;
+        if (ps._zeroStarts == 0) { // starts are all full, reuse
+            _zeroStarts = 0;
+            _startingNodeIndices = ps._startingNodeIndices;
+            _startingNodes = ps._startingNodes;
         } else {
-            _id = (TreeMap)ps._id.clone();
+            _zeroStarts = ps._zeroStarts;
+            _startingNodeIndices = ps._startingNodeIndices.clone();
+            _startingNodes = ps._startingNodes.clone();
         }
     }
 

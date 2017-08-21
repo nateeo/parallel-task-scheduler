@@ -1,6 +1,10 @@
 package algorithm;
 
-import java.util.*;
+import logger.Logger;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 /**
  * This class manages the storage and checking of duplicates
@@ -14,59 +18,43 @@ import java.util.*;
 public class Cache {
     private TreeSet<PartialSolution> _treeSet;
     private int _processorCount;
-    private int[] _firstNormalisedProcessors;
-    private int[] _secondNormalisedProcessors;
+    private int same = 0;
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
         if (costDiff == 0) {
             int nodeDiff = o1._nodes.size() - o2._nodes.size();
             if (nodeDiff == 0) {
-                // check keysets are same size
-                Set<Integer> firstSet = o1._id.keySet();
-                Set<Integer> secondSet = o2._id.keySet();
-                int setDiff = firstSet.size() - secondSet.size();
-                if (setDiff == 0) {
-                    // go through all normalised processors
-                    Iterator<Integer> first = firstSet.iterator();
-                    Iterator<Integer> second = secondSet.iterator();
-                    while (first.hasNext() && second.hasNext()) {
-                        int index = 0;
-                        int firstProcessorStartNode = first.next();
-                        int secondProcessorStartNode = second.next();
-                        int startNodeDiff = firstProcessorStartNode - secondProcessorStartNode;
-                        if (startNodeDiff != 0) {
-                            return startNodeDiff;
-                        }
-                        _firstNormalisedProcessors[index] = o1._id.get(firstProcessorStartNode);
-                        _secondNormalisedProcessors[index] = o2._id.get(secondProcessorStartNode);
-                        index++;
+                // check all start nodes are the same
+                for (int i = 0; i < _processorCount; i++) {
+                    int startDiff = o1._startingNodes[i] - o2._startingNodes[i];
+                    if (startDiff != 0) {
+                        return startDiff;
                     }
-                    // if we made it here, we need to start checking individual normalised processors size then nodes
-                    ArrayList[] firstProcessors = o1.getProcessors();
-                    ArrayList[] secondProcessors = o2.getProcessors();
-                    // check each size
-                    for (int i = 0; i < _processorCount; i++) {
-                        int processorSizeDiff = firstProcessors[_firstNormalisedProcessors[i]].size() - secondProcessors[_secondNormalisedProcessors[i]].size();
-                        if (processorSizeDiff != 0) {
-                            return processorSizeDiff;
-                        }
-                    }
-                    // check each list
-                    for (int i = 0; i < _processorCount; i++) {
-                        ArrayList<ProcessorSlot> processorOne = firstProcessors[_firstNormalisedProcessors[i]];
-                        ArrayList<ProcessorSlot> processorTwo = secondProcessors[_secondNormalisedProcessors[i]];
-                        for (int j = 0; j < processorOne.size(); j++) {
-                            int diff = processorOne.get(j).getNode().getId() - processorTwo.get(j).getNode().getId();
-                            if (diff != 0) {
-                                return diff;
-                            }
-                        }
-                    }
-                    return 0;
-                } else {
-                    return setDiff;
                 }
+                // if we made it here, we need to start checking individual normalised processors size then nodes
+                ArrayList[] firstProcessors = o1.getProcessors();
+                ArrayList[] secondProcessors = o2.getProcessors();
+                // check each size diff
+                for (int i = 0; i < _processorCount; i++) {
+                    int processorSizeDiff = firstProcessors[o1._startingNodeIndices[i]].size() - secondProcessors[o2._startingNodeIndices[i]].size();
+                    if (processorSizeDiff != 0) {
+                        return processorSizeDiff;
+                    }
+                }
+                // check each list
+                for (int i = 0; i < _processorCount; i++) {
+                    ArrayList<ProcessorSlot> processorOne = firstProcessors[o1._startingNodeIndices[i]];
+                    ArrayList<ProcessorSlot> processorTwo = secondProcessors[o2._startingNodeIndices[i]];
+                    for (int j = 0; j < processorOne.size(); j++) {
+                        int diff = processorOne.get(j).getNode().getId() - processorTwo.get(j).getNode().getId();
+                        if (diff != 0) {
+                            return diff;
+                        }
+                    }
+                }
+                Logger.info("" + same++);
+                return 0;
             } else {
                 return nodeDiff;
             }
@@ -78,8 +66,6 @@ public class Cache {
     public Cache(int processorCount) {
         _treeSet = new TreeSet<>(comparator);
         _processorCount = processorCount;
-        _firstNormalisedProcessors = new int[_processorCount];
-        _secondNormalisedProcessors = new int [_processorCount];
     }
 
     public boolean add(PartialSolution ps) {

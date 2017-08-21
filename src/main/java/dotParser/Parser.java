@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class Parser {
 
-    static int idCounter = 0;
+    static int idCounter = 1;
 
     /**
      * Parses .dot file and returns a Graph Object representation.
