@@ -63,15 +63,15 @@ public class PSManager {
                 for (int i = 0; i < _numberOfProcessors; i++) {
                     int earliestTime = earliestTimeOnProcessor[i];
                     if (parentPS._startingNodes[i] != 0) {
-                        addSlotToProcessor(parentPS, freeNode, queue, i, earliestTime);
+                        partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
                     } else if (!done) { // if we haven't added it to an empty processor
-                        addSlotToProcessor(parentPS, freeNode, queue, i, earliestTime);
+                        partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
                         done = true;
                     }
                 }
             } else {
                 for (int i = 0; i < _numberOfProcessors; i++) {
-                    addSlotToProcessor(parentPS, freeNode, queue, i, earliestTimeOnProcessor[i]);
+                    partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTimeOnProcessor[i]);
                 }
             }
         }
@@ -317,12 +317,12 @@ public class PSManager {
         }
     }
 
-    private void addSlotToProcessor(PartialSolution parentPS, Node freeNode, PSPriorityQueue queue, int processor, int time) {
+    private PartialSolution addSlotToProcessor(PartialSolution parentPS, Node freeNode, int processor, int time) {
         ProcessorSlot slot = new ProcessorSlot(freeNode, time, processor);
         PartialSolution partialSolution = new PartialSolution(parentPS);
         addSlot(partialSolution, slot);
         calculateUnderestimate(partialSolution);
-        checkAndAdd(partialSolution, queue);
+        return partialSolution;
     }
 
     private void addToSorted(int[] array, int value, int[] indicesArray, int index) {
