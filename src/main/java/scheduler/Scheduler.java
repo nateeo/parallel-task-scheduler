@@ -114,33 +114,34 @@ public class Scheduler {
     private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
-        Boolean parallel = false;
+        priorityQueue.initialise();
+        Boolean parallelization = false;
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-//            System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
-            if (priorityQueue.size() <= 10) {
+            if (priorityQueue.size() <= 200000000) {
                 System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
                 psManager.generateChildren(ps, priorityQueue);
-
             } else {
-                parallel = true;
+                parallelization = true;
                 System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                 Parallelization parallelize = new Parallelization(priorityQueue, psManager, _cores);
                 ps = parallelize.findOptimal();
                 break;
             }
+
+
+
         }
-        if (parallel == false) {
+        if (!parallelization){
             ps = priorityQueue.getCurrentPartialSolution();
         }
-
         return ps;
     }
 

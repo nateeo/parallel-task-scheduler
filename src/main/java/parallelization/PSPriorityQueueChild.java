@@ -17,14 +17,7 @@ public class PSPriorityQueueChild extends PSPriorityQueue {
         super(graph, processors);
         _id = id;
         _queue = queue;
-    }
-
-
-    public void printQueue() {
-
-            for (PartialSolution ps: _queue) {
-                System.out.println(ps.toString());
-        }
+        _currentPartialSolution = _queue.poll();
     }
 
 

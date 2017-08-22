@@ -26,7 +26,6 @@ public class PSPriorityQueue {
         // TODO: capacity heuristic
         _queue = new PriorityQueue<PartialSolution>(graph.getNodes().size() * processors * 5);
         _psManager = new PSManager(processors, graph);
-        initialise();
     }
 
     /**
@@ -51,8 +50,10 @@ public class PSPriorityQueue {
             _currentPartialSolution = _queue.poll();
             System.out.println("current partial solution has " + _currentPartialSolution._nodes.size());
             System.out.println("totalNodes: " + _totalNodes);
+            System.out.println("HAS NEXT??? " + (_currentPartialSolution._nodes.size() != _totalNodes));
             return _currentPartialSolution._nodes.size() != _totalNodes;
         } else {
+            System.out.println("Size is 0????");
             return false;
         }
 
