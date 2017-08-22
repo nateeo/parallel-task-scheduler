@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  * @author sueyeonlee
  * @author zihaoyang
  */
-public class Parallelization1 {
+public class Parallelization {
 
     private PSPriorityQueue _parentQueue;
     private  PSManager _psManager;
@@ -27,7 +27,7 @@ public class Parallelization1 {
     private ArrayList<PartialSolution> _solutions;
 
 
-    public Parallelization1(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
+    public Parallelization(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
         _parentQueue = priorityQueue;
         _psManager = psManager;
         _cores = cores;
@@ -44,10 +44,13 @@ public class Parallelization1 {
         for (int i = 0; i < _cores; i++) {
             _childQueues[i] = queues[i];
         }
+        System.out.println("************Child queues************");
+        printChildQueues();
+        System.out.println("************Child Queues************");
     }
 
     TASK private void threadQueue(PSPriorityQueueChild childQueue) {
-          System.out.println("THREAD DOING SHIT");
+
         PartialSolution ps = null;
         while (childQueue.hasNext()){
             ps = childQueue.getCurrentPartialSolution();
@@ -55,7 +58,7 @@ public class Parallelization1 {
         }
         System.out.println("child queue size " + childQueue.size());
         ps = childQueue.getCurrentPartialSolution();
-        System.out.println("8====D adding\n" + ps);
+
         _solutions.add(ps);
     }
 
@@ -63,13 +66,16 @@ public class Parallelization1 {
         PartialSolution[] ps = new PartialSolution[_cores];
         TaskIDGroup g = new TaskIDGroup(_cores);
         for (int i = 0; i < _cores; i++) {
-            System.out.println("~~~~~ THread: " + i);
+
             TaskID id = threadQueue(_childQueues[i]);
-            System.out.println("THREAD ID: " + id);
+
             g.add(id);
-            System.out.println("~~~~~ THread finished: " + i);
+
         }
         g.waitTillFinished();
+
+        printSolutions();
+
         PartialSolution solution = null;
         int finalTime = -1;
         for (int i = 0; i < _solutions.size(); i++) {
@@ -81,4 +87,26 @@ public class Parallelization1 {
         }
         return solution;
     }
+
+    public void printSolutions() {
+
+        System.out.println("**************ZIHAO'S OUPUT********************");
+
+        for (PartialSolution solution: _solutions) {
+            System.out.println(solution.toString());
+        }
+
+        System.out.println("**************ZIHAO'S OUPUT********************");
+    }
+
+    public void printChildQueues() {
+        for (int i = 0; i < _childQueues.length; i++) {
+
+            System.out.println("queue " + i);
+
+            PSPriorityQueueChild queue = _childQueues[i];
+            queue.printQueue();
+        }
+    }
+
 }
