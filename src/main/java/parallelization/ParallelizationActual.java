@@ -1,35 +1,35 @@
-//package parallelization;
-//
-//import algorithm.PSManager;
-//import algorithm.PSPriorityQueue;
-//import algorithm.PartialSolution;
-//import graph.Graph;
-//
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.PriorityQueue;
-//import java.util.concurrent.ExecutionException;
-//
-///**
-// * Created by zihaoyang on 19/08/17.
-// * @author sueyeonlee
-// * @author zihaoyang
-// */
-//public class ParallelizationActual {
-//
-//    private PSPriorityQueue _parentQueue;
-//    private  PSManager _psManager;
-//    private Graph _graph;
-//    private int _processors;
-//    private int _cores;
-//    private PSPriorityQueueChild[] _childQueues;
-//    private ArrayList<PartialSolution> _solutions;
-//
-//
-//    public ParallelizationActual(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
+package parallelization;
+
+import algorithm.PSManager;
+import algorithm.PSPriorityQueue;
+import algorithm.PartialSolution;
+import graph.Graph;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ExecutionException;
+
+/**
+ * Created by zihaoyang on 19/08/17.
+ * @author sueyeonlee
+ * @author zihaoyang
+ */
+public class ParallelizationActual {
+
+    private PSPriorityQueue _parentQueue;
+    private Graph _graph;
+    private int _processors;
+    private int _cores;
+    private PSPriorityQueueChild[] _childQueues;
+    private ArrayList<PartialSolution> _solutions;
+
+
+//    public ParallelizationActual(PSPriorityQueue priorityQueue, int processors, Graph graph, int cores) {
 //        _parentQueue = priorityQueue;
-//        _psManager = psManager;
+//        _processors = processors;
+//        _graph = graph;
 //        _cores = cores;
 //        _childQueues = new PSPriorityQueueChild[cores];
 //        _solutions = new ArrayList<PartialSolution>();
@@ -66,7 +66,7 @@
 //        TaskIDGroup g = new TaskIDGroup(_cores);
 //        for (int i = 0; i < _cores; i++) {
 //            System.out.println("~~~~~ THread: " + i);
-//            PSManager psManager = new PSManager(_psManager.getProcessors(), _psManager.getGraph());
+//            PSManager psManager = new PSManager(_processors, _graph);
 //            TaskID id = threadQueue(_childQueues[i], psManager);
 //            System.out.println("THREAD ID: " + id);
 //            g.add(id);
@@ -109,4 +109,4 @@
 //            queue.printQueue();
 //        }
 //    }
-//}
+}

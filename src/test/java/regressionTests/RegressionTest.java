@@ -93,8 +93,8 @@ public class RegressionTest {
                     } else {
                         parallelization = true;
                         System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
-                        Parallelization parallelize = new Parallelization(priorityQueue, psManager, 4);
-                        ps = parallelize.findOptimal();
+    //                    Parallelization parallelize = new Parallelization(priorityQueue, psManager, 4);
+    //                    ps = parallelize.findOptimal();
                         break;
                     }
                 }
