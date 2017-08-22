@@ -44,17 +44,17 @@
 //        for (int i = 0; i < _cores; i++) {
 //            _childQueues[i] = queues[i];
 //        }
+//        System.out.println("************Child queues************");
+//        printChildQueues();
+//        System.out.println("************Child Queues************");
 //    }
 //
-//    TASK private void threadQueue(PSPriorityQueueChild childQueue) {
+//    TASK private void threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {
 //        System.out.println("THREAD DOING SHIT");
-//        int[][] saved = null;
 //        PartialSolution ps = null;
 //        while (childQueue.hasNext()){
 //            ps = childQueue.getCurrentPartialSolution();
-//            int[][] temp = _psManager.shit(ps, childQueue, saved);
-//            saved = temp;
-//            System.out.println("child queue size " + childQueue.size());
+//            psManager.generateChildren(ps, childQueue);
 //        }
 //        ps = childQueue.getCurrentPartialSolution();
 //        System.out.println("8====D adding\n" + ps);
@@ -66,7 +66,8 @@
 //        TaskIDGroup g = new TaskIDGroup(_cores);
 //        for (int i = 0; i < _cores; i++) {
 //            System.out.println("~~~~~ THread: " + i);
-//            TaskID id = threadQueue(_childQueues[i]);
+//            PSManager psManager = new PSManager(_psManager.getProcessors(), _psManager.getGraph());
+//            TaskID id = threadQueue(_childQueues[i], psManager);
 //            System.out.println("THREAD ID: " + id);
 //            g.add(id);
 //            System.out.println("~~~~~ THread finished: " + i);
@@ -86,5 +87,26 @@
 //            }
 //        }
 //        return solution;
+//    }
+//
+//    public void printSolutions() {
+//
+//        System.out.println("**************ZIHAO'S OUPUT********************");
+//
+//        for (PartialSolution solution: _solutions) {
+//            System.out.println(solution.toString());
+//        }
+//
+//        System.out.println("**************ZIHAO'S OUPUT********************");
+//    }
+//
+//    public void printChildQueues() {
+//        for (int i = 0; i < _childQueues.length; i++) {
+//
+//            System.out.println("queue " + i);
+//
+//            PSPriorityQueueChild queue = _childQueues[i];
+//            queue.printQueue();
+//        }
 //    }
 //}

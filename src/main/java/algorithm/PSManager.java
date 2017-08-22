@@ -69,6 +69,14 @@ public class PSManager {
         _cache.add(parentPS);
     }
 
+    public Graph getGraph() {
+        return _graph;
+    }
+
+    public int getProcessors() {
+        return _numberOfProcessors;
+    }
+
     public int[][] shit(PartialSolution parentPS, PSPriorityQueue queue, int[][] savedArray){
         if (savedArray != null){
             _maxPredecessorTime = savedArray[0];

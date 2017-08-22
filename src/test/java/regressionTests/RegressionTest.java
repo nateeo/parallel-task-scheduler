@@ -8,6 +8,7 @@ import graph.Graph;
 import logger.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import parallelization.Parallelization;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -53,7 +55,7 @@ public class RegressionTest {
     }
 
     @Test
-    public void testAllInputs(){
+    public void testAllInputs() throws ExecutionException, InterruptedException {
         Set<String> inputFiles = _costDictionary.keySet();
         //loop through each graph
         for (String graphFileName : inputFiles){
@@ -72,16 +74,32 @@ public class RegressionTest {
                     processorNumber++;
                     continue;
                 }
-
+                boolean parallelization = false;
                 PSPriorityQueue priorityQueue = new PSPriorityQueue(graph, processorNumber);
+                priorityQueue.initialise();
                 PartialSolution ps = null;
                 PSManager psManager = new PSManager(processorNumber, graph);
                 //find the optimal partial solution, and time the execution
                 Logger.startTiming();
                 System.out.println(">>>> attempting to process " + graph.getName());
+                //priority queue will terminate upon the first instance of a total solution
                 while (priorityQueue.hasNext()) {
+                    if (priorityQueue.size() <= 10) {
+                        System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
+                        ps = priorityQueue.getCurrentPartialSolution();
+                        //generate the child partial solutions from the current "best" candidate partial solution
+                        //then add to the priority queue based on conditions.
+                        psManager.generateChildren(ps, priorityQueue);
+                    } else {
+                        parallelization = true;
+                        System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
+                        Parallelization parallelize = new Parallelization(priorityQueue, psManager, 4);
+                        ps = parallelize.findOptimal();
+                        break;
+                    }
+                }
+                if (!parallelization){
                     ps = priorityQueue.getCurrentPartialSolution();
-                    psManager.generateChildren(ps, priorityQueue);
                 }
                 ps = priorityQueue.getCurrentPartialSolution();
                 long timeTaken = Logger.endTiming();

@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  * @author sueyeonlee
  * @author zihaoyang
  */
-public class Parallelization1 {
+public class Parallelization {
 
     private PSPriorityQueue _parentQueue;
     private  PSManager _psManager;
@@ -27,7 +27,7 @@ public class Parallelization1 {
     private ArrayList<PartialSolution> _solutions;
 
 
-    public Parallelization1(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
+    public Parallelization(PSPriorityQueue priorityQueue, PSManager psManager, int cores) {
         _parentQueue = priorityQueue;
         _psManager = psManager;
         _cores = cores;
@@ -49,15 +49,12 @@ public class Parallelization1 {
         System.out.println("************Child Queues************");
     }
 
-    TASK private void threadQueue(PSPriorityQueueChild childQueue) {
+    TASK private void threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {
         System.out.println("THREAD DOING SHIT");
-        int[][] saved = null;
         PartialSolution ps = null;
         while (childQueue.hasNext()){
             ps = childQueue.getCurrentPartialSolution();
-            int[][] temp = _psManager.shit(ps, childQueue, saved);
-            saved = temp;
-            System.out.println("child queue size " + childQueue.size());
+            psManager.generateChildren(ps, childQueue);
         }
         ps = childQueue.getCurrentPartialSolution();
         System.out.println("8====D adding\n" + ps);
@@ -69,7 +66,8 @@ public class Parallelization1 {
         TaskIDGroup g = new TaskIDGroup(_cores);
         for (int i = 0; i < _cores; i++) {
             System.out.println("~~~~~ THread: " + i);
-            TaskID id = threadQueue(_childQueues[i]);
+            PSManager psManager = new PSManager(_psManager.getProcessors(), _psManager.getGraph());
+            TaskID id = threadQueue(_childQueues[i], psManager);
             System.out.println("THREAD ID: " + id);
             g.add(id);
             System.out.println("~~~~~ THread finished: " + i);

@@ -48,9 +48,9 @@ public class PSPriorityQueue {
     public boolean hasNext() {
         if (!_queue.isEmpty()) {
             _currentPartialSolution = _queue.poll();
-            System.out.println("current partial solution has " + _currentPartialSolution._nodes.size());
-            System.out.println("totalNodes: " + _totalNodes);
-            System.out.println("HAS NEXT??? " + (_currentPartialSolution._nodes.size() != _totalNodes));
+//            System.out.println("current partial solution has " + _currentPartialSolution._nodes.size());
+//            System.out.println("totalNodes: " + _totalNodes);
+//            System.out.println("HAS NEXT??? " + (_currentPartialSolution._nodes.size() != _totalNodes));
             return _currentPartialSolution._nodes.size() != _totalNodes;
         } else {
             System.out.println("Size is 0????");
@@ -97,12 +97,12 @@ public class PSPriorityQueue {
             }
         }
 
-        for (int i = 0; i < cores; i++){
-            System.out.println("THIS QUEUE...:");
-            for (PartialSolution ps : queues[i]){
-                System.out.println(ps.toString());
-            }
-        }
+//        for (int i = 0; i < cores; i++){
+//            System.out.println("THIS QUEUE...:");
+//            for (PartialSolution ps : queues[i]){
+//                System.out.println(ps.toString());
+//            }
+//        }
 
         PSPriorityQueueChild[] childQueues = new PSPriorityQueueChild[cores];
         for (int i = 0; i < cores; i++) {
