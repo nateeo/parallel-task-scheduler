@@ -1,10 +1,12 @@
 package frontend;
 
+import algorithm.PSManager;
+import algorithm.PSPriorityQueue;
+import algorithm.PartialSolution;
 import graph.Node;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -23,14 +25,42 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // input the graph.
-        File testGraph = new File ("src/test/resources/exampleLarge.dot");
+        File testGraph = new File ("input-graphs/Nodes_8_Random.dot");
         _graph = parseDotFile(testGraph);
         List<Node> listOfNodes = _graph.getNodes();
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
-        Parent root = FXMLLoader.load(url);
+        //Parent root = FXMLLoader.load(url);
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
-        primaryStage.setScene(new Scene(root));
+
+
+        //TESTING-START
+
+        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
+
+        // PSManager instance to perform calculations and generate states from existing Partial Solutions
+        PartialSolution ps = null;
+        PSManager psManager = new PSManager(3, _graph);
+        //priority queue will terminate upon the first instance of a total solution
+        while (priorityQueue.hasNext()) {
+            ps = priorityQueue.getCurrentPartialSolution();
+            //generate the child partial solutions from the current "best" candidate partial solution
+            //then add to the priority queue based on conditions.
+            psManager.generateChildren(ps, priorityQueue);
+        }
+        ps = priorityQueue.getCurrentPartialSolution();
+
+        ScheduleGraph sgm = new ScheduleGraph(ps);
+
+
+        StackPane root = sgm.generateGraph(ps);
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+
+        primaryStage.setScene(scene);
+
+
+        //TESTING-END
         primaryStage.show();
     }
 

@@ -19,3 +19,14 @@
     -fx-font-family: "Avenir Medium";
     -fx-text-fill: white;
 }
+
+.grid-cell {
+    -fx-background-color: red, blue ;
+    -fx-background-insets: 0, 0 1 1 0 ;
+}
+
+.rectangle {
+    -fx-background-color: aliceblue;
+}
+
+
