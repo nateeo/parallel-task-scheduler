@@ -69,6 +69,18 @@ public class PSManager {
         _cache.add(parentPS);
     }
 
+    public int[][] shit(PartialSolution parentPS, PSPriorityQueue queue, int[][] savedArray){
+        if (savedArray != null){
+            _maxPredecessorTime = savedArray[0];
+            _earliestTimes = savedArray[1];
+        }
+        generateChildren(parentPS, queue);
+        int[][] data = new int[2][];
+        data[0] = _maxPredecessorTime;
+        data[1] = _earliestTimes;
+        return data;
+    }
+
     /**
      * Calculates the bottomLevel value for all nodes in the graph, this only has to be run once in
      * the initialization. The bottom level of a source node is the sum of all the weights of each individual

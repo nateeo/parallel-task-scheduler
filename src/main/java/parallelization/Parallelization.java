@@ -128,42 +128,49 @@ public class Parallelization {//####[19]####
     }//####[49]####
     public void __pt__threadQueue(PSPriorityQueueChild childQueue) {//####[49]####
         System.out.println("THREAD DOING SHIT");//####[50]####
-        PartialSolution ps = null;//####[51]####
-        while (childQueue.hasNext()) //####[52]####
-        {//####[52]####
-            ps = childQueue.getCurrentPartialSolution();//####[53]####
-            _psManager.generateChildren(ps, childQueue);//####[54]####
-        }//####[55]####
-        System.out.println("child queue size " + childQueue.size());//####[56]####
-        ps = childQueue.getCurrentPartialSolution();//####[57]####
-        System.out.println("8====D adding\n" + ps);//####[58]####
-        _solutions.add(ps);//####[59]####
-    }//####[60]####
-//####[60]####
+        int[][] saved = null;//####[51]####
+        PartialSolution ps = null;//####[52]####
+        while (childQueue.hasNext()) //####[53]####
+        {//####[53]####
+            ps = childQueue.getCurrentPartialSolution();//####[54]####
+            int[][] temp = _psManager.shit(ps, childQueue, saved);//####[55]####
+            saved = temp;//####[56]####
+            System.out.println("child queue size " + childQueue.size());//####[57]####
+        }//####[58]####
+        ps = childQueue.getCurrentPartialSolution();//####[59]####
+        System.out.println("8====D adding\n" + ps);//####[60]####
+        _solutions.add(ps);//####[61]####
+    }//####[62]####
 //####[62]####
-    public PartialSolution findOptimal() throws ExecutionException, InterruptedException {//####[62]####
-        PartialSolution[] ps = new PartialSolution[_cores];//####[63]####
-        TaskIDGroup g = new TaskIDGroup(_cores);//####[64]####
-        for (int i = 0; i < _cores; i++) //####[65]####
-        {//####[65]####
-            System.out.println("~~~~~ THread: " + i);//####[66]####
-            TaskID id = threadQueue(_childQueues[i]);//####[67]####
-            System.out.println("THREAD ID: " + id);//####[68]####
-            g.add(id);//####[69]####
-            System.out.println("~~~~~ THread finished: " + i);//####[70]####
-        }//####[71]####
-        g.waitTillFinished();//####[72]####
-        PartialSolution solution = null;//####[73]####
-        int finalTime = -1;//####[74]####
-        for (int i = 0; i < _solutions.size(); i++) //####[75]####
-        {//####[75]####
-            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[76]####
-            if (finalTime == -1 || psFinishTime < finalTime) //####[77]####
-            {//####[77]####
-                solution = _solutions.get(i);//####[78]####
-                finalTime = psFinishTime;//####[79]####
-            }//####[80]####
-        }//####[81]####
-        return solution;//####[82]####
-    }//####[83]####
-}//####[83]####
+//####[64]####
+    public PartialSolution findOptimal() throws ExecutionException, InterruptedException {//####[64]####
+        PartialSolution[] ps = new PartialSolution[_cores];//####[65]####
+        TaskIDGroup g = new TaskIDGroup(_cores);//####[66]####
+        for (int i = 0; i < _cores; i++) //####[67]####
+        {//####[67]####
+            System.out.println("~~~~~ THread: " + i);//####[68]####
+            TaskID id = threadQueue(_childQueues[i]);//####[69]####
+            System.out.println("THREAD ID: " + id);//####[70]####
+            g.add(id);//####[71]####
+            System.out.println("~~~~~ THread finished: " + i);//####[72]####
+        }//####[73]####
+        g.waitTillFinished();//####[74]####
+        System.out.println("FINAL SOLUTION ~~~~~~~~~~~");//####[75]####
+        for (PartialSolution p : _solutions) //####[76]####
+        {//####[76]####
+            System.out.println("NEWWWWWW\n" + p.toString());//####[77]####
+        }//####[78]####
+        PartialSolution solution = null;//####[79]####
+        int finalTime = -1;//####[80]####
+        for (int i = 0; i < _solutions.size(); i++) //####[81]####
+        {//####[81]####
+            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[82]####
+            if (finalTime == -1 || psFinishTime < finalTime) //####[83]####
+            {//####[83]####
+                solution = _solutions.get(i);//####[84]####
+                finalTime = psFinishTime;//####[85]####
+            }//####[86]####
+        }//####[87]####
+        return solution;//####[88]####
+    }//####[89]####
+}//####[89]####

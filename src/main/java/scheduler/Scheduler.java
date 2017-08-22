@@ -98,7 +98,7 @@ public class Scheduler {
             Logger.error("null solution. Are you sure this is a valid task graph?");
         }
         System.out.println(_consolePrefix + "Found a schedule to " + _graph.getName() + " (" + _graph.getNodes().size() + " nodes) in " + totalTime + "ms.");
-        System.out.println(_consolePrefix + "End time of this schedule is " + ps._latestSlot.getFinish() + ".");
+        System.out.println(_consolePrefix + "End time of this schedule is " + ps._cost + ".");
         System.out.println(_consolePrefix + "Outputting to file \"" + _outputFile + "\"...");
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
@@ -114,21 +114,22 @@ public class Scheduler {
     private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+        priorityQueue.initialise();
+        Boolean parallelization = false;
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-//            System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
-            if (priorityQueue.size() <= 10000000) {
+            if (priorityQueue.size() <= 200000000) {
                 System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
                 psManager.generateChildren(ps, priorityQueue);
-                ps = priorityQueue.getCurrentPartialSolution();
             } else {
+                parallelization = true;
                 System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                 Parallelization parallelize = new Parallelization(priorityQueue, psManager, _cores);
                 ps = parallelize.findOptimal();
@@ -138,7 +139,9 @@ public class Scheduler {
 
 
         }
-
+        if (!parallelization){
+            ps = priorityQueue.getCurrentPartialSolution();
+        }
         return ps;
     }
 

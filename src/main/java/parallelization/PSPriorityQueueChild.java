@@ -17,7 +17,6 @@ public class PSPriorityQueueChild extends PSPriorityQueue {
         super(graph, processors);
         _id = id;
         _queue = queue;
-        _currentPartialSolution = _queue.poll();
     }
 
 

@@ -47,13 +47,15 @@
 //    }
 //
 //    TASK private void threadQueue(PSPriorityQueueChild childQueue) {
-//          System.out.println("THREAD DOING SHIT");
+//        System.out.println("THREAD DOING SHIT");
+//        int[][] saved = null;
 //        PartialSolution ps = null;
 //        while (childQueue.hasNext()){
 //            ps = childQueue.getCurrentPartialSolution();
-//            _psManager.generateChildren(ps, childQueue);
+//            int[][] temp = _psManager.shit(ps, childQueue, saved);
+//            saved = temp;
+//            System.out.println("child queue size " + childQueue.size());
 //        }
-//        System.out.println("child queue size " + childQueue.size());
 //        ps = childQueue.getCurrentPartialSolution();
 //        System.out.println("8====D adding\n" + ps);
 //        _solutions.add(ps);
@@ -70,6 +72,10 @@
 //            System.out.println("~~~~~ THread finished: " + i);
 //        }
 //        g.waitTillFinished();
+//        System.out.println("FINAL SOLUTION ~~~~~~~~~~~");
+//        for (PartialSolution p : _solutions){
+//            System.out.println("NEWWWWWW\n" + p.toString());
+//        }
 //        PartialSolution solution = null;
 //        int finalTime = -1;
 //        for (int i = 0; i < _solutions.size(); i++) {
