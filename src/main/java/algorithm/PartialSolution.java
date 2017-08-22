@@ -1,5 +1,7 @@
 package algorithm;
 
+import graph.Node;
+
 import java.util.ArrayList;
 
 /**
@@ -15,6 +17,8 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public int _currentFinishTime; // the finish time of the lowest node in the schedule
     public ProcessorSlot _latestSlot;
     public ProcessorSlot[] _latestSlots;
+
+    public ArrayList<Node> _brokenNodes = new ArrayList<>();
 
     public ArrayList<ProcessorSlot>[] _processors;
     public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;

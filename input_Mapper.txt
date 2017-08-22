@@ -5,3 +5,5 @@ Nodes_9_SeriesParallel.dot:0,55,0,55
 Nodes_10_Random.dot:0,50,0,50
 Nodes_10_Fork_Join.dot:0,499,0,342
 Nodes_11_OutTree.dot:0,350,0,227
+Pipeline_Nodes_21.dot:0,904,0,787
+Stencil_Nodes_21.dot:0,147,0,0
