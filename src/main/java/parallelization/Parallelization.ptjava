@@ -2,6 +2,7 @@ package parallelization;
 
 import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
+import algorithm.Cache;
 import algorithm.PartialSolution;
 import graph.Graph;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public class Parallelization {
 
     private PSPriorityQueue _parentQueue;
-    private  PSManager _psManager;
+    private Cache _cache;
     private Graph _graph;
     private int _processors;
     private int _cores;
@@ -27,13 +28,14 @@ public class Parallelization {
     private ArrayList<PartialSolution> _solutions;
 
 
-public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph graph, int cores) {
+public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph graph, int cores, Cache cache) {
         _parentQueue = priorityQueue;
         _processors = processors;
         _graph = graph;
         _cores = cores;
         _childQueues = new PSPriorityQueueChild[cores];
         _solutions = new ArrayList<PartialSolution>();
+        _cache = cache;
 
         initialiseQueues();
 
@@ -45,9 +47,6 @@ public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph gra
         for (int i = 0; i < _cores; i++) {
             _childQueues[i] = queues[i];
         }
-        System.out.println("************Child queues************");
-        printChildQueues();
-        System.out.println("************Child Queues************");
     }
 
     TASK private void threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {
@@ -67,7 +66,7 @@ public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph gra
         TaskIDGroup g = new TaskIDGroup(_cores);
         for (int i = 0; i < _cores; i++) {
             System.out.println("~~~~~ THread: " + i);
-            PSManager psManager = new PSManager(_processors, _graph);
+            PSManager psManager = new PSManager(_processors, _graph, _cache);
             TaskID id = threadQueue(_childQueues[i], psManager);
             System.out.println("THREAD ID: " + id);
             g.add(id);

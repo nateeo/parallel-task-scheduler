@@ -37,6 +37,16 @@ public class PSManager {
         _cache = new Cache(processors);
     }
 
+    public PSManager(int processors, Graph graph, Cache cache) {
+        _numberOfProcessors = processors;
+        _graph = graph;
+        _idleConstantHeuristic = graph.totalMinimumWork() / processors;
+        _bottomLevelWork = bottomLevelCalculator(graph);
+        _cache = cache;
+
+
+    }
+
     //BFS of  children of partial solution
     //for ever node, addNode to add to partial solution then return that
     //calculate functional cost i.e. the max formula
@@ -69,12 +79,8 @@ public class PSManager {
         _cache.add(parentPS);
     }
 
-    public Graph getGraph() {
-        return _graph;
-    }
-
-    public int getProcessors() {
-        return _numberOfProcessors;
+    public Cache getCache() {
+        return _cache;
     }
 
     public int[][] shit(PartialSolution parentPS, PSPriorityQueue queue, int[][] savedArray){

@@ -1,6 +1,7 @@
 package scheduler;
 
 
+import algorithm.Cache;
 import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
@@ -25,6 +26,8 @@ public class Scheduler {
     private static Graph _graph;
 
     private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
+
+    private static boolean _parallelOn = false;
 
 
     /**
@@ -75,6 +78,10 @@ public class Scheduler {
             switch (args[i]) {
                 case "-p":
                     _cores = Integer.valueOf(args[i + 1]);
+
+                    if (_cores > 1) {
+                        _parallelOn = true;
+                    }
                     break;
                 case "-v":
                     _visualize = true;
@@ -122,7 +129,7 @@ public class Scheduler {
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-            if (priorityQueue.size() <= 1000000) {
+            if (priorityQueue.size() <= 10 || _parallelOn == false) {
                 System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
@@ -131,11 +138,10 @@ public class Scheduler {
             } else {
                 parallelization = true;
                 System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
-                Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores);
+                Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores, psManager.getCache());
                 ps = parallelize.findOptimal();
                 break;
             }
-
 
 
         }
