@@ -51,7 +51,7 @@ public class PSPriorityQueue {
         _currentPartialSolution = _queue.poll();
         totalStates++;
         if (_currentPartialSolution._nodes.size() == _totalNodes) {
-            System.out.println("TOTAL STATES: " + totalStates);
+            System.out.println(_graph.getName() + " TOTAL STATES: " + totalStates);
         }
         return _currentPartialSolution._nodes.size() != _totalNodes;
     }
@@ -70,5 +70,9 @@ public class PSPriorityQueue {
 
     public void add(PartialSolution e) {
         _queue.add(e);
+    }
+
+    public PartialSolution pop() {
+        return _queue.poll();
     }
 }

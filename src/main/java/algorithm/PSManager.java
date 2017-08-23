@@ -4,7 +4,10 @@ import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This static class utilises the Partial solutions to generate children partial solutions.
@@ -62,17 +65,17 @@ public class PSManager {
                         int earliestTime = earliestTimeOnProcessor[i];
                         if (parentPS._startingNodes[i] != 0) {
                             partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
-                            checkAndAdd(partialSolution, queue);
+                            if (!equivalenceCheck(partialSolution, i)) checkAndAdd(partialSolution, queue);
                         } else if (!done) { // if we haven't added it to an empty processor
                             partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
-                            checkAndAdd(partialSolution, queue);
+                            if (!equivalenceCheck(partialSolution, i)) checkAndAdd(partialSolution, queue);
                             done = true;
                         }
                     }
                 } else {
                     for (int i = 0; i < _numberOfProcessors; i++) {
                         partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTimeOnProcessor[i]);
-                        checkAndAdd(partialSolution, queue);
+                        if (!equivalenceCheck(partialSolution, i)) checkAndAdd(partialSolution, queue);
                     }
                 }
         }
@@ -229,6 +232,8 @@ public class PSManager {
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
 
+        ps._slotMap.put(slot.getNode().getId(), slot);
+
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
         if (latestSlot == null) { // this is the first slot in the processor
@@ -262,6 +267,79 @@ public class PSManager {
         calculateUnderestimate(partialSolution);
         return partialSolution;
     }
+
+    private boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
+        ArrayList<ProcessorSlot> processor = ps.getProcessors()[processorIndex];
+        int m = processor.size() - 1;
+        int i = m - 1;
+        ArrayList<ProcessorSlot> backup = (ArrayList)processor.clone();
+        HashMap<Integer, ProcessorSlot> slotMapBackup = (HashMap)ps._slotMap.clone();
+        ProcessorSlot addedSlot = processor.get(m);
+        int maxTime = addedSlot.getFinish();
+        while (i >= 0 && addedSlot.getNode().getId() < processor.get(i).getNode().getId()) {
+            // swap
+            Collections.swap(processor, m, i);
+            // empty the processor on the partialSolution
+            ps.getProcessors()[processorIndex] = new ArrayList<>(processor.size());
+            // reschedule every node as early as possible
+            for (ProcessorSlot slot : backup) {
+                int earliestTime = earliestTimeOnProcessors(ps, slot.getNode())[processorIndex];
+                ProcessorSlot newSlot = new ProcessorSlot(slot.getNode(), earliestTime, processorIndex);
+                ps.getProcessors()[processorIndex].add(newSlot);
+                ps._slotMap.put(slot.getNode().getId(), newSlot);
+            }
+            ps.getProcessors()[processorIndex] = processor;
+            if (processor.get(processor.size() - 1).getFinish() <= maxTime && outgoingCheck(ps, backup, processorIndex, i)) {
+                ps.getProcessors()[processorIndex] = backup;
+                ps._slotMap = slotMapBackup;
+                return true;
+            }
+            i--;
+        }
+        ps.getProcessors()[processorIndex] = backup;
+        ps._slotMap = slotMapBackup;
+        return false;
+    }
+    // i is where m is
+
+    private boolean outgoingCheck(PartialSolution ps, ArrayList<ProcessorSlot> oldProcessor, int processorIndex, int newM) {
+        for (int i = 0; i < oldProcessor.size(); i++) {
+            ArrayList<ProcessorSlot> newProcessor = ps.getProcessors()[processorIndex];
+            ProcessorSlot newSlot = newProcessor.get(i);
+            ProcessorSlot oldSlot = oldProcessor.get(oldProcessor.indexOf(newSlot));
+            if (newSlot.getStart() > oldSlot.getStart()) {
+                // for all children, check affected time
+                for (Edge e : newSlot.getNode().getOutgoing()) {
+                    Node child = e.getTo();
+                    int dataTime = newSlot.getFinish() + e.getWeight();
+                    if (ps._slotMap.containsKey(child.getId())) { // child is already schedule
+                        ProcessorSlot childSlot = ps._slotMap.get(child.getId());
+                        if (!(childSlot.getProcessor() == processorIndex || childSlot.getStart() > dataTime)) {
+                            return false;
+                        }
+                    } else { // child is not scheduled
+                        boolean atLeastOneLater = false;
+                        // for all parents, check at least one comm time is later
+                        for (Edge parentEdge : child.getIncoming()) {
+                            Node parent = parentEdge.getFrom();
+                            if (ps._nodes.contains(parent.getName())) {
+                                // go through each processor and find it, compare it to dataTime
+                                ProcessorSlot parentSlot = ps._slotMap.get(parent.getId());
+                                if (parentSlot.getFinish() + parentEdge.getWeight() > dataTime) {
+                                    atLeastOneLater = true;
+                                }
+                            }
+                        }
+                        if (!atLeastOneLater) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 
     private void addToSorted(int[] array, int value, int[] indicesArray, int index) {
         for (int i = 0; i < array.length; i++) {

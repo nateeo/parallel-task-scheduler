@@ -1,8 +1,7 @@
 package algorithm;
 
-import graph.Node;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *  This class creates temporary representations of the schedules being used to find the optimal schedule.
@@ -18,14 +17,14 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public ProcessorSlot _latestSlot;
     public ProcessorSlot[] _latestSlots;
 
-    public ArrayList<Node> _brokenNodes = new ArrayList<>();
-
     public ArrayList<ProcessorSlot>[] _processors;
     public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
     //public TreeMap<Integer, Integer> _id; // node id -> array int
     public int[] _startingNodes;
     public int[] _startingNodeIndices;
     public int _zeroStarts;
+
+    public HashMap<Integer, ProcessorSlot> _slotMap;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
@@ -36,6 +35,8 @@ public class PartialSolution implements Comparable<PartialSolution> {
         _startingNodes = new int[numberOfProcessors];
         _startingNodeIndices = new int[numberOfProcessors];
         _zeroStarts = numberOfProcessors;
+        _slotMap = new HashMap<>();
+
     }
 
     /**
@@ -66,6 +67,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _startingNodeIndices = ps._startingNodeIndices.clone();
             _startingNodes = ps._startingNodes.clone();
         }
+        _slotMap = (HashMap)ps._slotMap.clone();
     }
 
     public int compareTo(PartialSolution o) {
