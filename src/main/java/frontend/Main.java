@@ -25,7 +25,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // input the graph.
-        File testGraph = new File ("input-graphs/Nodes_8_Random.dot");
+        File testGraph = new File ("input-graphs/Nodes_7_OutTree.dot");
         _graph = parseDotFile(testGraph);
         List<Node> listOfNodes = _graph.getNodes();
 
@@ -55,7 +55,6 @@ public class Main extends Application {
 
         StackPane root = sgm.generateGraph(ps);
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
         primaryStage.setScene(scene);
 

@@ -22,11 +22,12 @@ public class ScheduleGraph {
     StackPane _graphComponent;
     GridPane _graphLayout;
     PartialSolution _ps;
-    int ABSOLUTE_HEIGHT = 800;
+    int ABSOLUTE_HEIGHT = 700;
     int GRID_HEIGHT = 80;
-    int ABSOLUTE_WIDTH = 100;
+    double ABSOLUTE_WIDTH = 100;
     int _unitHeight;
     int _numProcessors;
+    double _roundingFactor; //needed for accurate rectangle sizes
 
     public ScheduleGraph(PartialSolution ps){
         _graphComponent = new StackPane();
@@ -34,11 +35,12 @@ public class ScheduleGraph {
         _ps = ps;
         _numProcessors = ps.getProcessors().length;
         _graphLayout = new GridPane();
-        //_graphLayout.getStylesheets().add("style.css");
         computeGridDimensions();
         GridPane gridWithBorders = drawGridBorders();
 
         _graphComponent.getChildren().add(gridWithBorders);
+        _graphComponent.getStyleClass().add("style.css");
+
 
 
     }
@@ -47,9 +49,6 @@ public class ScheduleGraph {
     public StackPane generateGraph(PartialSolution ps) throws Exception{
 
         //URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
-
-
-        //drawGridBorders();
 
         ArrayList<ProcessorSlot>[] processorLists = ps.getProcessors();
         for (int i = 0; i<processorLists.length; i++){
@@ -71,10 +70,10 @@ public class ScheduleGraph {
                 _graphLayout.add(rectangleLayout, i, task.getStart(), 1, height);
                 System.out.println(task.getStart());
 
+
             }
         }
 
-        //_graphLayout.setGridLinesVisible(true);
         _graphComponent.getChildren().add(_graphLayout);
 
         return _graphComponent;
@@ -83,57 +82,59 @@ public class ScheduleGraph {
     private void computeGridDimensions(){
         int totalTime = _ps._cost;
         _unitHeight = ABSOLUTE_HEIGHT/totalTime;
+        double roundedUnitHeight = Math.round(_unitHeight);
+        _roundingFactor = roundedUnitHeight/_unitHeight;
+
+        System.out.println("UNIT HEIGHT:" + _unitHeight);
         //assign column constraints
-        for (int i = 0; i<_ps.getProcessors().length; i++){
+        for (int i = 0; i<_numProcessors; i++){
             ColumnConstraints column = new ColumnConstraints(ABSOLUTE_WIDTH);
             _graphLayout.getColumnConstraints().add(column);
         }
         //assign row constraints
         for (int j = 0; j<totalTime; j++){
-            RowConstraints row = new RowConstraints(_unitHeight);
+
+            RowConstraints row = new RowConstraints(Math.round(_unitHeight));
             _graphLayout.getRowConstraints().add(row);
         }
+
+
 
 
     }
 
     private GridPane drawGridBorders(){
-        double absolute = ABSOLUTE_HEIGHT;
-        double finishTime = _ps._cost;
-        double gridHeightInRealTime = GRID_HEIGHT*finishTime/absolute;
-        double roundedGridHeightInRealTime = round(gridHeightInRealTime);
-        int roundedGridHeightInGridTime = (int)Math.round(roundedGridHeightInRealTime*absolute/finishTime);
+        int preferredRows = GRID_HEIGHT/_unitHeight;
+        int actualRows = round(preferredRows);
+        int gridHeight = (int)Math.ceil(_ps._cost/(double)actualRows);
+        System.out.println("Grid height is "+actualRows);
 
-        //compute number of cells required in y direction
-        int height = ABSOLUTE_HEIGHT/roundedGridHeightInGridTime;
+        GridPane backgroundGrid = new GridPane();
 
-
-        GridPane gridBorderPane = new GridPane();
+        //assign column constraints
         for (int i = 0; i<_numProcessors; i++){
             ColumnConstraints column = new ColumnConstraints(ABSOLUTE_WIDTH);
-            gridBorderPane.getColumnConstraints().add(column);
+            backgroundGrid.getColumnConstraints().add(column);
         }
         //assign row constraints
-        for (int j = 0; j<height; j++){
-            RowConstraints row = new RowConstraints(roundedGridHeightInGridTime);
-            gridBorderPane.getRowConstraints().add(row);
+        for (int j = 0; j<gridHeight; j++){
+
+            RowConstraints row = new RowConstraints(Math.round(_unitHeight*actualRows));
+            backgroundGrid.getRowConstraints().add(row);
         }
 
         for (int i = 0; i<_numProcessors; i++){
-            for (int j = 0; j<height; j++){
-                //Pane pane = new Pane();
-                //pane.getStyleClass().add("gridCell");
-                Rectangle pane = new Rectangle(ABSOLUTE_WIDTH, roundedGridHeightInGridTime);
-                pane.setFill(Color.HONEYDEW);
-                pane.setStroke(Color.DARKGRAY);
-                pane.setStrokeWidth(1);
-                pane.getStyleClass().add("grid-cell");
-                gridBorderPane.add(pane,i,j);
+            for (int j =0; j<gridHeight; j++){
+                Rectangle bg = new Rectangle(ABSOLUTE_WIDTH, _unitHeight*actualRows);
+                bg.setStrokeWidth(1);
+                bg.setStroke(Color.DARKGRAY);
+                bg.setFill(Color.LINEN);
+
+                backgroundGrid.add(bg,i,j);
             }
         }
 
-        return gridBorderPane;
-
+        return backgroundGrid;
 
 
 
@@ -141,18 +142,16 @@ public class ScheduleGraph {
 
     }
 
-    private double round(double gridHeightInRealTime){
-        System.out.println("40px in real time is:" + gridHeightInRealTime);
-        double roundedValue=gridHeightInRealTime;
-        if (0<=gridHeightInRealTime && gridHeightInRealTime<=4){
-            return roundedValue;
-        } else if (5<=gridHeightInRealTime && gridHeightInRealTime<=99){
-            roundedValue = Math.round(gridHeightInRealTime/5)*5;
+    private int round(int rows){
+        int roundedRows = rows;
+        if (1<=roundedRows && roundedRows<=4){
+            return roundedRows;
+        } else if (5<=roundedRows && roundedRows<=99){
+            roundedRows = Math.round(roundedRows/5)*5;
         } else {
-            roundedValue = Math.round(gridHeightInRealTime/100)*100;
+            roundedRows = Math.round(roundedRows/100)*100;
         }
-        System.out.println("Rounded value: " +roundedValue);
-        return roundedValue;
+        return roundedRows;
     }
 
 }
