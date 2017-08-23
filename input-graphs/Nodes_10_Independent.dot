@@ -1,0 +1,19 @@
+digraph "Independent_10_Nodes" {
+	graph [CCR=1.0,
+		Density=2.0,
+		"No of edges"=42,
+		"No of nodes"=21,
+		"Node concurrency"=3,
+		"Total sequential time"=250
+	];
+	0   [Weight=10];
+	1   [Weight=10];
+	2   [Weight=10];
+	3   [Weight=10];
+	4   [Weight=10];
+	5   [Weight=10];
+	6   [Weight=10];
+	7   [Weight=10];
+	8   [Weight=10];
+	9   [Weight=10];
+}

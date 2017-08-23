@@ -31,7 +31,7 @@ public class PSManager {
         _numberOfProcessors = processors;
         _graph = graph;
         _idleConstantHeuristic = graph.totalMinimumWork() / processors;
-        _bottomLevelWork = bottomLevelCalculator(graph);
+        _bottomLevelWork = graph._bottomLevelWork;
         _cache = new Cache(processors);
     }
 
@@ -76,68 +76,6 @@ public class PSManager {
                     }
                 }
         }
-    }
-
-    /**
-     * Calculates the bottomLevel value for all nodes in the graph, this only has to be run once in
-     * the initialization. The bottom level of a source node is the sum of all the weights of each individual
-     * node in the longest path originating from the source node. This function works backwards starting from
-     * the leaf nodes moving up towards the root nodes.
-     * @param graph the graph that contains all the nodes and edges parsed from an input .dot file
-     * @return HashMap<String, Integer> of bottomLevels. The String is the name of the node and the Integer
-     * is the bottom level value that is calculated.
-     */
-    private static HashMap<String,Integer> bottomLevelCalculator(Graph graph) {
-        List<Node> allNodes = graph.getNodes();
-        HashMap<String, Integer> bottomLevels = new HashMap<String, Integer>(allNodes.size());
-        Queue<Node> queuedNodes = new LinkedList<Node>();
-        Node predecessorNode;
-        Node currentNode;
-        int maxBottomLevel;
-        int currentNodeBL;
-        boolean allSuccessorsCalculated;
-
-        // Looks for all leaf nodes.
-        for(Node node: allNodes) {
-            if(node.getOutgoing().isEmpty()) {
-                queuedNodes.add(node);
-            }
-        }
-
-        // Goes through the Queue of nodes and adds their bottom level to the hashmap.
-        while(!queuedNodes.isEmpty()) {
-            currentNode = queuedNodes.remove();
-            maxBottomLevel = 0;
-            if (!currentNode.getOutgoing().isEmpty()) {
-                // Grabs all successor nodes and calculates the bottom level based on the max value of all it's successors.
-                for (Edge successors : currentNode.getOutgoing()) {
-                    currentNodeBL = bottomLevels.get(successors.getTo().getName());
-                    if (currentNodeBL > maxBottomLevel) {
-                        maxBottomLevel = currentNodeBL;
-                    }
-                }
-            }
-
-            bottomLevels.put(currentNode.getName(),maxBottomLevel + currentNode.getWeight());
-
-            // Grabs all predecessor nodes and checks if all their successor nodes have been calculated,
-            // if the node names exist on the hashmap. If true, adds node to the queue
-            if (!currentNode.getIncoming().isEmpty()) {
-                for (Edge predecessors : currentNode.getIncoming()) {
-                    predecessorNode = predecessors.getFrom();
-                    allSuccessorsCalculated = true;
-                    for (Edge pSuccessors : predecessorNode.getOutgoing()) {
-                        if (!bottomLevels.containsKey(pSuccessors.getTo().getName())) {
-                            allSuccessorsCalculated = false;
-                        }
-                    }
-                    if (allSuccessorsCalculated) {
-                        queuedNodes.add(predecessorNode);
-                    }
-                }
-            }
-        }
-        return bottomLevels;
     }
 
     /**

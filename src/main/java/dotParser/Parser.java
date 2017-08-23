@@ -7,8 +7,7 @@ import graph.Graph;
 import graph.Node;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * This class contains methods to:
@@ -28,6 +27,7 @@ public class Parser {
     public static Graph parseDotFile (File file) {
         idCounter = 1;
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        HashMap<Integer, ArrayList<Node>> equalCostNodes = new HashMap<>();
         HashMap startNodes;
         Graph graph;
         int totalMinimumWork = 0;
@@ -58,7 +58,11 @@ public class Parser {
                     if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
                         weight = getValue(right);
                         Node newVertex = new Node(idCounter++, left, weight);
-                        idCounter++;
+                        // add node to hashmap to detect duplicates
+                        if (!equalCostNodes.containsKey(weight)) {
+                            equalCostNodes.put(weight, new ArrayList<>());
+                        }
+                        equalCostNodes.get(weight).add(newVertex);
                         totalMinimumWork += weight;
                         nodeMap.put(left, newVertex);
                     } else { // add arc to queue for processing at the end
@@ -76,7 +80,7 @@ public class Parser {
         for (String[] string : arcQueue) {
             String[] arcString = string[0].split("->");
             String from = arcString[0].trim();
-            String to =  arcString[1].trim();
+            String to = arcString[1].trim();
             Node fromNode = nodeMap.get(from);
             Node toNode = nodeMap.get(to);
             int weight = getValue(string[1]);
@@ -91,6 +95,47 @@ public class Parser {
         graph.setNodes(new ArrayList<Node>(nodeMap.values()));
         graph.setTotalMinimumWork(totalMinimumWork);
 
+        // calculate bottom level work before handling node equivalence
+        graph.bottomLevelCalculator();
+        for (ArrayList<Node> list : equalCostNodes.values()) {
+            for (int i = 0; i < list.size() - 1; i++) {
+                for (int j = i + 1; j < list.size(); j++) {
+                    Node first = list.get(i);
+                    Node other = list.get(j);
+                    if (first.getIncoming().size() == other.getIncoming().size() && first.getOutgoing().size() == other.getOutgoing().size()) {
+                        boolean equal = true;
+                        for (Edge e : first.getIncoming()) {
+                            boolean found = false;
+                            for (Edge e2 : other.getIncoming()) {
+                                if (e.getFrom().equals(e2.getFrom()) && e.getWeight() == e2.getWeight()) found = true;
+                            }
+                            if (!found) {
+                                equal = false;
+                                break;
+                            }
+                        }
+                        if (equal) {
+                            for (Edge e : first.getOutgoing()) {
+                                boolean found = false;
+                                for (Edge e2 : other.getOutgoing()) {
+                                    if (e.getTo().equals(e2.getTo()) && e.getWeight() == e2.getWeight()) found = true;
+                                }
+                                if (!found) {
+                                    equal = false;
+                                    break;
+                                }
+                            }
+                            if (equal) { // equal, add edge between them so they don't appear together
+                                System.out.println("Found duplicates: " + first + " -> " + other);
+                                graph.addEdge(new Edge(first, other, 0));
+                                first.addOutgoingEdge(other, 0);
+                                other.addIncomingEdge(first, 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return graph;
     }
 
@@ -171,6 +216,7 @@ public class Parser {
 
 
     }
+
 
     private static int getValue(String value) {
         return Integer.parseInt(value.substring(value.indexOf("=") + 1, value.lastIndexOf("]")).trim());
