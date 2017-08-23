@@ -22,34 +22,24 @@ public class Cache {
         if (costDiff == 0) {
             int nodeDiff = o1._nodes.size() - o2._nodes.size();
             if (nodeDiff == 0) {
-                // check all start nodes are the same
+                // go through starting nodes
                 for (int i = 0; i < _processorCount; i++) {
-                    int startDiff = o1._startingNodes[i] - o2._startingNodes[i];
-                    if (startDiff != 0) {
-                        return startDiff;
+                    int startNodeDiff = o1._startingNodes[i] - o2._startingNodes[i];
+                    if (startNodeDiff != 0) return startNodeDiff;
+                }
+                // go through each processor, return if size different
+                for (int i = 0; i < _processorCount; i++) {
+                    ArrayList<ProcessorSlot> o1Processor = o1.getProcessors()[o1._startingNodeIndices[i]];
+                    ArrayList<ProcessorSlot> o2Processor = o2.getProcessors()[o2._startingNodeIndices[i]];
+                    int size1 = o1Processor.size();
+                    int size2 = o2Processor.size();
+                    if (size1 != size2) return size1 - size2;
+                    for (int j = 1; j < size1; j++) {
+                        int slotNodeDiff = o1Processor.get(j).getNode().getId() - o2Processor.get(j).getNode().getId();
+                        if (slotNodeDiff != 0) return slotNodeDiff;
                     }
                 }
-                // if we made it here, we need to start checking individual normalised processors size then nodes
-                ArrayList[] firstProcessors = o1.getProcessors();
-                ArrayList[] secondProcessors = o2.getProcessors();
-                // check each size diff
-                for (int i = 0; i < _processorCount; i++) {
-                    int processorSizeDiff = firstProcessors[o1._startingNodeIndices[i]].size() - secondProcessors[o2._startingNodeIndices[i]].size();
-                    if (processorSizeDiff != 0) {
-                        return processorSizeDiff;
-                    }
-                }
-                // check each list
-                for (int i = 0; i < _processorCount; i++) {
-                    ArrayList<ProcessorSlot> processorOne = firstProcessors[o1._startingNodeIndices[i]];
-                    ArrayList<ProcessorSlot> processorTwo = secondProcessors[o2._startingNodeIndices[i]];
-                    for (int j = 0; j < processorOne.size(); j++) {
-                        int diff = processorOne.get(j).getNode().getId() - processorTwo.get(j).getNode().getId();
-                        if (diff != 0) {
-                            return diff;
-                        }
-                    }
-                }
+                // same!
                 return 0;
             } else {
                 return nodeDiff;

@@ -18,6 +18,8 @@ public class PSPriorityQueue {
     private PartialSolution _currentPartialSolution;
     private PSManager _psManager;
 
+    public int totalStates;
+
     public PSPriorityQueue(Graph graph, int processors) {
         _graph = graph;
         _totalNodes = _graph.getNodes().size();
@@ -47,6 +49,10 @@ public class PSPriorityQueue {
      */
     public boolean hasNext() {
         _currentPartialSolution = _queue.poll();
+        totalStates++;
+        if (_currentPartialSolution._nodes.size() == _totalNodes) {
+            System.out.println("TOTAL STATES: " + totalStates);
+        }
         return _currentPartialSolution._nodes.size() != _totalNodes;
     }
 
