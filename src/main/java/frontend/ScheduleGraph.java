@@ -2,6 +2,7 @@ package frontend;
 
 import algorithm.PartialSolution;
 import algorithm.ProcessorSlot;
+import javafx.geometry.Pos;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
  * - convert fields from double to int
  */
 public class ScheduleGraph {
+    Pane _decoratedGraph;
     StackPane _graphComponent;
     GridPane _graphLayout;
     PartialSolution _ps;
@@ -27,6 +29,8 @@ public class ScheduleGraph {
     double ABSOLUTE_WIDTH = 100;
     int _unitHeight;
     int _numProcessors;
+    int _gridHeight;
+    int _actualRows;
     double _roundingFactor; //needed for accurate rectangle sizes
 
     public ScheduleGraph(PartialSolution ps){
@@ -39,16 +43,16 @@ public class ScheduleGraph {
         GridPane gridWithBorders = drawGridBorders();
 
         _graphComponent.getChildren().add(gridWithBorders);
-        _graphComponent.getStyleClass().add("style.css");
+        _graphComponent.getStylesheets().add("style.css");
 
+        _decoratedGraph = new HBox();
+        _decoratedGraph.getStylesheets().add("style.css");
 
 
     }
 
 
-    public StackPane generateGraph(PartialSolution ps) throws Exception{
-
-        //URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
+    public Pane generateGraph(PartialSolution ps) throws Exception{
 
         ArrayList<ProcessorSlot>[] processorLists = ps.getProcessors();
         for (int i = 0; i<processorLists.length; i++){
@@ -63,7 +67,6 @@ public class ScheduleGraph {
                 //stackpane encloses rectangle and text (required to nest text inside rectangle)
                 StackPane rectangleLayout = new StackPane();
                 Text taskName = new Text(task.getNode().getName());
-                //taskName.setStyle("-fx-text-fill: wheat");
                 rectangleLayout.getChildren().addAll(taskBlock, taskName);
                 rectangleLayout.getStyleClass().add("rectangle");
 
@@ -73,10 +76,86 @@ public class ScheduleGraph {
 
             }
         }
-
         _graphComponent.getChildren().add(_graphLayout);
 
-        return _graphComponent;
+
+        decorateGraph();
+
+
+
+
+
+
+
+
+
+
+
+        return _decoratedGraph;
+    }
+
+    private void decorateGraph(){
+        VBox rightContainer = new VBox();
+        //text label container
+        HBox topLabelContainer = new HBox();
+        for (int i = 0; i<_numProcessors; i++){
+
+
+
+            StackPane labelPane = new StackPane();
+            labelPane.setMinWidth(ABSOLUTE_WIDTH);
+            labelPane.setPrefWidth(ABSOLUTE_WIDTH);
+            labelPane.setMinHeight(25);
+            Text processorText = new Text(i+"");
+            labelPane.getChildren().addAll(processorText);
+
+
+            topLabelContainer.getChildren().add(labelPane);
+        }
+
+        StackPane topNameContainer = new StackPane();
+        Text topName = new Text("Processors");
+        topNameContainer.setMinHeight(20);
+        topNameContainer.setPrefHeight(20);
+        topNameContainer.getChildren().add(topName);
+
+
+        rightContainer.getChildren().addAll(topNameContainer, topLabelContainer, _graphComponent);
+
+        //decorate horizontal
+        HBox leftContainer = new HBox();
+        VBox leftGridContainer = new VBox();
+        StackPane bufferPane = new StackPane();
+        bufferPane.setMinHeight(47);
+        bufferPane.setMinWidth(10);
+        Text ZeroUnit = new Text("0");
+        bufferPane.setAlignment(Pos.BOTTOM_CENTER);
+        bufferPane.getChildren().add(ZeroUnit);
+        leftGridContainer.getChildren().add(bufferPane);
+
+
+        int labelCounter = 0;
+        for (int i = 0; i <_gridHeight; i++){
+            StackPane pane = new StackPane();
+            pane.setMinHeight(_unitHeight*_actualRows);
+            pane.setMinWidth(20);
+
+            labelCounter+= _actualRows;
+            Text numberLabel = new Text(labelCounter+"");
+
+            pane.setAlignment(Pos.BOTTOM_CENTER);
+            pane.getChildren().add(numberLabel);
+
+            leftGridContainer.getChildren().add(pane);
+        }
+
+        Text leftLabel = new Text("Time");
+        StackPane leftLabelContainer = new StackPane();
+        leftLabelContainer.getChildren().add(leftLabel);
+        leftContainer.getChildren().addAll(leftLabelContainer, leftGridContainer);
+
+        _decoratedGraph.getChildren().addAll(leftContainer, rightContainer);
+
     }
 
     private void computeGridDimensions(){
@@ -105,9 +184,9 @@ public class ScheduleGraph {
 
     private GridPane drawGridBorders(){
         int preferredRows = GRID_HEIGHT/_unitHeight;
-        int actualRows = round(preferredRows);
-        int gridHeight = (int)Math.ceil(_ps._cost/(double)actualRows);
-        System.out.println("Grid height is "+actualRows);
+        _actualRows = round(preferredRows);
+        _gridHeight = (int)Math.ceil(_ps._cost/(double)_actualRows);
+        System.out.println("Grid height is "+_actualRows);
 
         GridPane backgroundGrid = new GridPane();
 
@@ -117,15 +196,15 @@ public class ScheduleGraph {
             backgroundGrid.getColumnConstraints().add(column);
         }
         //assign row constraints
-        for (int j = 0; j<gridHeight; j++){
+        for (int j = 0; j<_gridHeight; j++){
 
-            RowConstraints row = new RowConstraints(Math.round(_unitHeight*actualRows));
+            RowConstraints row = new RowConstraints(Math.round(_unitHeight*_actualRows));
             backgroundGrid.getRowConstraints().add(row);
         }
 
         for (int i = 0; i<_numProcessors; i++){
-            for (int j =0; j<gridHeight; j++){
-                Rectangle bg = new Rectangle(ABSOLUTE_WIDTH, _unitHeight*actualRows);
+            for (int j =0; j<_gridHeight; j++){
+                Rectangle bg = new Rectangle(ABSOLUTE_WIDTH, _unitHeight*_actualRows);
                 bg.setStrokeWidth(1);
                 bg.setStroke(Color.DARKGRAY);
                 bg.setFill(Color.LINEN);
