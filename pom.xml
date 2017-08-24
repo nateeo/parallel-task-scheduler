@@ -44,6 +44,13 @@
         <scope>test</scope>
     </dependency>
     <dependency>
+        <groupId>pt</groupId>
+        <artifactId>pt</artifactId>
+        <version>1.0</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/ParaTask-Runtime-0.9.5.jar</systemPath>
+    </dependency>
+    <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
         <version>RELEASE</version>

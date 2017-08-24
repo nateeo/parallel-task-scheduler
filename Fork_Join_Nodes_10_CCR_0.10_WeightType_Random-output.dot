@@ -1,0 +1,28 @@
+digraph "outputFork_Join_Nodes_10_CCR_0.10_WeightType_Random" {
+	0				[ Weight =57,Start =0,Processor =1];
+	1				[ Weight =114,Start =171,Processor =1];
+	0 -> 1	 [Weight=10];
+	2				[ Weight =143,Start =62,Processor =4];
+	0 -> 2	 [Weight=5];
+	3				[ Weight =143,Start =61,Processor =3];
+	0 -> 3	 [Weight=4];
+	4				[ Weight =114,Start =57,Processor =1];
+	0 -> 4	 [Weight=7];
+	5				[ Weight =128,Start =102,Processor =2];
+	0 -> 5	 [Weight=9];
+	6				[ Weight =43,Start =233,Processor =3];
+	0 -> 6	 [Weight=7];
+	7				[ Weight =43,Start =59,Processor =2];
+	0 -> 7	 [Weight=2];
+	8				[ Weight =29,Start =204,Processor =3];
+	0 -> 8	 [Weight=5];
+	9				[ Weight =57,Start =285,Processor =1];
+	1 -> 9	 [Weight=6];
+	2 -> 9	 [Weight=5];
+	3 -> 9	 [Weight=5];
+	4 -> 9	 [Weight=3];
+	5 -> 9	 [Weight=2];
+	6 -> 9	 [Weight=4];
+	7 -> 9	 [Weight=6];
+	8 -> 9	 [Weight=7];
+}

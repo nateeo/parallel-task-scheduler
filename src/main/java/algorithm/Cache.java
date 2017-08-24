@@ -1,8 +1,6 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This class manages the storage and checking of duplicates
@@ -14,9 +12,10 @@ import java.util.TreeSet;
  * author: nhur714
  */
 public class Cache {
-
-    private TreeSet<PartialSolution> _treeSet;
+    private SortedSet<PartialSolution>  _treeSet;
     private int _processorCount;
+    private int[] _firstNormalisedProcessors;
+    private int[] _secondNormalisedProcessors;
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
@@ -53,12 +52,9 @@ public class Cache {
         }
     };
 
-    /**
-     * constructs a cache object
-     * @param processorCount
-     */
     public Cache(int processorCount) {
-        _treeSet = new TreeSet<>(comparator);
+        TreeSet<PartialSolution> ts = new TreeSet<>(comparator);
+        _treeSet = Collections.synchronizedSortedSet(ts);
         _processorCount = processorCount;
     }
 

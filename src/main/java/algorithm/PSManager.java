@@ -26,13 +26,18 @@ public class PSManager {
     //lists for calculating earliest times
     private int[] _maxPredecessorTime;
     private int[] _earliestTimes;
-  
+
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
         _idleConstantHeuristic = (double)graph.totalMinimumWork() / processors;
         _bottomLevelWork = graph._bottomLevelWork;
         _cache = new Cache(processors);
+    }
+
+    public PSManager(int processors, Graph graph, Cache cache) {
+        this(processors, graph);
+        _cache = cache;
     }
 
     //BFS of  children of partial solution
@@ -79,6 +84,10 @@ public class PSManager {
         _cache.add(parentPS);
     }
 
+    public Cache getCache() {
+        return _cache;
+    }
+
     /**
      * Function to calculate and update the work for a partialSolution aka the cost function f(s)
      * @param ps a partial solution
@@ -91,8 +100,8 @@ public class PSManager {
 
         // data ready time heuristic
         int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
-      
-        // update estimate, aka cost function f(s)
+
+        // update estimate
         ps._cost = Math.max(Math.max(Math.max(ps._bottomLevelWork, ps._cost), idleTimeHeuristic), dataReadyTimeHeuristic);
     }
 
@@ -228,7 +237,6 @@ public class PSManager {
 
     /**
      * check if a node is present within the schedule of the partial schedule.
-     *
      * @param node
      * @return
      */

@@ -1,14 +1,17 @@
 package scheduler;
 
 
+import algorithm.Cache;
 import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
 import graph.Graph;
 import logger.Logger;
+import parallelization.Parallelization;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Entry point to the scheduling algorithm
@@ -23,6 +26,8 @@ public class Scheduler {
     private static Graph _graph;
 
     private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
+
+    private static boolean _parallelOn = false;
 
 
     /**
@@ -73,6 +78,10 @@ public class Scheduler {
             switch (args[i]) {
                 case "-p":
                     _cores = Integer.valueOf(args[i + 1]);
+
+                    if (_cores > 1) {
+                        _parallelOn = true;
+                    }
                     break;
                 case "-v":
                     _visualize = true;
@@ -109,21 +118,34 @@ public class Scheduler {
      * and the number of processors on which to schedule.
      * @return the valid optimal schedule
      */
-    private static PartialSolution solution() {
+    private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+        priorityQueue.initialise();
+        Boolean parallelization = false;
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-            ps = priorityQueue.getCurrentPartialSolution();
-            //generate the child partial solutions from the current "best" candidate partial solution
-            //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, priorityQueue);
+            if (_parallelOn == false || priorityQueue.size() <= 1000) {
+                ps = priorityQueue.getCurrentPartialSolution();
+                //generate the child partial solutions from the current "best" candidate partial solution
+                //then add to the priority queue based on conditions.
+                psManager.generateChildren(ps, priorityQueue);
+            } else {
+                parallelization = true;
+                Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores, psManager.getCache());
+                ps = parallelize.findOptimal();
+                break;
+            }
+
+
         }
-        ps = priorityQueue.getCurrentPartialSolution();
+        if (!parallelization){
+            ps = priorityQueue.getCurrentPartialSolution();
+        }
         return ps;
     }
 

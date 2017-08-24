@@ -11,7 +11,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip
@@ -25,6 +24,7 @@
 # Maven files
 
 target/
+hi5-v1.jar
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
