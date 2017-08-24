@@ -40,5 +40,18 @@ public class ProcessorSlot {
         return _processor;
     }
 
+    @Override
+    public String toString() {
+        return "" + _node.getTopId();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ProcessorSlot) {
+            return _node.getId() == ((ProcessorSlot) other)._node.getId();
+        }
+        return false;
+    }
+
 
 }

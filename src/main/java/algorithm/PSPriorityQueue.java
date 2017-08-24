@@ -18,14 +18,12 @@ public class PSPriorityQueue {
     private PartialSolution _currentPartialSolution;
     private PSManager _psManager;
 
-    public int totalStates;
-
     public PSPriorityQueue(Graph graph, int processors) {
         _graph = graph;
         _totalNodes = _graph.getNodes().size();
         _processors = processors;
         // TODO: capacity heuristic
-        _queue = new PriorityQueue<PartialSolution>(graph.getNodes().size() * processors * 5);
+        _queue = new PriorityQueue<>(graph.getNodes().size() * processors * 5);
         _psManager = new PSManager(processors, graph);
         initialise();
     }
@@ -48,11 +46,8 @@ public class PSPriorityQueue {
      * @return
      */
     public boolean hasNext() {
-        _currentPartialSolution = _queue.poll();
-        totalStates++;
-        if (_currentPartialSolution._nodes.size() == _totalNodes) {
-            System.out.println("TOTAL STATES: " + totalStates);
-        }
+        PartialSolution ps = _queue.poll();
+        _currentPartialSolution = ps;
         return _currentPartialSolution._nodes.size() != _totalNodes;
     }
 

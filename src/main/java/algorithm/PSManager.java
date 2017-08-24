@@ -21,7 +21,7 @@ public class PSManager {
     private Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
-    private int _idleConstantHeuristic;
+    private double _idleConstantHeuristic;
 
     //lists for calculating earliest times
     private int[] _maxPredecessorTime;
@@ -30,7 +30,7 @@ public class PSManager {
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
-        _idleConstantHeuristic = graph.totalMinimumWork() / processors;
+        _idleConstantHeuristic = (double)graph.totalMinimumWork() / processors;
         _bottomLevelWork = graph._bottomLevelWork;
         _cache = new Cache(processors);
     }
@@ -62,20 +62,21 @@ public class PSManager {
                         int earliestTime = earliestTimeOnProcessor[i];
                         if (parentPS._startingNodes[i] != 0) {
                             partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
-                            checkAndAdd(partialSolution, queue);
+                            checkAndAdd(partialSolution, i, queue);
                         } else if (!done) { // if we haven't added it to an empty processor
                             partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTime);
-                            checkAndAdd(partialSolution, queue);
+                            checkAndAdd(partialSolution, i, queue);
                             done = true;
                         }
                     }
                 } else {
                     for (int i = 0; i < _numberOfProcessors; i++) {
                         partialSolution = addSlotToProcessor(parentPS, freeNode, i, earliestTimeOnProcessor[i]);
-                        checkAndAdd(partialSolution, queue);
+                        checkAndAdd(partialSolution, i, queue);
                     }
                 }
-        }
+            }
+        _cache.add(parentPS);
     }
 
     /**
@@ -86,13 +87,13 @@ public class PSManager {
 
 
         // update idle time heuristic TODO: optimise
-        int idleTimeHeuristic = _idleConstantHeuristic + (ps._idleTime / _numberOfProcessors);
+        int idleTimeHeuristic = (int)Math.ceil(_idleConstantHeuristic + (ps._idleTime / _numberOfProcessors));
 
         // data ready time heuristic
         int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
 
         // update estimate
-        ps._cost = Math.max(Math.max(Math.max(ps._bottomLevelWork, ps._cost), idleTimeHeuristic), dataReadyTimeHeuristic);
+        ps._cost = Math.max(ps._cost, Math.max(Math.max(idleTimeHeuristic, dataReadyTimeHeuristic), ps._bottomLevelWork));
     }
 
     /**
@@ -101,7 +102,6 @@ public class PSManager {
      * @return
      */
     public int calculateDataReadyTime(PartialSolution ps){
-
         List<Node> freeNodeList = getFreeNodes(ps);
         int maximumDRT = 0;
 
@@ -229,6 +229,8 @@ public class PSManager {
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
 
+        ps._slotMap.put(slot.getNode().getId(), slot);
+
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
         if (latestSlot == null) { // this is the first slot in the processor
@@ -237,6 +239,11 @@ public class PSManager {
             addToSorted(ps._startingNodes, slot.getNode().getId(), ps._startingNodeIndices, slot.getProcessor());
         } else {
             prevSlotFinishTime = latestSlot.getFinish();
+            if ((latestSlot.getNode().getTopId() < slot.getNode().getId()) && ps._priority == 0) {
+                ps._priority = 0;
+            } else {
+                ps._priority = 1;
+            }
         }
         int processor = slot.getProcessor();
         ps._processors[processor].add(slot);
@@ -249,9 +256,11 @@ public class PSManager {
         }
     }
 
-    private void checkAndAdd(PartialSolution ps, PSPriorityQueue queue) {
-        if (_cache.add(ps)) {
-            queue.add(ps);
+    private void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
+        if (!equivalenceCheck(ps, processorIndex)) {
+            if (_cache.add(ps)) {
+                queue.add(ps);
+            }
         }
     }
 
@@ -262,6 +271,84 @@ public class PSManager {
         calculateUnderestimate(partialSolution);
         return partialSolution;
     }
+
+    private boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
+        ArrayList<ProcessorSlot> toCopy = ps.getProcessors()[processorIndex];
+        ArrayList<ProcessorSlot> copy = new ArrayList<>(toCopy); // copy we use re order
+
+        //backups
+        ArrayList<ProcessorSlot> backup = new ArrayList<>(ps.getProcessors()[processorIndex]);
+        HashMap<Integer, ProcessorSlot> backupSlotMap = new HashMap<>(ps._slotMap);
+        ProcessorSlot[] latestSlotsBackup = ps._latestSlots.clone();
+
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+        int addedIndex = processors[processorIndex].size() - 1;
+        Node addedNode = processors[processorIndex].get(addedIndex).getNode();
+        int maxTime = processors[processorIndex].get(addedIndex).getFinish();
+        int i = addedIndex - 1; // where we check switch to
+        // empty the corresponding partialsolution processor
+        processors[processorIndex].clear();
+        ps._latestSlots[processorIndex] = null;
+        while (i >= 0 && (addedNode.getTopId() < copy.get(i).getNode().getTopId())) {
+            Collections.swap(copy, addedIndex, i);
+            for (ProcessorSlot slot : copy) {
+                int earliestTime = earliestTimeOnProcessors(ps, slot.getNode())[processorIndex];
+                ProcessorSlot newSlot = new ProcessorSlot(slot.getNode(), earliestTime, processorIndex);
+                processors[processorIndex].add(newSlot);
+                ps._latestSlots[processorIndex] = newSlot;
+            }
+            int newFinishTime = processors[processorIndex].get(processors[processorIndex].size() - 1).getFinish();
+            if (newFinishTime <= maxTime && outgoingCheck(ps, backup, processorIndex)) {
+                return true;
+            }
+            i--;
+        }
+        // restore and return
+        processors[processorIndex] = backup;
+        ps._slotMap = backupSlotMap;
+        ps._latestSlots = latestSlotsBackup;
+        return false;
+    }
+    // i is where m is
+
+    private boolean outgoingCheck(PartialSolution ps, ArrayList<ProcessorSlot> oldProcessor, int processorIndex) {
+        for (int i = 0; i < oldProcessor.size(); i++) {
+            ArrayList<ProcessorSlot> newProcessor = ps.getProcessors()[processorIndex];
+            ProcessorSlot newSlot = newProcessor.get(i);
+            ProcessorSlot oldSlot = oldProcessor.get(oldProcessor.indexOf(newSlot));
+            if (newSlot.getStart() > oldSlot.getStart()) {
+                // for all children, check affected time
+                for (Edge e : newSlot.getNode().getOutgoing()) {
+                    Node child = e.getTo();
+                    int dataTime = newSlot.getFinish() + e.getWeight();
+                    if (ps._slotMap.containsKey(child.getId())) { // child is already schedule
+                        ProcessorSlot childSlot = ps._slotMap.get(child.getId());
+                        if (!(childSlot.getProcessor() == processorIndex || childSlot.getStart() > dataTime)) {
+                            return false;
+                        }
+                    } else { // child is not scheduled
+                        boolean atLeastOneLater = false;
+                        // for all parents, check at least one comm time is later
+                        for (Edge parentEdge : child.getIncoming()) {
+                            Node parent = parentEdge.getFrom();
+                            if (ps._nodes.contains(parent.getName())) {
+                                // go through each processor and find it, compare it to dataTime
+                                ProcessorSlot parentSlot = ps._slotMap.get(parent.getId());
+                                if (parentSlot.getFinish() + parentEdge.getWeight() > dataTime) {
+                                    atLeastOneLater = true;
+                                }
+                            }
+                        }
+                        if (!atLeastOneLater) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 
     private void addToSorted(int[] array, int value, int[] indicesArray, int index) {
         for (int i = 0; i < array.length; i++) {
