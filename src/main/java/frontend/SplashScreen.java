@@ -39,6 +39,7 @@ import java.util.*;
 public class SplashScreen implements Initializable {
 
     Graph _graph;
+    GraphDrawer _gd;
 
     @FXML
     private AnchorPane graphPane;
@@ -51,8 +52,8 @@ public class SplashScreen implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         _graph = Main.getGraph();
-        GraphDrawer gd = new GraphDrawer(_graph, graphPane, circleSize);
-        gd.drawGraph();
+        _gd = new GraphDrawer(_graph, graphPane, circleSize);
+        _gd.drawGraph();
 
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
 
@@ -82,6 +83,15 @@ public class SplashScreen implements Initializable {
         Scene nextScene = new Scene(root);
         Stage loadingPage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
         loadingPage.setScene(nextScene);
+    }
+
+    public void changeColor(ActionEvent event) {
+        _gd.handleColorChange(event);
+    }
+
+    public void testChangeColor(ActionEvent event) {
+        int[] values = {80,50,32,31,21,17,13,8,1,1,1};
+        _gd.updateHeatMap(values);
     }
 }
 

@@ -213,4 +213,19 @@ public class GraphDrawer {
         }
         return returnList;
     }
+
+    // TODO: change when id of nodes have been updated.
+    public void updateHeatMap(int[] nodesVisited) {
+        double maxVisitedValue = 0;
+
+        for(int singleVisits: nodesVisited) {
+            if(singleVisits > maxVisitedValue) {
+                maxVisitedValue = singleVisits;
+            }
+        }
+
+        for(int i = 0; i < nodesVisited.length * 2; i = i+2) {
+            circleMap.get(i).setFill(Color.hsb(240, nodesVisited[i/2]/maxVisitedValue,1));
+        }
+    }
 }
