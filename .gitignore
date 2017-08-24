@@ -21,6 +21,9 @@
 .idea/
 *.iml
 
+# Output files
+*-output.dot
+
 # Maven files
 
 target/
