@@ -228,9 +228,8 @@ public class GraphDrawer {
                 maxVisitedValue = singleVisits;
             }
         }
-
-        for(int i = 0; i < nodesVisited.length * 2; i = i+2) {
-            circleMap.get(i).setFill(Color.hsb(240, nodesVisited[i/2]/maxVisitedValue,1));
+        for(int i = 0; i < nodesVisited.length; i++) {
+            circleMap.get(i + 1).setFill(Color.hsb(240, nodesVisited[i]/maxVisitedValue,1));
         }
     }
 }
