@@ -5,7 +5,10 @@ import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import graph.Node;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.Parent;
+
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -32,7 +35,7 @@ public class Main extends Application {
         List<Node> listOfNodes = _graph.getNodes();
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
-        //Parent root = FXMLLoader.load(url);
+        Parent root = FXMLLoader.load(url);
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
 
 
@@ -55,7 +58,7 @@ public class Main extends Application {
         ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
 
 
-        ScrollPane root = sgm.generateGraph(ps);
+        //ScrollPane root = sgm.generateGraph(ps);
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
