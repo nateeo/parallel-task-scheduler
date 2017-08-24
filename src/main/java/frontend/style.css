@@ -1,0 +1,59 @@
+.label.title {
+    -fx-font-family: "Avenir Medium";
+    -fx-font-size: 20pt;
+    -fx-text-fill: white;
+}
+
+.button {
+   -fx-font-size: 10pt;
+   -fx-font-family: "Avenir Medium";
+   -fx-background-radius: 10;
+}
+
+.background {
+   -fx-background-color: #474747;
+}
+
+.label {
+    -fx-font-size: 12pt;
+    -fx-font-family: "Avenir Medium";
+    -fx-text-fill: white;
+}
+
+.grid-cell {
+    -fx-background-color: #26547c ;
+    -fx-border-color: #19647e;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.rectangle {
+    -fx-border-color: white;
+    -fx-border-width: 0.25px;
+    -fx-background-color: rgba(46, 192, 155, 0.5);
+
+
+}
+
+
+.top-grid-first {
+    -fx-border-color: darkgray;
+    -fx-border-width: 0 1px 1px 1px;
+}
+
+.top-grid {
+    -fx-border-color: darkgray;
+    -fx-border-width: 0 1px 1px 0;
+}
+
+.left-grid-first {
+    -fx-border-color: darkgray;
+    -fx-border-width: 1px 1px 1px 0;
+}
+
+.left-grid {
+    -fx-border-color: darkgray;
+    -fx-border-width: 0px 1px 1px 0;
+}
+
+
+
