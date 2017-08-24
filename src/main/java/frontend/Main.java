@@ -6,6 +6,7 @@ import algorithm.PartialSolution;
 import graph.Node;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -26,7 +27,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // input the graph.
-        File testGraph = new File ("input-graphs/Nodes_10_Fork_Join.dot");
+        File testGraph = new File ("input-graphs/Nodes_10_Random.dot");
         _graph = parseDotFile(testGraph);
         List<Node> listOfNodes = _graph.getNodes();
 
@@ -51,10 +52,10 @@ public class Main extends Application {
         }
         ps = priorityQueue.getCurrentPartialSolution();
 
-        ScheduleGraph sgm = new ScheduleGraph(ps);
+        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
 
 
-        Pane root = sgm.generateGraph(ps);
+        ScrollPane root = sgm.generateGraph(ps);
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
