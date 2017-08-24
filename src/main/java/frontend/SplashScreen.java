@@ -1,5 +1,8 @@
 package frontend;
 
+import algorithm.PSManager;
+import algorithm.PSPriorityQueue;
+import algorithm.PartialSolution;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
@@ -11,6 +14,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -41,11 +46,35 @@ public class SplashScreen implements Initializable {
     private AnchorPane graphPane;
     private double circleSize = 40;
 
+    @FXML
+    private AnchorPane schedulerPane;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         _graph = Main.getGraph();
         drawGraph(_graph);
 
+        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
+
+        // PSManager instance to perform calculations and generate states from existing Partial Solutions
+        PartialSolution ps = null;
+        PSManager psManager = new PSManager(3, _graph);
+        //priority queue will terminate upon the first instance of a total solution
+        while (priorityQueue.hasNext()) {
+            ps = priorityQueue.getCurrentPartialSolution();
+            //generate the child partial solutions from the current "best" candidate partial solution
+            //then add to the priority queue based on conditions.
+            psManager.generateChildren(ps, priorityQueue);
+        }
+        ps = priorityQueue.getCurrentPartialSolution();
+
+        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
+        try {
+            schedulerPane.getChildren().add(sgm.generateGraph(ps));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void changeScene(String filePathToXML, ActionEvent actionEvent) throws Exception{

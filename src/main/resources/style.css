@@ -1,0 +1,32 @@
+.label.title {
+    -fx-font-family: "Avenir Medium";
+    -fx-font-size: 20pt;
+    -fx-text-fill: white;
+}
+
+.button {
+   -fx-font-size: 10pt;
+   -fx-font-family: "Avenir Medium";
+   -fx-background-radius: 10;
+}
+
+.background {
+   -fx-background-color: #474747;
+}
+
+.label {
+    -fx-font-size: 12pt;
+    -fx-font-family: "Avenir Medium";
+    -fx-text-fill: white;
+}
+
+.grid-cell {
+    -fx-background-color: red, blue ;
+    -fx-background-insets: 0, 0 1 1 0 ;
+}
+
+.rectangle {
+    -fx-background-color: aliceblue;
+}
+
+
