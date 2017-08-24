@@ -6,9 +6,15 @@ import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
 import graph.Graph;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import logger.Logger;
 
 import java.io.File;
+
+import static scheduler.Scheduler._priorityQueue;
 
 /**
  * Entry point to the scheduling algorithm
@@ -21,6 +27,7 @@ public class Scheduler {
     private static String _outputFile = "INPUT-output.dot";
     private static File _inputFile;
     private static Graph _graph;
+    public static PSPriorityQueue _priorityQueue;
 
     private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
 
@@ -111,19 +118,19 @@ public class Scheduler {
      */
     private static PartialSolution solution() {
         // Priority queue containing generated states
-        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+         _priorityQueue = new PSPriorityQueue(_graph, _processors);
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
-        while (priorityQueue.hasNext()) {
-            ps = priorityQueue.getCurrentPartialSolution();
+        while (_priorityQueue.hasNext()) {
+            ps = _priorityQueue.getCurrentPartialSolution();
             //generate the child partial solutions from the current "best" candidate partial solution
             //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, priorityQueue);
+            psManager.generateChildren(ps, _priorityQueue);
         }
-        ps = priorityQueue.getCurrentPartialSolution();
+        ps = _priorityQueue.getCurrentPartialSolution();
         return ps;
     }
 
@@ -135,4 +142,35 @@ public class Scheduler {
         Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
 
+}
+
+class PSPriorityQueueWrapper {
+    Timeline _timeline;
+    // Listeners to give EDS/Sam stats every second or so
+    // Uses decorator/wrapper pattern to wrap PSManager and send data every poll
+    // Wraps PSManager
+
+    // method to assign sam/eds stuff as a listneer, and this method has a timer to send
+    // PSManager's data every second or so
+
+    PSPriorityQueueWrapper(){
+        startEventTimer();
+    }
+
+    public void startEventTimer(){
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.millis(1000),
+                ae -> bestPS()));
+        _timeline = timeline;
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    public void cancelEventTimer(){
+        _timeline.stop();
+    }
+
+    public PartialSolution bestPS(){
+        return _priorityQueue.getCurrentPartialSolution();
+    }
 }

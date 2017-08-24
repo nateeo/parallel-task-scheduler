@@ -1,5 +1,10 @@
 package algorithm;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -84,3 +89,5 @@ public class PartialSolution implements Comparable<PartialSolution> {
         return s;
     }
 }
+
+
