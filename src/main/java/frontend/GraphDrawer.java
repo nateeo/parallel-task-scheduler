@@ -32,6 +32,11 @@ public class GraphDrawer {
         List<Node> nodes = _graph.getNodes();
         //List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = _graph.getEdges();
+        for(Edge deletingEdge: edges) {
+            if(deletingEdge.getWeight() == 0) {
+                edges.remove(deletingEdge);
+            }
+        }
         List<Node> source = _graph.getStart();
         double graphPaneX = _graphPane.getPrefWidth();
         double graphPaneY = _graphPane.getPrefHeight();
