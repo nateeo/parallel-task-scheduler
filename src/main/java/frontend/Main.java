@@ -25,14 +25,15 @@ import static dotParser.Parser.parseDotFile;
 public class Main extends Application {
 
     static Graph _graph;
+    static PartialSolution _ps;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        // input the graph.
+        /*// input the graph.
         File testGraph = new File ("src/test/resources/exampleLarge.dot");
         _graph = parseDotFile(testGraph);
-        List<Node> listOfNodes = _graph.getNodes();
+        List<Node> listOfNodes = _graph.getNodes();*/
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
         Parent root = FXMLLoader.load(url);
@@ -40,7 +41,7 @@ public class Main extends Application {
 
 
         //TESTING-START
-
+        /*
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
@@ -55,7 +56,7 @@ public class Main extends Application {
         }
         ps = priorityQueue.getCurrentPartialSolution();
 
-        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
+        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);*/
 
 
         //ScrollPane root = sgm.generateGraph(ps);
@@ -72,10 +73,12 @@ public class Main extends Application {
         return _graph;
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(Graph graph, PartialSolution ps) {
+        _graph = graph;
+        _ps = ps;
+        launch();
+
     }
 
-    //private File testGraph = new File ("../../../test/resources/exampleSmall.dot");
-    //private Graph graph = parseDotFile(testGraph);
+
 }

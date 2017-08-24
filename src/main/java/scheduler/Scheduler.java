@@ -5,6 +5,7 @@ import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
+import frontend.Main;
 import graph.Graph;
 import logger.Logger;
 
@@ -101,6 +102,8 @@ public class Scheduler {
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
         System.out.println(ps.toString());
+        Main.main(_graph,ps);
+
         return ps; // for testing
     }
 

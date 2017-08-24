@@ -39,6 +39,7 @@ import java.util.*;
 public class SplashScreen implements Initializable {
 
     Graph _graph;
+    PartialSolution _ps;
     GraphDrawer _gd;
 
     @FXML
@@ -46,14 +47,21 @@ public class SplashScreen implements Initializable {
     private double circleSize = 40;
 
     @FXML
+    private AnchorPane statsPane;
+
+    @FXML
     private AnchorPane schedulerPane;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        //draw graph
         _graph = Main.getGraph();
         _gd = new GraphDrawer(_graph, graphPane, circleSize);
         _gd.drawGraph();
+
+        //generate stats
+
 
         PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
 
