@@ -14,13 +14,17 @@ import java.util.TreeSet;
  * author: nhur714
  */
 public class Cache {
+
     private TreeSet<PartialSolution> _treeSet;
     private int _processorCount;
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
+
+        // if the PartialSolutions have the same cost
         if (costDiff == 0) {
             int nodeDiff = o1._nodes.size() - o2._nodes.size();
+            // same cost and same number of nodes
             if (nodeDiff == 0) {
                 // go through starting nodes
                 for (int i = 0; i < _processorCount; i++) {
@@ -49,6 +53,10 @@ public class Cache {
         }
     };
 
+    /**
+     * constructs a cache object
+     * @param processorCount
+     */
     public Cache(int processorCount) {
         _treeSet = new TreeSet<>(comparator);
         _processorCount = processorCount;

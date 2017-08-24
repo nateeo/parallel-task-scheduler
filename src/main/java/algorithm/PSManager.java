@@ -26,7 +26,7 @@ public class PSManager {
     //lists for calculating earliest times
     private int[] _maxPredecessorTime;
     private int[] _earliestTimes;
-
+  
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
@@ -45,7 +45,7 @@ public class PSManager {
      * and generates partial solutions from those free variables.
      * @param parentPS the parent partial solution to generate children from
      * @param queue the queue to add the children to
-     * @return
+     * @return void
      */
     public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
         List<Node> freeNodes = getFreeNodes(parentPS);
@@ -91,9 +91,9 @@ public class PSManager {
 
         // data ready time heuristic
         int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
-
-        // update estimate
-        ps._cost = Math.max(ps._cost, Math.max(Math.max(idleTimeHeuristic, dataReadyTimeHeuristic), ps._bottomLevelWork));
+      
+        // update estimate, aka cost function f(s)
+        ps._cost = Math.max(Math.max(Math.max(ps._bottomLevelWork, ps._cost), idleTimeHeuristic), dataReadyTimeHeuristic);
     }
 
     /**
@@ -102,24 +102,41 @@ public class PSManager {
      * @return
      */
     public int calculateDataReadyTime(PartialSolution ps){
+        // construct a list of all free nodes in the given partial solution to iterate over
         List<Node> freeNodeList = getFreeNodes(ps);
         int maximumDRT = 0;
 
+        // for every free node
         for(Node freeNode : freeNodeList){
             // get minimum drt on each processor
             int minDrt = -1;
+
+            // get the blw for the free node
             int blw = _bottomLevelWork.get(freeNode.getName());
+
+            //for the earliest time this given freenode can be placed on each processor
             for (int i : earliestTimeOnProcessors(ps, freeNode)) {
-                if (i < minDrt || minDrt == -1) {
-                    minDrt = i;
+                if (i < minDrt || minDrt == -1) { // if this earliest time is earlier than minDrt
+                    minDrt = i; // update it
                 }
             }
+            // calcs data ready time for this given free node
             int dataReadyFinish = blw + minDrt;
-            if (dataReadyFinish > maximumDRT) maximumDRT = dataReadyFinish;
+
+            // if this free nodes drt is greater than all previous free nodes drt's update the drt for this PS
+            if (dataReadyFinish > maximumDRT) {
+                maximumDRT = dataReadyFinish;
+            }
         }
         return maximumDRT;
     }
 
+    /**
+     * gets all the freenodes by finding all nodes not on the PartialSolution that have all their
+     * predecessors on the PartialSolution
+     * @param parentPS
+     * @return
+     */
     private List<Node> getFreeNodes(PartialSolution parentPS) {
         List<Node> freeNodes = new ArrayList<Node>();
         List<Node> nodes = _graph.getNodes();
@@ -211,6 +228,7 @@ public class PSManager {
 
     /**
      * check if a node is present within the schedule of the partial schedule.
+     *
      * @param node
      * @return
      */
@@ -228,11 +246,12 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-
         ps._slotMap.put(slot.getNode().getId(), slot);
 
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
+
+        // calculate when the prev slot finished
         if (latestSlot == null) { // this is the first slot in the processor
             prevSlotFinishTime = 0;
             ps._zeroStarts--;
@@ -245,12 +264,14 @@ public class PSManager {
                 ps._priority = 1;
             }
         }
-        int processor = slot.getProcessor();
-        ps._processors[processor].add(slot);
+
+
+        ps._processors[processorNo].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
-        ps._latestSlots[processor] = slot; // the newest slot becomes the latest
+        ps._latestSlots[processorNo] = slot; // the newest slot becomes the latest
         ps._nodes.add(slot.getNode().getName()); // add node to node string
+
         if (ps._latestSlot == null || ps._latestSlot.getFinish() < slot.getFinish()) {
             ps._latestSlot = slot; // last slot across all processors is the new slot if it finishes later
         }

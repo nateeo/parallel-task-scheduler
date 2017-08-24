@@ -91,6 +91,9 @@ public class PartialSolution implements Comparable<PartialSolution> {
     }
 
     @Override // TODO: remove when working
+    /**
+     * glorified logging
+     */
     public String toString() {
         String s = "\n===========================\n";
         for (int i = 0; i < _processors.length; i++) {
