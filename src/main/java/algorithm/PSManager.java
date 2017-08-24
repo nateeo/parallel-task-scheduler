@@ -23,10 +23,6 @@ public class PSManager {
     //cache the constant portion of the idle time heuristic (total work / processors)
     private double _idleConstantHeuristic;
 
-    //lists for calculating earliest times
-    private int[] _maxPredecessorTime;
-    private int[] _earliestTimes;
-
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
@@ -87,10 +83,10 @@ public class PSManager {
 
 
         // update idle time heuristic TODO: optimise
-        int idleTimeHeuristic = (int)Math.ceil(_idleConstantHeuristic + (ps._idleTime / _numberOfProcessors));
+        double idleTimeHeuristic = _idleConstantHeuristic + (ps._idleTime / _numberOfProcessors);
 
         // data ready time heuristic
-        int dataReadyTimeHeuristic = calculateDataReadyTime(ps);
+        double dataReadyTimeHeuristic = calculateDataReadyTime(ps);
 
         // update estimate
         ps._cost = Math.max(ps._cost, Math.max(Math.max(idleTimeHeuristic, dataReadyTimeHeuristic), ps._bottomLevelWork));
@@ -149,8 +145,8 @@ public class PSManager {
      * @return int[] index is the processor, value is the time
      */
     private int[] earliestTimeOnProcessors(PartialSolution parentPS, Node freeNode) {
-        _earliestTimes = new int[_numberOfProcessors];
-        _maxPredecessorTime = new int[_numberOfProcessors];
+        int[] _earliestTimes = new int[_numberOfProcessors];
+        int[] _maxPredecessorTime = new int[_numberOfProcessors];
         ArrayList<Node> parents = freeNode.getParentNodes();
         int maxTime = 0;
         ProcessorSlot maxSlot = null;

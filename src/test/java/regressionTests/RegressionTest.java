@@ -86,7 +86,7 @@ public class RegressionTest {
                 ps = priorityQueue.getCurrentPartialSolution();
                 long timeTaken = Logger.endTiming();
 
-                int testCost = ps._cost;
+                double testCost = ps._cost;
                 boolean isValid = scheduleIsValid(graph, ps);
                 System.out.println("\n================\n\n[PROCESSORS: " + processorNumber + "] GRAPH: " + graph.getName()  +
                         "\nexpectedCost: " + expectedCost + "\tactualCost: " + testCost + "\tisValid: " + isValid + "\ttimeTaken: " + timeTaken + "ms" +
@@ -95,8 +95,8 @@ public class RegressionTest {
 
                 // check solution has an optimal finish time, and that this is equal to the final cost estimate
                 assertEquals("Cost of graph " + graph.getName() + " on " + processorNumber + " processors should be " + expectedCost,
-                        expectedCost, testCost);
-                assertEquals("Cost should equal finish time", testCost, ps._latestSlot.getFinish());
+                        expectedCost, testCost, 0);
+                assertEquals("Cost should equal finish time", testCost, ps._latestSlot.getFinish(), 0);
 
                 // check solution is a valid schedule
                 assertTrue("The produced schedule should be valid", isValid);

@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class PartialSolution implements Comparable<PartialSolution> {
 
     public int _idleTime; // total idle time (between slots)
-    public int _cost; // overall cost heuristic
+    public double _cost; // overall cost heuristic
     public int _bottomLevelWork;
     public int _currentFinishTime; // the finish time of the lowest node in the schedule
     public ProcessorSlot _latestSlot;

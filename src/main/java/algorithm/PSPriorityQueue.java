@@ -46,8 +46,7 @@ public class PSPriorityQueue {
      * @return
      */
     public boolean hasNext() {
-        PartialSolution ps = _queue.poll();
-        _currentPartialSolution = ps;
+        _currentPartialSolution = _queue.poll();
         return _currentPartialSolution._nodes.size() != _totalNodes;
     }
 

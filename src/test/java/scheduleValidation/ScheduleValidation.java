@@ -46,16 +46,13 @@ public class ScheduleValidation {
 
         for (int i = 0; i < valid.length; i++) {
 
-            if (valid[i] == false) {
+            if (!valid[i]) {
                 System.out.println("method" + i + " failed");
                 fail_count++;
             }
         }
 
-        if(fail_count == 0){
-            return true;
-        }
-        return false;
+        return fail_count == 0;
 
     }
 

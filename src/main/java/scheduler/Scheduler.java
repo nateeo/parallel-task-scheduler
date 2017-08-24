@@ -14,15 +14,10 @@ import java.io.File;
  * Entry point to the scheduling algorithm
  */
 public class Scheduler {
-    private static String _inputFileName;
     private static int _processors;
-    private static int _cores = 1;
-    private static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
     private static File _inputFile;
     private static Graph _graph;
-
-    private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
 
 
     /**
@@ -50,7 +45,7 @@ public class Scheduler {
      * @throws InvalidInputException
      * @throws Exception
      */
-    public static PartialSolution parseConsole(String[] args) throws InvalidInputException, Exception {
+    public static PartialSolution parseConsole(String[] args) throws Exception {
         int argLength = args.length;
         boolean customOutput = false;
         //argument must have at most 7 space separated strings.
@@ -59,7 +54,7 @@ public class Scheduler {
             throw new InvalidInputException("Invalid number of arguments.");
         }
         //first string is input filename. Must be a .dot file.
-        _inputFileName = args[0];
+        String _inputFileName = args[0];
         if (!_inputFileName.endsWith(".dot")) {
             throw new InvalidInputException("Input file must be dot");
         }
@@ -72,10 +67,10 @@ public class Scheduler {
         for (int i = 2; i < argLength; i++) {
             switch (args[i]) {
                 case "-p":
-                    _cores = Integer.valueOf(args[i + 1]);
+                    int _cores = Integer.valueOf(args[i + 1]);
                     break;
                 case "-v":
-                    _visualize = true;
+                    boolean _visualize = true;
                     break;
                 case "-o":
                     _outputFile = args[i + 1];
@@ -89,6 +84,7 @@ public class Scheduler {
             _outputFile = _graph.getName()+"-output.dot";//generate output based on graph name
         }
         Logger.startTiming();
+        String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
         System.out.println(_consolePrefix + "Processing the graph...");
         PartialSolution ps = solution();//generate the solution
         long totalTime = Logger.endTiming();

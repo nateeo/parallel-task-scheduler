@@ -105,12 +105,12 @@ public class Parser {
         boolean[] visited = new boolean[nodes.size() + 1];
 
         for (Node node : nodes) {
-            if (visited[node.getId()] == false) {
+            if (!visited[node.getId()]) {
                 topologicalSort(node, visited, stack);
             }
         }
 
-        while (stack.empty() == false) {
+        while (!stack.empty()) {
             String name = stack.pop();
             nodeMap.get(name).setTopId(idCounter);
             idCounter++;
