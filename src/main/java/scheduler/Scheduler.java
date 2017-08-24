@@ -9,7 +9,6 @@ import graph.Graph;
 import logger.Logger;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * Entry point to the scheduling algorithm
@@ -23,7 +22,7 @@ public class Scheduler {
     private static File _inputFile;
     private static Graph _graph;
 
-    private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
+    private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
 
 
     /**
@@ -102,8 +101,6 @@ public class Scheduler {
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
         System.out.println(ps.toString());
-        System.out.println(Arrays.toString(ps._startingNodes));
-        System.out.println(Arrays.toString(ps._startingNodeIndices));
         return ps; // for testing
     }
 
