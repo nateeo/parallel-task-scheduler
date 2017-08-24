@@ -31,6 +31,7 @@ public class ScheduleGraphGenerator {
 
     //FIXED DIMENSIONS
     private int ABSOLUTE_HEIGHT = 700;//height of the output
+    private int DESIRED_WIDTH= 400;
     private int ABSOLUTE_WIDTH = 100;
     private int GRID_HEIGHT = 80;//preferred grid height. Will be rounded to a 'neat' number
 
@@ -48,6 +49,7 @@ public class ScheduleGraphGenerator {
         _graphComponent = new StackPane();
         _ps = ps;
         _numProcessors = ps.getProcessors().length;
+        ABSOLUTE_WIDTH = DESIRED_WIDTH/_numProcessors;
         _graphLayout = new GridPane();
         computeGridDimensions();//calculate dimensions of graph
         GridPane gridWithBorders = drawGridBorders();//draws the background grid of the graph
@@ -60,6 +62,7 @@ public class ScheduleGraphGenerator {
 
         _returnPane = new ScrollPane();
         _returnPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
     }
 
     /**
