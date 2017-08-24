@@ -265,7 +265,7 @@ public class PSManager {
             }
         }
 
-
+        int processorNo = slot.getProcessor();
         ps._processors[processorNo].add(slot);
         ps._idleTime += slot.getStart() - prevSlotFinishTime; // add any idle time found
         ps._bottomLevelWork = Math.max(ps._bottomLevelWork, slot.getStart() + _bottomLevelWork.get(slot.getNode().getName()));// update max bottom level work
