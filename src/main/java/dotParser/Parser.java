@@ -9,6 +9,8 @@ import graph.Node;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * This class contains methods to:
@@ -17,7 +19,7 @@ import java.util.HashMap;
  */
 public class Parser {
 
-    static int idCounter = 0;
+    static int idCounter = 1;
 
     /**
      * Parses .dot file and returns a Graph Object representation.
@@ -26,8 +28,9 @@ public class Parser {
      * @throws IOException
      */
     public static Graph parseDotFile (File file) {
-        idCounter = 0;
+        idCounter = 1;
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        HashMap<Integer, ArrayList<Node>> equalCostNodes = new HashMap<>();
         HashMap startNodes;
         Graph graph;
         int totalMinimumWork = 0;
@@ -58,7 +61,11 @@ public class Parser {
                     if (!splitLine[0].contains("->")) { // add single vertex to graph and hashmap, as well as weight to min work
                         weight = getValue(right);
                         Node newVertex = new Node(idCounter++, left, weight);
-                        idCounter++;
+                        // add node to hashmap to detect duplicates
+                        if (!equalCostNodes.containsKey(weight)) {
+                            equalCostNodes.put(weight, new ArrayList<>());
+                        }
+                        equalCostNodes.get(weight).add(newVertex);
                         totalMinimumWork += weight;
                         nodeMap.put(left, newVertex);
                     } else { // add arc to queue for processing at the end
@@ -76,7 +83,7 @@ public class Parser {
         for (String[] string : arcQueue) {
             String[] arcString = string[0].split("->");
             String from = arcString[0].trim();
-            String to =  arcString[1].trim();
+            String to = arcString[1].trim();
             Node fromNode = nodeMap.get(from);
             Node toNode = nodeMap.get(to);
             int weight = getValue(string[1]);
@@ -87,11 +94,88 @@ public class Parser {
         }
 
         // set some useful fields in graph Object
-        graph.setStart(new ArrayList<Node>(startNodes.values()));
         graph.setNodes(new ArrayList<Node>(nodeMap.values()));
+        graph.setStart(new ArrayList<Node>(startNodes.values()));
         graph.setTotalMinimumWork(totalMinimumWork);
 
+        // topologically sort for setting id in order
+        idCounter = 1;
+        List<Node> nodes = graph.getNodes();
+        Stack<String> stack = new Stack<>();
+        boolean[] visited = new boolean[nodes.size() + 1];
+
+        for (Node node : nodes) {
+            if (visited[node.getId()] == false) {
+                topologicalSort(node, visited, stack);
+            }
+        }
+
+        while (stack.empty() == false) {
+            String name = stack.pop();
+            nodeMap.get(name).setTopId(idCounter);
+            idCounter++;
+        }
+
+        // calculate bottom level work before handling node equivalence
+        graph.bottomLevelCalculator();
+        for (ArrayList<Node> list : equalCostNodes.values()) {
+            for (int i = 0; i < list.size() - 1; i++) {
+                for (int j = i + 1; j < list.size(); j++) {
+                    Node first = list.get(i);
+                    Node other = list.get(j);
+                    if (first.getIncoming().size() == other.getIncoming().size() && first.getOutgoing().size() == other.getOutgoing().size()) {
+                        boolean equal = true;
+                        for (Edge e : first.getIncoming()) {
+                            boolean found = false;
+                            for (Edge e2 : other.getIncoming()) {
+                                if (e.getFrom().equals(e2.getFrom()) && e.getWeight() == e2.getWeight()) found = true;
+                            }
+                            if (!found) {
+                                equal = false;
+                                break;
+                            }
+                        }
+                        if (equal) {
+                            for (Edge e : first.getOutgoing()) {
+                                boolean found = false;
+                                for (Edge e2 : other.getOutgoing()) {
+                                    if (e.getTo().equals(e2.getTo()) && e.getWeight() == e2.getWeight()) found = true;
+                                }
+                                if (!found) {
+                                    equal = false;
+                                    break;
+                                }
+                            }
+                            if (equal) { // equal, add edge between them so they don't appear together
+                                if (first.getTopId() < other.getTopId()) {
+                                    graph.addEdge(new Edge(first, other, 0));
+                                    first.addOutgoingEdge(other, 0);
+                                    other.addIncomingEdge(first, 0);
+                                } else {
+
+                                    graph.addEdge(new Edge(other, first, 0));
+                                    other.addOutgoingEdge(first, 0);
+                                    first.addIncomingEdge(other, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return graph;
+    }
+
+    private static void topologicalSort(Node node, boolean visited[], Stack stack) {
+        visited[node.getId()] = true;
+        ArrayList<Edge> outgoing = node.getOutgoing();
+        for (Edge e : outgoing) {
+            Node to = e.getTo();
+            if (!visited[to.getId()]) {
+                topologicalSort(to, visited, stack);
+            }
+        }
+        stack.push(node.getName());
     }
 
     /**
@@ -162,7 +246,7 @@ public class Parser {
                 writer.print(output.toString());
                 writer.close();
             } catch (IOException e) {
-                System.out.println("Invalid outout file name. ");
+                System.out.println("Invalid output file name. ");
                 e.printStackTrace();
             }
         } catch (IOException e) {
