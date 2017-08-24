@@ -276,7 +276,7 @@ public class PSManager {
         HashMap<Integer, ProcessorSlot> slotMapBackup = (HashMap)ps._slotMap.clone();
         ProcessorSlot addedSlot = processor.get(m);
         int maxTime = addedSlot.getFinish();
-        while (i >= 0 && addedSlot.getNode().getId() < processor.get(i).getNode().getId()) {
+        while (i >= 0 && addedSlot.getNode().getTopId() < processor.get(i).getNode().getTopId()) {
             // swap
             Collections.swap(processor, m, i);
             // empty the processor on the partialSolution

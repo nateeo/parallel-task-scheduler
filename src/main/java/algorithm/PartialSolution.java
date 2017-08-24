@@ -18,7 +18,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public ProcessorSlot[] _latestSlots;
 
     public ArrayList<ProcessorSlot>[] _processors;
-    public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
+    public ArrayList<String> _nodes; //trialing string to show nodes in solution;
     //public TreeMap<Integer, Integer> _id; // node id -> array int
     public int[] _startingNodes;
     public int[] _startingNodeIndices;
@@ -31,6 +31,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
         }
+        _nodes = new ArrayList<String>();
         _latestSlots = new ProcessorSlot[numberOfProcessors];
         _startingNodes = new int[numberOfProcessors];
         _startingNodeIndices = new int[numberOfProcessors];

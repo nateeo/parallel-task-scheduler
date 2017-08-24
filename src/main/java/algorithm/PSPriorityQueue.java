@@ -48,12 +48,18 @@ public class PSPriorityQueue {
      * @return
      */
     public boolean hasNext() {
-        _currentPartialSolution = _queue.poll();
-        totalStates++;
-        if (_currentPartialSolution._nodes.size() == _totalNodes) {
-            System.out.println(_graph.getName() + " TOTAL STATES: " + totalStates);
+        PartialSolution ps = _queue.poll();
+        if (ps != null) {
+            _currentPartialSolution = ps;
+            totalStates++;
+            if (_currentPartialSolution._nodes.size() == _totalNodes) {
+                System.out.println(_graph.getName() + " TOTAL STATES: " + totalStates);
+            }
+            return _currentPartialSolution._nodes.size() != _totalNodes;
+        } else {
+            System.out.println("empty.. last thing was \n" + _currentPartialSolution.toString());
         }
-        return _currentPartialSolution._nodes.size() != _totalNodes;
+        return false;
     }
 
     /**

@@ -7,7 +7,10 @@ import graph.Graph;
 import graph.Node;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * This class contains methods to:
@@ -91,9 +94,28 @@ public class Parser {
         }
 
         // set some useful fields in graph Object
-        graph.setStart(new ArrayList<Node>(startNodes.values()));
         graph.setNodes(new ArrayList<Node>(nodeMap.values()));
+        graph.setStart(new ArrayList<Node>(startNodes.values()));
         graph.setTotalMinimumWork(totalMinimumWork);
+
+        // topologically sort for setting id in order
+        idCounter = 1;
+        List<Node> nodes = graph.getNodes();
+        Stack<String> stack = new Stack<>();
+        boolean[] visited = new boolean[nodes.size() + 1];
+
+        for (Node node : nodes) {
+            if (visited[node.getId()] == false) {
+                topologicalSort(node, visited, stack);
+            }
+        }
+
+        while (stack.empty() == false) {
+            String name = stack.pop();
+            System.out.println(name);
+            nodeMap.get(name).setTopId(idCounter);
+            idCounter++;
+        }
 
         // calculate bottom level work before handling node equivalence
         graph.bottomLevelCalculator();
@@ -137,6 +159,18 @@ public class Parser {
             }
         }
         return graph;
+    }
+
+    private static void topologicalSort(Node node, boolean visited[], Stack stack) {
+        visited[node.getId()] = true;
+        ArrayList<Edge> outgoing = node.getOutgoing();
+        for (Edge e : outgoing) {
+            Node to = e.getTo();
+            if (!visited[to.getId()]) {
+                topologicalSort(to, visited, stack);
+            }
+        }
+        stack.push(node.getName());
     }
 
     /**
@@ -207,7 +241,7 @@ public class Parser {
                 writer.print(output.toString());
                 writer.close();
             } catch (IOException e) {
-                System.out.println("Invalid outout file name. ");
+                System.out.println("Invalid output file name. ");
                 e.printStackTrace();
             }
         } catch (IOException e) {
@@ -216,7 +250,6 @@ public class Parser {
 
 
     }
-
 
     private static int getValue(String value) {
         return Integer.parseInt(value.substring(value.indexOf("=") + 1, value.lastIndexOf("]")).trim());
