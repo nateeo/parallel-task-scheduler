@@ -7,6 +7,14 @@
     <groupId>306-group5</groupId>
     <artifactId>scheduling-app</artifactId>
     <version>1.0</version>
+
+    <repositories>
+        <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${project.basedir}/pttask</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -44,11 +52,9 @@
         <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>pt</groupId>
+        <groupId>osinnen</groupId>
         <artifactId>pt</artifactId>
-        <version>1.0</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/ParaTask-Runtime-0.9.5.jar</systemPath>
+        <version>0.9.5</version>
     </dependency>
     <dependency>
         <groupId>org.junit.jupiter</groupId>

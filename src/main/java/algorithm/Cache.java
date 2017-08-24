@@ -1,5 +1,7 @@
 package algorithm;
 
+import logger.Logger;
+
 import java.util.*;
 
 /**
@@ -32,6 +34,7 @@ public class Cache {
                 }
                 // go through each processor, return if size different
                 for (int i = 0; i < _processorCount; i++) {
+                    if (o1._startingNodes[i] != 0) {
                     ArrayList<ProcessorSlot> o1Processor = o1.getProcessors()[o1._startingNodeIndices[i]];
                     ArrayList<ProcessorSlot> o2Processor = o2.getProcessors()[o2._startingNodeIndices[i]];
                     int size1 = o1Processor.size();
@@ -41,6 +44,7 @@ public class Cache {
                         int slotNodeDiff = o1Processor.get(j).getNode().getId() - o2Processor.get(j).getNode().getId();
                         if (slotNodeDiff != 0) return slotNodeDiff;
                     }
+                }
                 }
                 // same!
                 return 0;
