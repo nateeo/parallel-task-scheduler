@@ -11,7 +11,7 @@
     <repositories>
         <repository>
             <id>local-maven-repo</id>
-            <url>file:///${project.basedir}/pttask</url>
+            <url>file:///${project.basedir}/local-maven-repo</url>
         </repository>
     </repositories>
 
@@ -52,8 +52,8 @@
         <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>osinnen</groupId>
-        <artifactId>pt</artifactId>
+        <groupId>pttask</groupId>
+        <artifactId>pttask</artifactId>
         <version>0.9.5</version>
     </dependency>
     <dependency>
