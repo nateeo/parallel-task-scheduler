@@ -42,7 +42,7 @@ public class ProcessorSlot {
 
     @Override
     public String toString() {
-        return _node.toString();
+        return "" + _node.getTopId();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package algorithm;
 
+import graph.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +18,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public int _currentFinishTime; // the finish time of the lowest node in the schedule
     public ProcessorSlot _latestSlot;
     public ProcessorSlot[] _latestSlots;
-
+    public ArrayList<Node> _brokenNodes = new ArrayList<Node>();
     public ArrayList<ProcessorSlot>[] _processors;
     public ArrayList<String> _nodes; //trialing string to show nodes in solution;
     //public TreeMap<Integer, Integer> _id; // node id -> array int
@@ -88,7 +90,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         for (int i = 0; i < _processors.length; i++) {
             s += "PROCESSOR " + (i+1) + "\n";
             for (ProcessorSlot slot : _processors[i]) {
-                s += "start: " + slot.getStart() + " finish: " + slot.getFinish() + " node: " + slot.getNode().getId() + "\n";
+                s += "start: " + slot.getStart() + " finish: " + slot.getFinish() + " node: " + slot.getNode().getId() +  "\n";
             }
         }
         s+= "cost estimate: " + _cost;

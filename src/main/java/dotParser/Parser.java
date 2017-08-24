@@ -112,7 +112,6 @@ public class Parser {
 
         while (stack.empty() == false) {
             String name = stack.pop();
-            System.out.println(name);
             nodeMap.get(name).setTopId(idCounter);
             idCounter++;
         }
@@ -149,9 +148,15 @@ public class Parser {
                             }
                             if (equal) { // equal, add edge between them so they don't appear together
                                 System.out.println("Found duplicates: " + first + " -> " + other);
-                                graph.addEdge(new Edge(first, other, 0));
-                                first.addOutgoingEdge(other, 0);
-                                other.addIncomingEdge(first, 0);
+                                if (first.getTopId() < other.getTopId()) {
+                                    graph.addEdge(new Edge(other, first, 0));
+                                    other.addOutgoingEdge(first, 0);
+                                    first.addIncomingEdge(other, 0);
+                                } else {
+                                    graph.addEdge(new Edge(first, other, 0));
+                                    first.addOutgoingEdge(other, 0);
+                                    other.addIncomingEdge(first, 0);
+                                }
                             }
                         }
                     }
