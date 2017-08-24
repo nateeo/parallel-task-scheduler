@@ -25,7 +25,7 @@ public class Scheduler {
     private static File _inputFile;
     private static Graph _graph;
 
-    private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
+    private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
 
     private static boolean _parallelOn = false;
 

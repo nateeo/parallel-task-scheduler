@@ -2,7 +2,6 @@ package algorithm;
 
 import graph.Graph;
 import graph.Node;
-import parallelization.PSPriorityQueueChild;
 
 import java.util.PriorityQueue;
 
@@ -53,7 +52,6 @@ public class PSPriorityQueue {
 //            System.out.println("HAS NEXT??? " + (_currentPartialSolution._nodes.size() != _totalNodes));
             return _currentPartialSolution._nodes.size() != _totalNodes;
         } else {
-            System.out.println("Size is 0????");
             return false;
         }
 

@@ -8,7 +8,9 @@ import graph.Node;
  */
 
 public class ProcessorSlot {
-    private Node _node;
+
+    private Node _node; // node object for the processor slot, only one node per processor slot
+    // start times and which processor (numbered 1-4) that the slot is on
     private int _start;
     private int _finish;
     private int _processor;
@@ -20,6 +22,9 @@ public class ProcessorSlot {
         _processor = processor;
     }
 
+    /**
+     * alternate constructor if finish time is not given
+     */
     public ProcessorSlot (Node node, int start, int processor) {
         this(node, start, start + node.getWeight(), processor);
     }
@@ -38,6 +43,19 @@ public class ProcessorSlot {
 
     public int getProcessor() {
         return _processor;
+    }
+
+    @Override
+    public String toString() {
+        return "" + _node.getTopId();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ProcessorSlot) {
+            return _node.getId() == ((ProcessorSlot) other)._node.getId();
+        }
+        return false;
     }
 
 
