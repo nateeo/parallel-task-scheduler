@@ -5,11 +5,10 @@ import algorithm.PSPriorityQueue;
 import algorithm.Cache;
 import algorithm.PartialSolution;
 import graph.Graph;
+import pt.runtime.TaskID;
+import pt.runtime.TaskIDGroup;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -26,9 +25,12 @@ public class Parallelization {
     private int _cores;
     private PSPriorityQueueChild[] _childQueues;
     private ArrayList<PartialSolution> _solutions;
+    private PartialSolution _preOptimalSolution;
+    private int _fastestSolution;
 
 
-public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph graph, int cores, Cache cache) {
+
+    public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph graph, int cores, Cache cache) {
         _parentQueue = priorityQueue;
         _processors = processors;
         _graph = graph;
@@ -36,6 +38,8 @@ public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph gra
         _childQueues = new PSPriorityQueueChild[cores];
         _solutions = new ArrayList<PartialSolution>();
         _cache = cache;
+        _preOptimalSolution = null;
+
 
         initialiseQueues();
 
@@ -49,44 +53,37 @@ public Parallelization (PSPriorityQueue priorityQueue, int processors, Graph gra
         }
     }
 
-    TASK private void threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {
-        System.out.println("THREAD DOING SHIT");
+    TASK private PartialSolution threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {
         PartialSolution ps = null;
         while (childQueue.hasNext()){
             ps = childQueue.getCurrentPartialSolution();
-            psManager.generateChildren(ps, childQueue);
+            if (_preOptimalSolution == null || ps._latestSlot.getFinish() < _fastestSolution){
+                psManager.generateChildren(ps, childQueue);
+            }
+            System.out.println(childQueue.size());
         }
         ps = childQueue.getCurrentPartialSolution();
         System.out.println("8====D adding\n" + ps);
-        _solutions.add(ps);
+        return ps;
     }
 
     public PartialSolution findOptimal() throws ExecutionException, InterruptedException {
         PartialSolution[] ps = new PartialSolution[_cores];
         TaskIDGroup g = new TaskIDGroup(_cores);
         for (int i = 0; i < _cores; i++) {
-            System.out.println("~~~~~ THread: " + i);
             PSManager psManager = new PSManager(_processors, _graph, _cache);
-            TaskID id = threadQueue(_childQueues[i], psManager);
-            System.out.println("THREAD ID: " + id);
+            TaskID<PartialSolution> id = threadQueue(_childQueues[i], psManager);
+            PartialSolution partialSolution = id.getReturnResult();
+            if (_preOptimalSolution == null || partialSolution._latestSlot.getFinish() < _preOptimalSolution._latestSlot.getFinish()) {
+                _preOptimalSolution = partialSolution;
+                _fastestSolution = partialSolution._latestSlot.getFinish();
+                System.out.println("NEW BEST!");
+            }
             g.add(id);
-            System.out.println("~~~~~ THread finished: " + i);
+
         }
         g.waitTillFinished();
-        System.out.println("FINAL SOLUTION ~~~~~~~~~~~");
-        for (PartialSolution p : _solutions){
-            System.out.println("NEWWWWWW\n" + p.toString());
-        }
-        PartialSolution solution = null;
-        int finalTime = -1;
-        for (int i = 0; i < _solutions.size(); i++) {
-            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();
-            if (finalTime == -1 || psFinishTime < finalTime) {
-                solution = _solutions.get(i);
-                finalTime = psFinishTime;
-            }
-        }
-        return solution;
+        return _preOptimalSolution;
     }
 
     public void printSolutions() {
