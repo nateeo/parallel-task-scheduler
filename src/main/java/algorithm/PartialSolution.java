@@ -58,7 +58,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
 
     public int compareTo(PartialSolution o) {
         if (_cost == o._cost) {
-            return o._nodes.size() - _nodes.size();
+            return o._nodes.size() - _nodes.size(); // if equal costs for PartialSolutions, compare based on number of nodes
         }
         return _cost - o._cost;
     }
@@ -68,6 +68,9 @@ public class PartialSolution implements Comparable<PartialSolution> {
     }
 
     @Override // TODO: remove when working
+    /**
+     * glorified logging
+     */
     public String toString() {
         String s = "===========================\nPARTIAL SOLUTION contains: " + _nodes + "\n";
         for (int i = 0; i < _processors.length; i++) {

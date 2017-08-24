@@ -6,7 +6,7 @@ import graph.Node;
 import java.util.PriorityQueue;
 
 /**
- * A priority queue of partial solutions, priority is calculated from their underestimates of cost
+ * A priority queue of partial solutions, priority is calculated from their underestimates of cost function
  * It wraps a Java PriorityQueue, allowing a check for a complete solution before popping off the highest
  * priority PartialSolution while initialising it with an estimated length.
  */
@@ -58,11 +58,20 @@ public class PSPriorityQueue {
         return _currentPartialSolution;
     }
 
+    /**
+     * returns true if the current Partial solution is contained in our priority queue
+     * @param ps
+     * @return
+     */
     public boolean contains(PartialSolution ps) {
        return _queue.contains(ps);
     }
 
-    public void add(PartialSolution e) {
-        _queue.add(e);
+    /**
+     * adds a PartialSolution object to the priority queue
+     * @param ps
+     */
+    public void add(PartialSolution ps) {
+        _queue.add(ps);
     }
 }
