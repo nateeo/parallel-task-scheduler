@@ -79,7 +79,7 @@ public class ValidationTest {
     @Test
     public void testParallelValidity() {
 
-        String[] args = new String[3];
+        String[] args = new String[2];
 
         try {
             String inputFileName = "input-graphs/Nodes_10_Fork_Join.dot";
@@ -92,8 +92,6 @@ public class ValidationTest {
 
             // The amount of processors
             args[1] = "4";
-
-            args[2] = "-p 4";
 
             _solution = parseConsole(args);
             _graph = Parser.parseDotFile(inputFile);

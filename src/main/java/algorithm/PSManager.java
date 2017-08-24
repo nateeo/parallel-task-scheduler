@@ -35,6 +35,11 @@ public class PSManager {
         _cache = new Cache(processors);
     }
 
+    public PSManager(int processors, Graph graph, Cache cache) {
+        this(processors, graph);
+        _cache = cache;
+    }
+
     //BFS of  children of partial solution
     //for ever node, addNode to add to partial solution then return that
     //calculate functional cost i.e. the max formula

@@ -78,11 +78,6 @@ public class Node {
     }
 
     @Override
-    public int hashCode() {
-        return this._id;
-    }
-
-    @Override
     public String toString() {
         return _name;
     }

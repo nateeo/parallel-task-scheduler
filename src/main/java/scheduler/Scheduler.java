@@ -129,8 +129,7 @@ public class Scheduler {
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (priorityQueue.hasNext()) {
-            if (priorityQueue.size() <= 10 || _parallelOn == false) {
-                System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
+            if (_parallelOn == false || priorityQueue.size() <= 10) {
                 ps = priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.

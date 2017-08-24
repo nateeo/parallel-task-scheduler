@@ -85,7 +85,6 @@ public class RegressionTest {
                 //priority queue will terminate upon the first instance of a total solution
                 while (priorityQueue.hasNext()) {
                     if (priorityQueue.size() <= 10) {
-                        System.out.println("PRIORITY QUEUE: " + priorityQueue.size());
                         ps = priorityQueue.getCurrentPartialSolution();
                         //generate the child partial solutions from the current "best" candidate partial solution
                         //then add to the priority queue based on conditions.
@@ -93,15 +92,14 @@ public class RegressionTest {
                     } else {
                         parallelization = true;
                         System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
-    //                    Parallelization parallelize = new Parallelization(priorityQueue, psManager, 4);
-    //                    ps = parallelize.findOptimal();
+                        Parallelization parallelize = new Parallelization(priorityQueue, processorNumber, graph, 4, psManager.getCache());
+                        ps = parallelize.findOptimal();
                         break;
                     }
                 }
                 if (!parallelization){
                     ps = priorityQueue.getCurrentPartialSolution();
                 }
-                ps = priorityQueue.getCurrentPartialSolution();
                 long timeTaken = Logger.endTiming();
 
                 int testCost = ps._cost;

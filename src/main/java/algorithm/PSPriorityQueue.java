@@ -2,6 +2,7 @@ package algorithm;
 
 import graph.Graph;
 import graph.Node;
+import parallelization.PSPriorityQueueChild;
 
 import java.util.PriorityQueue;
 
