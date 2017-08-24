@@ -9,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="background" stylesheets="@../../resources/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
    <children>
       <VBox alignment="TOP_CENTER" layoutX="39.0" layoutY="67.0" prefHeight="266.0" prefWidth="175.0">
          <children>
@@ -17,7 +17,7 @@
          </children></VBox>
       <HBox alignment="CENTER" layoutX="39.0" prefHeight="58.0" prefWidth="517.0">
          <children>
-            <Label alignment="CENTER" styleClass="title" stylesheets="@style.css" text="HI-5 Task Scheduling" textAlignment="CENTER" textFill="WHITE">
+            <Label alignment="CENTER" styleClass="title" stylesheets="@../../resources/style.css" text="HI-5 Task Scheduling" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Avenir Medium" size="22.0" />
                </font>
