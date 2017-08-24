@@ -1,8 +1,8 @@
 package parallelization;//####[1]####
 //####[1]####
-import algorithm.PSManager;//####[3]####
-import algorithm.PSPriorityQueue;//####[4]####
-import algorithm.Cache;//####[5]####
+import algorithm.Cache;//####[3]####
+import algorithm.PSManager;//####[4]####
+import algorithm.PSPriorityQueue;//####[5]####
 import algorithm.PartialSolution;//####[6]####
 import graph.Graph;//####[7]####
 import java.util.ArrayList;//####[9]####
@@ -40,13 +40,13 @@ public class Parallelization {//####[20]####
 //####[22]####
     private PSPriorityQueue _parentQueue;//####[22]####
 //####[23]####
-    private Cache _cache;//####[23]####
+    private Graph _graph;//####[23]####
 //####[24]####
-    private Graph _graph;//####[24]####
+    private int _processors;//####[24]####
 //####[25]####
-    private int _processors;//####[25]####
+    private int _cores;//####[25]####
 //####[26]####
-    private int _cores;//####[26]####
+    private Cache _cache;//####[26]####
 //####[27]####
     private PSPriorityQueueChild[] _childQueues;//####[27]####
 //####[28]####
@@ -57,9 +57,9 @@ public class Parallelization {//####[20]####
         _processors = processors;//####[33]####
         _graph = graph;//####[34]####
         _cores = cores;//####[35]####
-        _childQueues = new PSPriorityQueueChild[cores];//####[36]####
-        _solutions = new ArrayList<PartialSolution>();//####[37]####
-        _cache = cache;//####[38]####
+        _cache = cache;//####[36]####
+        _childQueues = new PSPriorityQueueChild[cores];//####[37]####
+        _solutions = new ArrayList<PartialSolution>();//####[38]####
         initialiseQueues();//####[40]####
     }//####[42]####
 //####[44]####
@@ -70,168 +70,167 @@ public class Parallelization {//####[20]####
             _childQueues[i] = queues[i];//####[48]####
         }//####[49]####
     }//####[50]####
-//####[52]####
-    private static volatile Method __pt__threadQueue_PSPriorityQueueChild_PSManager_method = null;//####[52]####
-    private synchronized static void __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet() {//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            try {//####[52]####
-                __pt__threadQueue_PSPriorityQueueChild_PSManager_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__threadQueue", new Class[] {//####[52]####
-                    PSPriorityQueueChild.class, PSManager.class//####[52]####
-                });//####[52]####
-            } catch (Exception e) {//####[52]####
-                e.printStackTrace();//####[52]####
-            }//####[52]####
-        }//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, PSManager psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, PSManager psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, PSManager psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setTaskIdArgIndexes(0);//####[52]####
-        taskinfo.addDependsOn(childQueue);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, PSManager psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, PSManager psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setQueueArgIndexes(0);//####[52]####
-        taskinfo.setIsPipeline(true);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, TaskID<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setTaskIdArgIndexes(1);//####[52]####
-        taskinfo.addDependsOn(psManager);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setTaskIdArgIndexes(0, 1);//####[52]####
-        taskinfo.addDependsOn(childQueue);//####[52]####
-        taskinfo.addDependsOn(psManager);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setQueueArgIndexes(0);//####[52]####
-        taskinfo.setIsPipeline(true);//####[52]####
-        taskinfo.setTaskIdArgIndexes(1);//####[52]####
-        taskinfo.addDependsOn(psManager);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, BlockingQueue<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setQueueArgIndexes(1);//####[52]####
-        taskinfo.setIsPipeline(true);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setQueueArgIndexes(1);//####[52]####
-        taskinfo.setIsPipeline(true);//####[52]####
-        taskinfo.setTaskIdArgIndexes(0);//####[52]####
-        taskinfo.addDependsOn(childQueue);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager) {//####[52]####
-        //-- execute asynchronously by enqueuing onto the taskpool//####[52]####
-        return threadQueue(childQueue, psManager, new TaskInfo());//####[52]####
-    }//####[52]####
-    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[52]####
-        // ensure Method variable is set//####[52]####
-        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[52]####
-            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[52]####
-        }//####[52]####
-        taskinfo.setQueueArgIndexes(0, 1);//####[52]####
-        taskinfo.setIsPipeline(true);//####[52]####
-        taskinfo.setParameters(childQueue, psManager);//####[52]####
-        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[52]####
-        taskinfo.setInstance(this);//####[52]####
-        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[52]####
-    }//####[52]####
-    public void __pt__threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {//####[52]####
-        System.out.println("THREAD DOING SHIT");//####[53]####
+//####[53]####
+    private static volatile Method __pt__threadQueue_PSPriorityQueueChild_PSManager_method = null;//####[53]####
+    private synchronized static void __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet() {//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            try {//####[53]####
+                __pt__threadQueue_PSPriorityQueueChild_PSManager_method = ParaTaskHelper.getDeclaredMethod(new ParaTaskHelper.ClassGetter().getCurrentClass(), "__pt__threadQueue", new Class[] {//####[53]####
+                    PSPriorityQueueChild.class, PSManager.class//####[53]####
+                });//####[53]####
+            } catch (Exception e) {//####[53]####
+                e.printStackTrace();//####[53]####
+            }//####[53]####
+        }//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, PSManager psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, PSManager psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, PSManager psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setTaskIdArgIndexes(0);//####[53]####
+        taskinfo.addDependsOn(childQueue);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, PSManager psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, PSManager psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setQueueArgIndexes(0);//####[53]####
+        taskinfo.setIsPipeline(true);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, TaskID<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setTaskIdArgIndexes(1);//####[53]####
+        taskinfo.addDependsOn(psManager);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setTaskIdArgIndexes(0, 1);//####[53]####
+        taskinfo.addDependsOn(childQueue);//####[53]####
+        taskinfo.addDependsOn(psManager);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, TaskID<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setQueueArgIndexes(0);//####[53]####
+        taskinfo.setIsPipeline(true);//####[53]####
+        taskinfo.setTaskIdArgIndexes(1);//####[53]####
+        taskinfo.addDependsOn(psManager);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, BlockingQueue<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(PSPriorityQueueChild childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setQueueArgIndexes(1);//####[53]####
+        taskinfo.setIsPipeline(true);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(TaskID<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setQueueArgIndexes(1);//####[53]####
+        taskinfo.setIsPipeline(true);//####[53]####
+        taskinfo.setTaskIdArgIndexes(0);//####[53]####
+        taskinfo.addDependsOn(childQueue);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager) {//####[53]####
+        //-- execute asynchronously by enqueuing onto the taskpool//####[53]####
+        return threadQueue(childQueue, psManager, new TaskInfo());//####[53]####
+    }//####[53]####
+    private TaskID<Void> threadQueue(BlockingQueue<PSPriorityQueueChild> childQueue, BlockingQueue<PSManager> psManager, TaskInfo taskinfo) {//####[53]####
+        // ensure Method variable is set//####[53]####
+        if (__pt__threadQueue_PSPriorityQueueChild_PSManager_method == null) {//####[53]####
+            __pt__threadQueue_PSPriorityQueueChild_PSManager_ensureMethodVarSet();//####[53]####
+        }//####[53]####
+        taskinfo.setQueueArgIndexes(0, 1);//####[53]####
+        taskinfo.setIsPipeline(true);//####[53]####
+        taskinfo.setParameters(childQueue, psManager);//####[53]####
+        taskinfo.setMethod(__pt__threadQueue_PSPriorityQueueChild_PSManager_method);//####[53]####
+        taskinfo.setInstance(this);//####[53]####
+        return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[53]####
+    }//####[53]####
+    public void __pt__threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {//####[53]####
         PartialSolution ps = null;//####[54]####
         while (childQueue.hasNext()) //####[55]####
         {//####[55]####
@@ -239,58 +238,34 @@ public class Parallelization {//####[20]####
             psManager.generateChildren(ps, childQueue);//####[57]####
         }//####[58]####
         ps = childQueue.getCurrentPartialSolution();//####[59]####
-        System.out.println("8====D adding\n" + ps);//####[60]####
-        _solutions.add(ps);//####[61]####
-    }//####[62]####
-//####[62]####
-//####[64]####
-    public PartialSolution findOptimal() throws ExecutionException, InterruptedException {//####[64]####
-        PartialSolution[] ps = new PartialSolution[_cores];//####[65]####
-        TaskIDGroup g = new TaskIDGroup(_cores);//####[66]####
-        for (int i = 0; i < _cores; i++) //####[67]####
-        {//####[67]####
-            System.out.println("~~~~~ THread: " + i);//####[68]####
-            PSManager psManager = new PSManager(_processors, _graph, _cache);//####[69]####
-            TaskID id = threadQueue(_childQueues[i], psManager);//####[70]####
-            System.out.println("THREAD ID: " + id);//####[71]####
-            g.add(id);//####[72]####
-            System.out.println("~~~~~ THread finished: " + i);//####[73]####
-        }//####[74]####
-        g.waitTillFinished();//####[75]####
-        System.out.println("FINAL SOLUTION ~~~~~~~~~~~");//####[76]####
-        for (PartialSolution p : _solutions) //####[77]####
-        {//####[77]####
-            System.out.println("NEWWWWWW\n" + p.toString());//####[78]####
-        }//####[79]####
-        PartialSolution solution = null;//####[80]####
-        int finalTime = -1;//####[81]####
-        for (int i = 0; i < _solutions.size(); i++) //####[82]####
-        {//####[82]####
-            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[83]####
-            if (finalTime == -1 || psFinishTime < finalTime) //####[84]####
-            {//####[84]####
-                solution = _solutions.get(i);//####[85]####
-                finalTime = psFinishTime;//####[86]####
-            }//####[87]####
-        }//####[88]####
-        return solution;//####[89]####
-    }//####[90]####
-//####[92]####
-    public void printSolutions() {//####[92]####
-        System.out.println("**************ZIHAO'S OUPUT********************");//####[94]####
-        for (PartialSolution solution : _solutions) //####[96]####
-        {//####[96]####
-            System.out.println(solution.toString());//####[97]####
-        }//####[98]####
-        System.out.println("**************ZIHAO'S OUPUT********************");//####[100]####
-    }//####[101]####
-//####[103]####
-    public void printChildQueues() {//####[103]####
-        for (int i = 0; i < _childQueues.length; i++) //####[104]####
-        {//####[104]####
-            System.out.println("queue " + i);//####[106]####
-            PSPriorityQueueChild queue = _childQueues[i];//####[108]####
-            queue.printQueue();//####[109]####
-        }//####[110]####
-    }//####[111]####
-}//####[111]####
+        _solutions.add(ps);//####[60]####
+    }//####[61]####
+//####[61]####
+//####[63]####
+    public PartialSolution findOptimal() throws ExecutionException, InterruptedException {//####[63]####
+        PartialSolution[] ps = new PartialSolution[_cores];//####[64]####
+        TaskIDGroup g = new TaskIDGroup(_cores);//####[65]####
+        for (int i = 0; i < _cores; i++) //####[66]####
+        {//####[66]####
+            PSManager psManager = new PSManager(_processors, _graph, _cache);//####[67]####
+            TaskID id = threadQueue(_childQueues[i], psManager);//####[68]####
+            g.add(id);//####[69]####
+        }//####[70]####
+        g.waitTillFinished();//####[71]####
+        for (PartialSolution p : _solutions) //####[72]####
+        {//####[72]####
+        }//####[73]####
+        PartialSolution solution = null;//####[74]####
+        int finalTime = -1;//####[75]####
+        for (int i = 0; i < _solutions.size(); i++) //####[76]####
+        {//####[76]####
+            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[77]####
+            if (finalTime == -1 || psFinishTime < finalTime) //####[78]####
+            {//####[78]####
+                solution = _solutions.get(i);//####[79]####
+                finalTime = psFinishTime;//####[80]####
+            }//####[81]####
+        }//####[82]####
+        return solution;//####[83]####
+    }//####[84]####
+}//####[84]####

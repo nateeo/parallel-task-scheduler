@@ -136,7 +136,6 @@ public class Scheduler {
                 psManager.generateChildren(ps, priorityQueue);
             } else {
                 parallelization = true;
-                System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                 Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores, psManager.getCache());
                 ps = parallelize.findOptimal();
                 break;

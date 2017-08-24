@@ -91,7 +91,6 @@ public class RegressionTest {
                         psManager.generateChildren(ps, priorityQueue);
                     } else {
                         parallelization = true;
-                        System.out.println("IN PARALLELIZATION, SIZE IS:" + priorityQueue.size());
                         Parallelization parallelize = new Parallelization(priorityQueue, processorNumber, graph, 4, psManager.getCache());
                         ps = parallelize.findOptimal();
                         break;
