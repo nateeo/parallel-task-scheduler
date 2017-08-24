@@ -1,7 +1,7 @@
 package algorithm;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 /**
  *  This class creates temporary representations of the schedules being used to find the optimal schedule.
@@ -16,18 +16,28 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public int _currentFinishTime; // the finish time of the lowest node in the schedule
     public ProcessorSlot _latestSlot;
     public ProcessorSlot[] _latestSlots;
-
     public ArrayList<ProcessorSlot>[] _processors;
-    public ArrayList<String> _nodes = new ArrayList<>(); //trialing string to show nodes in solution;
-    public TreeMap<Integer, Integer> _id; // node id -> array int
+    public ArrayList<String> _nodes; //trialing string to show nodes in solution;
+    public int[] _startingNodes;
+    public int[] _startingNodeIndices;
+    public int _zeroStarts;
+    public int _priority;
+
+    public HashMap<Integer, ProcessorSlot> _slotMap;
 
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
-        _id = new TreeMap<>();
         for (int i = 0; i < numberOfProcessors; i++) {
             _processors[i] = new ArrayList<>();
         }
+        _nodes = new ArrayList<>();
+        _priority = 0;
         _latestSlots = new ProcessorSlot[numberOfProcessors];
+        _startingNodes = new int[numberOfProcessors];
+        _startingNodeIndices = new int[numberOfProcessors];
+        _zeroStarts = numberOfProcessors;
+        _slotMap = new HashMap<>();
+
     }
 
     /**
@@ -40,6 +50,7 @@ public class PartialSolution implements Comparable<PartialSolution> {
         _bottomLevelWork = ps._bottomLevelWork;
         _currentFinishTime = ps._currentFinishTime;
         _latestSlot = ps._latestSlot;
+        _priority = ps._priority;
         _latestSlots = new ProcessorSlot[ps._latestSlots.length];
         for (int i = 0; i < _latestSlots.length; i++) {
             _latestSlots[i] = ps._latestSlots[i];
@@ -48,19 +59,31 @@ public class PartialSolution implements Comparable<PartialSolution> {
         for (int i = 0; i < _processors.length; i++) {
             _processors[i] = new ArrayList<>(ps._processors[i]);
         }
-        _nodes = (ArrayList)ps._nodes.clone();
-        if (ps._id.size() == ps._processors.length) {
-            _id = ps._id;
+        _nodes = new ArrayList<>(ps._nodes);
+        if (ps._zeroStarts == 0) { // starts are all full, reuse
+            _zeroStarts = 0;
+            _startingNodeIndices = ps._startingNodeIndices;
+            _startingNodes = ps._startingNodes;
         } else {
-            _id = (TreeMap)ps._id.clone();
+            _zeroStarts = ps._zeroStarts;
+            _startingNodeIndices = ps._startingNodeIndices.clone();
+            _startingNodes = ps._startingNodes.clone();
         }
+        _slotMap = new HashMap<>(ps._slotMap);
     }
 
     public int compareTo(PartialSolution o) {
-        if (_cost == o._cost) {
-            return o._nodes.size() - _nodes.size(); // if equal costs for PartialSolutions, compare based on number of nodes
+        double costDiff = _cost - o._cost;
+        if (costDiff == 0) {
+            int nodeDiff = o._nodes.size() - _nodes.size();
+            if (nodeDiff == 0) {
+                return _priority - o._priority;
+            } else {
+                return nodeDiff;
+            }
+        } else {
+            return costDiff > 0 ? 1 : -1;
         }
-        return _cost - o._cost;
     }
 
     public ArrayList<ProcessorSlot>[] getProcessors() {
@@ -72,15 +95,15 @@ public class PartialSolution implements Comparable<PartialSolution> {
      * glorified logging
      */
     public String toString() {
-        String s = "===========================\nPARTIAL SOLUTION contains: " + _nodes + "\n";
+        String s = "\n===========================\n";
         for (int i = 0; i < _processors.length; i++) {
-            s += "PROCESSOR " + (i+1) + "\n";
+            s += "\nPROCESSOR " + (i+1) + "\n";
             for (ProcessorSlot slot : _processors[i]) {
-                s += "start: " + slot.getStart() + " finish: " + slot.getFinish() + " node: " + slot.getNode() + "\n";
+                s += "[Time: " + slot.getStart() + " -> " + slot.getFinish() + "] Task: " + slot.getNode().getName() +  "\n";
             }
         }
-        s+= "cost estimate: " + _cost;
-        s += "\n===========================\n";
+        s+= "\nCost: " + _cost;
+        s += "\n\n===========================\n";
         return s;
     }
 }

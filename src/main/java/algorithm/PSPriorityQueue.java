@@ -6,7 +6,7 @@ import graph.Node;
 import java.util.PriorityQueue;
 
 /**
- * A priority queue of partial solutions, priority is calculated from their underestimates of cost function
+ * A priority queue of partial solutions, priority is calculated from their underestimates of cost
  * It wraps a Java PriorityQueue, allowing a check for a complete solution before popping off the highest
  * priority PartialSolution while initialising it with an estimated length.
  */
@@ -23,7 +23,7 @@ public class PSPriorityQueue {
         _totalNodes = _graph.getNodes().size();
         _processors = processors;
         // TODO: capacity heuristic
-        _queue = new PriorityQueue<PartialSolution>(graph.getNodes().size() * processors * 5);
+        _queue = new PriorityQueue<>(graph.getNodes().size() * processors * 5);
         _psManager = new PSManager(processors, graph);
         initialise();
     }
@@ -46,7 +46,8 @@ public class PSPriorityQueue {
      * @return
      */
     public boolean hasNext() {
-        _currentPartialSolution = _queue.poll();
+        PartialSolution ps = _queue.poll();
+        _currentPartialSolution = ps;
         return _currentPartialSolution._nodes.size() != _totalNodes;
     }
 
@@ -58,20 +59,11 @@ public class PSPriorityQueue {
         return _currentPartialSolution;
     }
 
-    /**
-     * returns true if the current Partial solution is contained in our priority queue
-     * @param ps
-     * @return
-     */
     public boolean contains(PartialSolution ps) {
        return _queue.contains(ps);
     }
 
-    /**
-     * adds a PartialSolution object to the priority queue
-     * @param ps
-     */
-    public void add(PartialSolution ps) {
-        _queue.add(ps);
+    public void add(PartialSolution e) {
+        _queue.add(e);
     }
 }
