@@ -171,9 +171,9 @@ public class Scheduler {
                         int[] nodevizCounts = _psManager._nodeVisitCounts;
                             int memory = _psManager._memory;
                             int cost = _psManager._cost;
-                            int statesExplored = ps.
+                            int statesExplored = _psManager. _statesExplored;
                             if (_listener != null) {
-                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost, _psManager._currentFinishTime, _psManager._statesExplored));
+                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost, _psManager._currentFinishTime, _psManager._statesExplored);
                             }
                     }
                 };
