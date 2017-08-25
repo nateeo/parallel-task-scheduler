@@ -10,11 +10,7 @@ import frontend.Listener;
 import frontend.Main;
 import frontend.ScheduleGraphGenerator;
 import graph.Graph;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.util.Duration;
 import logger.Logger;
 import parallelization.Parallelization;
 
@@ -22,8 +18,6 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-
-import static scheduler.Scheduler._priorityQueue;
 
 /**
  * Entry point to the scheduling algorithm
@@ -177,7 +171,7 @@ public class Scheduler {
                             }
                     }
                 };
-                updater.schedule(task, 500, 300);
+                updater.schedule(task, 3000, 300);
             }).start();
         }
 

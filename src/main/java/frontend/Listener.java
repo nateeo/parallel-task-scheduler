@@ -32,9 +32,7 @@ public class Listener {
     }
 
     public void update(String message, int[] nodeCounts){
-        System.out.print("Yea the fucking boys");
         if(nodeCounts != null){
-            System.out.print("it can't be null mate!!!!!!!!");
             _ss._gd.updateHeatMap(nodeCounts);
         }
     }

@@ -204,7 +204,6 @@ public class ScheduleGraphGenerator {
             _unitHeight=1;
         }
 
-        System.out.println("UNIT HEIGHT:" + _unitHeight);
         //assign column constraints
         for (int i = 0; i<_numProcessors; i++){
             ColumnConstraints column = new ColumnConstraints(ABSOLUTE_WIDTH);
