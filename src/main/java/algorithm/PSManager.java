@@ -37,6 +37,7 @@ public class PSManager {
     public int _statesExplored;
     public int _memory;
     public double _loaded;
+    public PartialSolution _currentStatPS;
 
     public PSManager(){
 

@@ -38,8 +38,7 @@ public class Scheduler {
     private static int DELAY_TIME = 5000;
     private static int REFRESH_TIME = 1000;
 
-
-    public static Timer updater;
+    public static boolean _stopTimer;
 
     private static PartialSolution _last;
 
@@ -147,7 +146,7 @@ public class Scheduler {
         Boolean parallelization = false;
         PartialSolution ps = null;
 
-        updater = new Timer();
+        Timer updater = new Timer();
 
         if(_visualize) {
 
@@ -157,22 +156,15 @@ public class Scheduler {
             new Thread(() -> {
                 TimerTask task = new TimerTask() {
                     public void run() {
+                        if (_stopTimer) this.cancel();
+                        if (_priorityQueue._queue.isEmpty()) {
+                        }
                         PartialSolution ps = _priorityQueue._queue.peek();
                             if (ps != null) {
                                 _last = ps;
                             }
-                            if (_last != null) {
-                                PartialSolution currentBestPS = Scheduler._priorityQueue._queue.peek();
-                                ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(currentBestPS);
-                                if (_listener != null) {
-                                    _listener.notify("Updated", currentBestPS);
-                                }
-                            }
-                        int[] nodevizCounts = _psManager._nodeVisitCounts;
-                            int memory = _psManager._memory;
-                            int cost = _psManager._cost;
-                            int statesExplored = _psManager. _statesExplored;
-                            if (_listener != null) {
+                            if (_last != null && _listener != null) {
+                                _listener.notify("Updated", _psManager._currentStatPS);
                                 _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
                                         _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             }
