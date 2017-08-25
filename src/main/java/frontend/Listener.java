@@ -14,6 +14,7 @@ public class Listener {
     AnchorPane _statsPane;
     SplashScreen _ss;
 
+
     public Listener(ScrollPane schedulePane, AnchorPane statsPane) {
         _schedulePane = schedulePane;
         _statsPane = statsPane;

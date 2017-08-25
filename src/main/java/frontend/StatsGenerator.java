@@ -1,8 +1,11 @@
 package frontend;
 
 import algorithm.PartialSolution;
+import javafx.animation.AnimationTimer;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+
+import java.util.concurrent.TimeUnit;
 
 public class StatsGenerator {
 
@@ -23,11 +26,26 @@ public class StatsGenerator {
         _underestimate = underestimate;
         _statesExplored = statesExplored;
         _memory = memory;
+        long startTime = System.currentTimeMillis();
+
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                long elapsedMillisec = System.currentTimeMillis() - startTime;
+                String output= String.format("%02d:%02d:",
+                        TimeUnit.MILLISECONDS.toMinutes(elapsedMillisec),
+                        TimeUnit.MILLISECONDS.toSeconds(elapsedMillisec) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillisec))
+                );
+                String milliseconds = String.format("%02d", elapsedMillisec%100);
+                _timer.setText(output+ milliseconds);
+            }
+        }.start();
     }
 
     public void updateStats(double pvalue, int timer, int currentFinishTime, int underestimates, int statesExplored, int memory) {
         _progressBar.setProgress(pvalue);
-        _timer.setText((timer + ""));
+        //_timer.setText((timer + ""));
         _currentFinishTime.setText((currentFinishTime + ""));
         _underestimate.setText((underestimates + ""));
         _statesExplored.setText((statesExplored+ ""));
