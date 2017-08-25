@@ -30,7 +30,7 @@ public class ScheduleGraphGenerator {
 
     //FIXED DIMENSIONS
     private int ABSOLUTE_HEIGHT = 700;//height of the output
-    private int DESIRED_WIDTH= 200;
+    private int DESIRED_WIDTH= 260;
     private int ABSOLUTE_WIDTH = 100;
     private int GRID_HEIGHT = 80;//preferred grid height. Will be rounded to a 'neat' number
 
@@ -109,7 +109,6 @@ public class ScheduleGraphGenerator {
                 rectangleLayout.getStyleClass().add("rectangle");
 
                 _graphLayout.add(rectangleLayout, i, task.getStart(), 1, height);
-                System.out.println(task.getStart());
 
 
             }
@@ -259,8 +258,6 @@ public class ScheduleGraphGenerator {
      * @return
      */
     private GridPane drawGridBorders(){
-
-        System.out.println("Grid height is "+_actualRows);
 
         GridPane backgroundGrid = new GridPane();
 

@@ -39,7 +39,7 @@ public class Scheduler {
     private static int REFRESH_TIME = 1000;
 
 
-    public static Timer _updater;
+    public static Timer updater;
 
     private static PartialSolution _last;
 
@@ -147,7 +147,7 @@ public class Scheduler {
         Boolean parallelization = false;
         PartialSolution ps = null;
 
-        Timer updater = new Timer();
+        updater = new Timer();
 
         if(_visualize) {
 

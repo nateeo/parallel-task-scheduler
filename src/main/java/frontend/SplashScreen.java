@@ -36,7 +36,7 @@ public class SplashScreen implements Initializable {
     protected AnchorPane statsPane;
 
     @FXML
-    protected AnchorPane schedulerPane;
+    protected ScrollPane schedulerPane;
 
     @FXML
     protected Label timer;
@@ -80,7 +80,7 @@ public class SplashScreen implements Initializable {
             ScheduleGraphGenerator sgm = new ScheduleGraphGenerator();
 
             currentSGM = sgm.initialise();
-            schedulerPane.getChildren().add(currentSGM);
+            schedulerPane.setContent(currentSGM);
 
         } catch (Exception e) {
             e.printStackTrace();

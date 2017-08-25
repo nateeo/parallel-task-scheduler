@@ -5,13 +5,13 @@
 }
 
 .button {
-   -fx-font-size: 10pt;
-   -fx-font-family: "Avenir Medium";
-   -fx-background-radius: 10;
+    -fx-font-size: 10pt;
+    -fx-font-family: "Avenir Medium";
+    -fx-background-radius: 10;
 }
 
 .background {
-   -fx-background-color: #474747;
+    -fx-background-color: #474747;
 }
 
 .label {
