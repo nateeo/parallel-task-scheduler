@@ -2,7 +2,6 @@ package scheduler;
 
 
 import algorithm.PSManager;
-import algorithm.PSManagerWrapper;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
@@ -39,6 +38,8 @@ public class Scheduler {
     public static PSPriorityQueue _priorityQueue;
     private static String[] _args;
 
+
+    public static Timer _updater;
 
     private static PartialSolution _last;
 
@@ -175,11 +176,7 @@ public class Scheduler {
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
-        if(_visualize) {
-            PSManager psManager = new PSManagerWrapper(_processors, _graph);
-        } else {
-            PSManager psManager = new PSManager(_processors, _graph);
-        }
+        PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
         while (_priorityQueue.hasNext()) {
             if (_parallelOn == false || _priorityQueue.size() <= 1000) {

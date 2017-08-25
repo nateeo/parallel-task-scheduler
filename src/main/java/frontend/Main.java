@@ -37,6 +37,14 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
+    }
+
+    @Override
+    public void stop(){
+        // kill the updater
+        Scheduler._updater.cancel();
+        Scheduler._updater.purge();
     }
 
 
