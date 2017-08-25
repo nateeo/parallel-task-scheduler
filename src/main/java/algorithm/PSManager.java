@@ -18,6 +18,7 @@ public class PSManager {
 
     private Graph _graph;
     private int _numberOfProcessors;
+    public int[] _nodeVisitCounts;
 
     //calculate all bottom level work values and cache them for the cost function
     private HashMap<String, Integer> _bottomLevelWork;

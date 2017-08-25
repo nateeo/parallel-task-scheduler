@@ -28,5 +28,12 @@ public class Listener {
                 ScheduleGraphGenerator sgg = new ScheduleGraphGenerator(ps);
                 Platform.runLater(() -> _ss.schedulerPane.getChildren().set(0, sgg.generateGraph()));
             }
+
+    }
+
+    public void update(String message, int[] nodeCounts){
+        if(nodeCounts != null){
+            _ss._gd.updateHeatMap(nodeCounts);
         }
     }
+}

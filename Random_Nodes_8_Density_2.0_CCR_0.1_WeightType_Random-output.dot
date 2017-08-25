@@ -4,7 +4,7 @@ digraph "outputRandom_Nodes_8_Density_2.0_CCR_0.1_WeightType_Random" {
 	0 -> 1	 [Weight=3];
 	2				[ Weight =176,Start =35,Processor =1];
 	0 -> 2	 [Weight=9];
-	3				[ Weight =159,Start =126,Processor =2];
+	3				[ Weight =159,Start =42,Processor =3];
 	0 -> 3	 [Weight=7];
 	4				[ Weight =176,Start =211,Processor =1];
 	0 -> 4	 [Weight=5];
@@ -15,7 +15,7 @@ digraph "outputRandom_Nodes_8_Density_2.0_CCR_0.1_WeightType_Random" {
 	1 -> 4	 [Weight=10];
 	1 -> 7	 [Weight=6];
 	2 -> 4	 [Weight=8];
-	5				[ Weight =141,Start =285,Processor =2];
+	5				[ Weight =141,Start =217,Processor =2];
 	2 -> 5	 [Weight=6];
 	2 -> 7	 [Weight=3];
 	3 -> 5	 [Weight=5];

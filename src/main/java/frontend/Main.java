@@ -28,7 +28,6 @@ public class Main extends Application {
         SplashScreen controller = new SplashScreen();
         Listener listener = new Listener(controller);
         controller.listener = listener;
-        System.out.println("Controller listener is " + listener);
         loader.setController(controller);
 
         Parent root = loader.load(url);
