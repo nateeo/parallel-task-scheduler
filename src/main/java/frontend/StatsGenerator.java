@@ -27,10 +27,10 @@ public class StatsGenerator {
 
     public void updateStats(double pvalue, int timer, int currentFinishTime, int underestimates, int statesExplored, int memory) {
         _progressBar.setProgress(pvalue);
-        _timer.setText(Integer.toString(timer));
-        _currentFinishTime.setText(Integer.toString(currentFinishTime));
-        _underestimate.setText(Integer.toString(underestimates));
-        _statesExplored.setText(Integer.toString(statesExplored));
-        _memory.setText(Integer.toString(memory));
+        _timer.setText((timer + ""));
+        _currentFinishTime.setText((currentFinishTime + ""));
+        _underestimate.setText((underestimates + ""));
+        _statesExplored.setText((statesExplored+ ""));
+        _memory.setText((memory + ""));
     }
 }
