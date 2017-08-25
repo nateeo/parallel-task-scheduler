@@ -28,8 +28,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
     public int _zeroStarts;
     public int _priority;
 
-    public HashMap<Integer, ProcessorSlot> _slotMap;
-
     public PartialSolution(int numberOfProcessors) {
         _processors = new ArrayList[numberOfProcessors];
         for (int i = 0; i < numberOfProcessors; i++) {
@@ -41,7 +39,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
         _startingNodes = new int[numberOfProcessors];
         _startingNodeIndices = new int[numberOfProcessors];
         _zeroStarts = numberOfProcessors;
-        _slotMap = new HashMap<>();
 
     }
 
@@ -74,7 +71,6 @@ public class PartialSolution implements Comparable<PartialSolution> {
             _startingNodeIndices = ps._startingNodeIndices.clone();
             _startingNodes = ps._startingNodes.clone();
         }
-        _slotMap = new HashMap<>(ps._slotMap);
     }
 
     public int compareTo(PartialSolution o) {

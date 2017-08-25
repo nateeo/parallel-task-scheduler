@@ -270,8 +270,6 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        ps._slotMap.put(slot.getNode().getId(), slot);
-
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
 
@@ -323,7 +321,6 @@ public class PSManager {
 
         //backups
         ArrayList<ProcessorSlot> backup = new ArrayList<>(ps.getProcessors()[processorIndex]);
-        HashMap<Integer, ProcessorSlot> backupSlotMap = new HashMap<>(ps._slotMap);
         ProcessorSlot[] latestSlotsBackup = ps._latestSlots.clone();
 
         ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
@@ -350,7 +347,6 @@ public class PSManager {
         }
         // restore and return
         processors[processorIndex] = backup;
-        ps._slotMap = backupSlotMap;
         ps._latestSlots = latestSlotsBackup;
         return false;
     }
@@ -366,8 +362,8 @@ public class PSManager {
                 for (Edge e : newSlot.getNode().getOutgoing()) {
                     Node child = e.getTo();
                     int dataTime = newSlot.getFinish() + e.getWeight();
-                    if (ps._slotMap.containsKey(child.getId())) { // child is already schedule
-                        ProcessorSlot childSlot = ps._slotMap.get(child.getId());
+                    if (ps._nodes.contains(child.getName())) { // child is already schedule
+                        ProcessorSlot childSlot = getSlot(ps, child.getId());
                         if (!(childSlot.getProcessor() == processorIndex || childSlot.getStart() > dataTime)) {
                             return false;
                         }
@@ -378,7 +374,7 @@ public class PSManager {
                             Node parent = parentEdge.getFrom();
                             if (ps._nodes.contains(parent.getName())) {
                                 // go through each processor and find it, compare it to dataTime
-                                ProcessorSlot parentSlot = ps._slotMap.get(parent.getId());
+                                ProcessorSlot parentSlot = getSlot(ps, parent.getId());
                                 if (parentSlot.getFinish() + parentEdge.getWeight() > dataTime) {
                                     atLeastOneLater = true;
                                 }
@@ -411,5 +407,16 @@ public class PSManager {
                 return;
             }
         }
+    }
+
+    private ProcessorSlot getSlot(PartialSolution ps, int nodeId) {
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+        for (int i = 0; i < processors.length; i++) {
+            for (int j = 0; j < processors[i].size(); j++) {
+                ProcessorSlot slot = processors[i].get(j);
+                if (slot.getNode().getId() == nodeId) return slot;
+            }
+        }
+        return null;
     }
 }
