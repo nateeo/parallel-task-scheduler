@@ -9,11 +9,7 @@ import frontend.Listener;
 import frontend.Main;
 import frontend.ScheduleGraphGenerator;
 import graph.Graph;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.util.Duration;
 import logger.Logger;
 import parallelization.Parallelization;
 
@@ -21,8 +17,6 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-
-import static scheduler.Scheduler._priorityQueue;
 
 /**
  * Entry point to the scheduling algorithm
@@ -37,6 +31,8 @@ public class Scheduler {
     public static Graph _graph;
     public static PSPriorityQueue _priorityQueue;
     private static String[] _args;
+
+    public static Timer _updater;
 
     private static PartialSolution _last;
 
@@ -143,7 +139,7 @@ public class Scheduler {
         _priorityQueue.initialise();
         Boolean parallelization = false;
 
-        Timer updater = new Timer();
+        _updater = new Timer();
 
         if(_visualize) {
             new Thread(() -> {
@@ -165,7 +161,7 @@ public class Scheduler {
                             }
                     }
                 };
-                updater.schedule(task, 1000, 2000);
+                _updater.schedule(task, 1000, 2000);
             }).start();
         }
 
@@ -205,37 +201,5 @@ public class Scheduler {
      */
     private static void parseOutput(PartialSolution ps){
         Parser.outputGraphToFile(ps,_outputFile,_inputFile);
-    }
-
-}
-
-class PSPriorityQueueWrapper {
-    Timeline _timeline;
-    // Listeners to give EDS/Sam stats every second or so
-    // Uses decorator/wrapper pattern to wrap PSManager and send data every poll
-    // Wraps PSManager
-
-    // method to assign sam/eds stuff as a listneer, and this method has a timer to send
-    // PSManager's data every second or so
-
-    PSPriorityQueueWrapper(){
-        startEventTimer();
-    }
-
-    public void startEventTimer(){
-        Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(1000),
-                ae -> bestPS()));
-        _timeline = timeline;
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-    }
-
-    public void cancelEventTimer(){
-        _timeline.stop();
-    }
-
-    public PartialSolution bestPS(){
-        return _priorityQueue.getCurrentPartialSolution();
     }
 }
