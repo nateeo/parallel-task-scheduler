@@ -34,6 +34,10 @@ public class Scheduler {
     private static String[] _args;
     private static PSManager _psManager;
 
+    // for visualisation
+    private static int DELAY_TIME = 3000;
+    private static int REFRESH_TIME = 1000;
+
 
     public static Timer _updater;
 
@@ -165,13 +169,15 @@ public class Scheduler {
                                 }
                             }
                         int[] nodevizCounts = _psManager._nodeVisitCounts;
+                            int memory = _psManager._memory;
+                            int cost = _psManager._cost;
+                            int statesExplored = ps.
                             if (_listener != null) {
-
-                                _listener.update("Updated", nodevizCounts);
+                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost, _psManager._currentFinishTime, _psManager._statesExplored));
                             }
                     }
                 };
-                updater.schedule(task, 5000, 300);
+                updater.schedule(task, DELAY_TIME, REFRESH_TIME);
             }).start();
         }
 

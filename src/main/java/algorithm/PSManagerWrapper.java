@@ -4,7 +4,6 @@ import graph.Graph;
 
 public class PSManagerWrapper extends PSManager{
 
-
     public PSManagerWrapper(){
         super();
     }
@@ -21,14 +20,29 @@ public class PSManagerWrapper extends PSManager{
 
     @Override
     protected void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
+        if (!equivalenceCheck(ps, processorIndex)) {
+            if (_cache.add(ps)) {
+                _memory++;
+                queue.add(ps);
+            }
+        }
+    }
+
+    @Override
+    public void generateChildren(PartialSolution ps, PSPriorityQueue queue) {
+
+        // update currentFinishTime, cost and states explored
+        _currentFinishTime = ps._currentFinishTime;
+        _cost = ps._cost;
+        _statesExplored++;
+
+        // update _nodeVisitCounts
         for(int i = 0; i<ps._processors.length; i++){
             for(int j=0; j<ps._processors[i].size(); j++){
                 _nodeVisitCounts[ps._processors[i].get(j).getNode().getId() - 1]++;
             }
         }
-        super.checkAndAdd(ps, processorIndex, queue);
-
-
+        super.generateChildren(ps, queue);
     }
 
 

@@ -18,11 +18,10 @@ public class PSManager {
 
     private Graph _graph;
     private int _numberOfProcessors;
-    public int[] _nodeVisitCounts;
 
     //calculate all bottom level work values and cache them for the cost function
     private HashMap<String, Integer> _bottomLevelWork;
-    private Cache _cache;
+    protected Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
     private double _idleConstantHeuristic;
@@ -30,6 +29,13 @@ public class PSManager {
     //lists for calculating earliest times
     private int[] _maxPredecessorTime;
     private int[] _earliestTimes;
+
+    // for stats
+    public int[] _nodeVisitCounts;
+    public int _currentFinishTime;
+    public int _cost;
+    public int _statesExplored;
+    public int _memory;
 
     public PSManager(){
 
@@ -309,7 +315,7 @@ public class PSManager {
         return partialSolution;
     }
 
-    private boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
+    protected boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
         ArrayList<ProcessorSlot> toCopy = ps.getProcessors()[processorIndex];
         ArrayList<ProcessorSlot> copy = new ArrayList<>(toCopy); // copy we use re order
 
