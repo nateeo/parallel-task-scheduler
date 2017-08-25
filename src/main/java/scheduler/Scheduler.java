@@ -5,6 +5,7 @@ import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
+import frontend.Main;
 import graph.Graph;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -23,11 +24,12 @@ public class Scheduler {
     private static String _inputFileName;
     private static int _processors;
     private static int _cores = 1;
-    private static boolean _visualize = false;
+    public static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
     private static File _inputFile;
-    private static Graph _graph;
+    public static Graph _graph;
     public static PSPriorityQueue _priorityQueue;
+    private static String[] _args;
 
     private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
 
@@ -38,6 +40,7 @@ public class Scheduler {
      * @param args
      */
     public static void main(String[] args) {
+        _args = args;
         try {
             parseConsole(args);
         } catch (InvalidInputException e) {
@@ -120,10 +123,26 @@ public class Scheduler {
         // Priority queue containing generated states
          _priorityQueue = new PSPriorityQueue(_graph, _processors);
 
+
+        if(_visualize) {
+            new Thread() {
+                @Override
+                public void run() {
+                    javafx.application.Application.launch(Main.class);
+                }
+            }.start();
+        }
+
+
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
+
+
+        // if we're visualising, run the JavaFX application class
+
+
         while (_priorityQueue.hasNext()) {
             ps = _priorityQueue.getCurrentPartialSolution();
             //generate the child partial solutions from the current "best" candidate partial solution

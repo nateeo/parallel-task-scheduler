@@ -68,13 +68,12 @@ public class ScheduleGraphGenerator {
     /**
      * Generates the graph based on the partial solution as well as the preferred dimensions of the
      * graph.
-     * @param ps
      * @return Pane Node containing the graph
      * @throws Exception
      */
-    public ScrollPane generateGraph(PartialSolution ps) throws Exception{
+    public ScrollPane generateGraph() throws Exception{
 
-        ArrayList<ProcessorSlot>[] processorLists = ps.getProcessors();
+        ArrayList<ProcessorSlot>[] processorLists = _ps.getProcessors();
         for (int i = 0; i<processorLists.length; i++){
             for (ProcessorSlot task : processorLists[i]){
                 //generate the rectangle

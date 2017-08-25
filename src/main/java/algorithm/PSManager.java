@@ -1,8 +1,14 @@
 package algorithm;
 
+import com.sun.javafx.applet.Splash;
+import frontend.Main;
+import frontend.ScheduleGraphGenerator;
+import frontend.SplashScreen;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
+import javafx.animation.Timeline;
+import scheduler.Scheduler;
 
 import java.util.*;
 
@@ -37,6 +43,35 @@ public class PSManager {
         _idleConstantHeuristic = graph.totalMinimumWork() / processors;
         _bottomLevelWork = bottomLevelCalculator(graph);
         _cache = new Cache(processors);
+
+
+        if(Scheduler._visualize) new Thread() {
+            SplashScreen ss = new SplashScreen();
+            @Override
+            public void run() {
+                Timer timer = new Timer();
+
+                TimerTask task = new TimerTask() {
+                    public void run() {
+
+                        System.out.println("In the timer");
+                        if (!Scheduler._priorityQueue._queue.peek().equals(null)) {
+
+                            PartialSolution currentBestPS = Scheduler._priorityQueue._queue.peek();
+
+                            System.out.println("in this section of code");
+
+                            ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(currentBestPS);
+
+
+                            ss.update(sgm);
+                        }
+                    }
+                };
+                timer.schedule(task, 3000l); // call every 3seconds
+            }
+        }.start();
+
     }
 
     //BFS of  children of partial solution

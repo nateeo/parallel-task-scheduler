@@ -41,6 +41,7 @@ public class SplashScreen implements Initializable {
     Graph _graph;
     Map<Integer, StackPane> shapeMap = new HashMap<>();
     Map<Integer, Circle> circleMap = new HashMap<>();
+    static ScrollPane currentSGM;
 
     @FXML
     private AnchorPane graphPane;
@@ -55,23 +56,12 @@ public class SplashScreen implements Initializable {
         _graph = Main.getGraph();
         drawGraph(_graph);
 
-        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
 
-        // PSManager instance to perform calculations and generate states from existing Partial Solutions
-        PartialSolution ps = null;
-        PSManager psManager = new PSManager(3, _graph);
-        //priority queue will terminate upon the first instance of a total solution
-        while (priorityQueue.hasNext()) {
-            ps = priorityQueue.getCurrentPartialSolution();
-            //generate the child partial solutions from the current "best" candidate partial solution
-            //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, priorityQueue);
-        }
-        ps = priorityQueue.getCurrentPartialSolution();
 
-        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
         try {
-            schedulerPane.getChildren().add(sgm.generateGraph(ps));
+            //currentSGM = sgm.generateGraph();
+            //schedulerPane.getChildren().add(currentSGM);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +114,7 @@ public class SplashScreen implements Initializable {
             for(int j = 0 ; j < graphLevels.get(i).size(); j++) {
                 printShit += graphLevels.get(i).get(j);
             }
-            System.out.println(printShit);
+            //System.out.println(printShit);
         }
 
         int i = 0;
@@ -132,9 +122,9 @@ public class SplashScreen implements Initializable {
         for (List<Node> levels: graphLevels) {
 
             yCoordinate += ySpacing;
-            System.out.println("ySpacing: " +ySpacing +" For level" + i);
+            //("ySpacing: " +ySpacing +" For level" + i);
             i++;
-            System.out.println("Y Coordinate: "+yCoordinate);
+           // System.out.println("Y Coordinate: "+yCoordinate);
             xSpacing = (graphPaneX - (levels.size() * circleSize)) / (levels.size() + 1);
             xCoordinate = 0;
             for(Node circlesDrawn: levels) {
@@ -177,7 +167,7 @@ public class SplashScreen implements Initializable {
         double endOfLineX = to.getLayoutX() + circleSize/2;
         double endOfLineY = to.getLayoutY(); //+ circleSize/2;
 
-        System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
+       // System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
 
         Line line = new Line(beginningOfLineX,beginningOfLineY,endOfLineX,endOfLineY);
         line.setStroke(Color.WHITE);
@@ -192,7 +182,7 @@ public class SplashScreen implements Initializable {
     }
 
     public void handleColorChange(ActionEvent action) {
-        System.out.println(shapeMap.keySet());
+        //System.out.println(shapeMap.keySet());
         circleMap.get(0).setFill(Color.RED);
         //circleMap.get(16).setFill(Color.RED);
         //circleMap.get(2).setFill(Color.RED);
@@ -270,6 +260,15 @@ public class SplashScreen implements Initializable {
             }
         }
         return returnList;
+    }
+
+    public void update(ScheduleGraphGenerator sgm) {
+        try {
+            schedulerPane.getChildren().remove(currentSGM);
+            schedulerPane.getChildren().add(sgm.generateGraph());
+        } catch (Exception e) {
+
+        }
     }
 
 }
