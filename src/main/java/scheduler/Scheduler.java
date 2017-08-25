@@ -121,6 +121,8 @@ public class Scheduler {
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
         System.out.println(ps.toString());
+        Main.main(_graph,ps);
+
         return ps; // for testing
     }
 

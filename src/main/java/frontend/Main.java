@@ -35,13 +35,15 @@ import static javafx.animation.Animation.INDEFINITE;
 public class Main extends Application {
 
     static Graph _graph;
-
-
+    static PartialSolution _ps;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        _graph = Scheduler._graph;
+        /*// input the graph.
+        File testGraph = new File ("src/test/resources/exampleLarge.dot");
+        _graph = parseDotFile(testGraph);
+        List<Node> listOfNodes = _graph.getNodes();*/
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
