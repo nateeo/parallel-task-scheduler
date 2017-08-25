@@ -87,11 +87,6 @@ public class SplashScreen implements Initializable {
         }
     }
 
-    public void testChangeColor(ActionEvent event) {
-        int[] values = {80,50,32,31,21,17,13,8,1,1,1};
-        _gd.updateHeatMap(values);
-    }
-
     public void testUpdateStats(ActionEvent event) {
         _sg.updateStats(0.6,12,12121212,121212,12121212,1212);
     }

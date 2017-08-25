@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="857.0" minHeight="800.0" prefHeight="834.0" prefWidth="1046.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
+<AnchorPane maxHeight="857.0" minHeight="779.0" prefHeight="779.0" prefWidth="1046.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
    <children>
       <HBox id="componentContent" alignment="TOP_CENTER" layoutX="4.0" layoutY="49.0" style="-fx-background-color: dedee6;">
          <children>
@@ -90,8 +90,6 @@
                </HBox.margin></AnchorPane>
          </children>
       </HBox>
-      <Button layoutX="449.0" layoutY="789.0" mnemonicParsing="false" onAction="#testChangeColor" text="Work" />
-      <Button layoutX="555.0" layoutY="792.0" mnemonicParsing="false" onAction="#testUpdateStats" text="Test Stats" />
       <Label layoutX="459.0" layoutY="14.0" text="Hi-5 Task Scheduler" />
    </children>
    <stylesheets>

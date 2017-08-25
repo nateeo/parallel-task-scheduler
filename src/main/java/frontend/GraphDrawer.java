@@ -32,20 +32,6 @@ public class GraphDrawer {
         List<Node> nodes = _graph.getNodes();
         //List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = _graph.getEdges();
-        List<Edge> edgesToRemove = new ArrayList<>();
-        if (edges.size() > 0) {
-            for (Edge deletingEdge : edges) {
-                if (deletingEdge.getWeight() == 0) {
-                    edgesToRemove.add(deletingEdge);
-                }
-            }
-        }
-
-        edges.removeAll(edgesToRemove);
-
-        for(Edge edge: edges) {
-            System.out.println("Edge To"+ edge.getTo() +"From "+ edge.getFrom()+ "with weight of"+edge.getWeight());
-        }
 
         List<Node> source = _graph.getStart();
         double graphPaneX = _graphPane.getPrefWidth();
@@ -76,22 +62,9 @@ public class GraphDrawer {
             maxXSpacing = (graphPaneX - (maxXSize * _circleSize)) / (maxXSize + 1);
         }
 
-        for(int i = 0 ; i < graphLevels.size(); i++) {
-            String printShit = "Level [" +i+"]";
-            for(int j = 0 ; j < graphLevels.get(i).size(); j++) {
-                printShit += graphLevels.get(i).get(j);
-            }
-            System.out.println(printShit);
-        }
-
-        int i = 0;
-
         for (List<Node> levels: graphLevels) {
 
             yCoordinate += ySpacing;
-            System.out.println("ySpacing: " +ySpacing +" For level" + i);
-            i++;
-            System.out.println("Y Coordinate: "+yCoordinate);
             xSpacing = (graphPaneX - (levels.size() * _circleSize)) / (levels.size() + 1);
             xCoordinate = 0;
             for(Node circlesDrawn: levels) {
