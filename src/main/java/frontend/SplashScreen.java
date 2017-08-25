@@ -58,12 +58,8 @@ public class SplashScreen implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("GEasg");
         listener = new Listener(this);
         Scheduler._listener = listener;
-        System.out.println("assign " + Scheduler._listener);
-        System.out.println(statsPane);
-        System.out.println(schedulerPane);
 
         //draw graph
         _graph = Main.getGraph();
