@@ -171,7 +171,7 @@ public class Scheduler {
                             }
                     }
                 };
-                updater.schedule(task, 3000, 300);
+                updater.schedule(task, 5000, 300);
             }).start();
         }
 
