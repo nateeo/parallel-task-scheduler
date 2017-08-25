@@ -29,44 +29,53 @@
                   <ProgressIndicator fx:id="progressBar" layoutX="107.0" layoutY="42.0" prefHeight="131.0" prefWidth="119.0" progress="0.0" />
                   <VBox layoutX="17.0" layoutY="189.0" prefHeight="501.0" prefWidth="300.0">
                      <children>
-                        <AnchorPane id="stats1" prefHeight="75.0" prefWidth="300.0" styleClass="statsPane">
+                        <AnchorPane id="stats1" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #E74B3C;" styleClass="statsPane">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Timer: " />
+                              <Label layoutX="14.0" layoutY="14.0" text="Timer" />
+                              <Label layoutX="206.0" layoutY="17.0" styleClass="statsValues" text="0">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </AnchorPane>
-                        <AnchorPane id="stats2" prefHeight="75.0" prefWidth="300.0" styleClass="statsPane">
+                        <AnchorPane prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #EF8700;" styleClass="statsPane">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Current Finish Time: " />
+                              <Label layoutX="14.0" layoutY="14.0" text="Current Finish Time" />
+                              <Label layoutX="206.0" layoutY="16.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane id="stats3" prefHeight="75.0" prefWidth="300.0" styleClass="statsPane">
+                        <AnchorPane id="stats3" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #F1C40F;" styleClass="statsPane">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Current Expected cost estimate: " />
+                              <Label layoutX="14.0" layoutY="14.0" text="Underestimate" />
+                              <Label layoutX="206.0" layoutY="20.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane id="stats4" prefHeight="75.0" prefWidth="300.0" styleClass="statsPane">
+                        <AnchorPane id="stats4" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #19BC9D;" styleClass="statsPane">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Number of states explored: " />
+                              <Label layoutX="14.0" layoutY="14.0" text="States explored" />
+                              <Label layoutX="205.0" layoutY="17.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane id="stats5" prefHeight="75.0" prefWidth="300.0" styleClass="statsPane">
+                        <AnchorPane id="stats5" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #3598DB;" styleClass="statsPane">
                            <VBox.margin>
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Number of states stored in memory: " />
+                              <Label layoutX="14.0" layoutY="14.0" text="Memory" />
+                              <Label layoutX="205.0" layoutY="16.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                      </children>
