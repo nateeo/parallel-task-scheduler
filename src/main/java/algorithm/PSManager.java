@@ -16,11 +16,11 @@ import java.util.List;
 
 public class PSManager {
 
-    private Graph _graph;
-    private int _numberOfProcessors;
+    protected Graph _graph;
+    protected int _numberOfProcessors;
 
     //calculate all bottom level work values and cache them for the cost function
-    private HashMap<String, Integer> _bottomLevelWork;
+    protected HashMap<String, Integer> _bottomLevelWork;
     protected Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
@@ -36,6 +36,7 @@ public class PSManager {
     public int _cost;
     public int _statesExplored;
     public int _memory;
+    public double _loaded;
 
     public PSManager(){
 

@@ -173,7 +173,8 @@ public class Scheduler {
                             int cost = _psManager._cost;
                             int statesExplored = _psManager. _statesExplored;
                             if (_listener != null) {
-                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost, _psManager._currentFinishTime, _psManager._statesExplored);
+                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                                        _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             }
                     }
                 };

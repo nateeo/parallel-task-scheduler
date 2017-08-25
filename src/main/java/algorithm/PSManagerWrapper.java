@@ -4,6 +4,8 @@ import graph.Graph;
 
 public class PSManagerWrapper extends PSManager{
 
+    protected int _totalNodes;
+
     public PSManagerWrapper(){
         super();
     }
@@ -11,6 +13,7 @@ public class PSManagerWrapper extends PSManager{
     public PSManagerWrapper(int processors, Graph graph){
         super(processors, graph);
         _nodeVisitCounts = new int[graph.getNodes().size()];
+        _totalNodes = _graph.getNodes().size();
     }
 
     public PSManagerWrapper(int processors, Graph graph, Cache cache) {
@@ -31,10 +34,11 @@ public class PSManagerWrapper extends PSManager{
     @Override
     public void generateChildren(PartialSolution ps, PSPriorityQueue queue) {
 
-        // update currentFinishTime, cost and states explored
+        // update currentFinishTime, cost, loaded and states explored
         _currentFinishTime = ps._currentFinishTime;
         _cost = ps._cost;
         _statesExplored++;
+        _loaded = ps._nodes.size() / _totalNodes;
 
         // update _nodeVisitCounts
         for(int i = 0; i<ps._processors.length; i++){

@@ -31,7 +31,7 @@ public class Listener {
 
     }
 
-    public void update(int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored){
+    public void update(int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
         if(nodeCounts != null){
             _ss._gd.updateHeatMap(nodeCounts);
             // SAM LI UPDATE YOUR STUFF HERE
