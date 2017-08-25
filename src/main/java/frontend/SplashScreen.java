@@ -4,6 +4,8 @@ import graph.Graph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import scheduler.Scheduler;
@@ -36,12 +38,23 @@ public class SplashScreen implements Initializable {
     @FXML
     protected AnchorPane schedulerPane;
 
+    @FXML
+    protected Label timer;
+
+    @FXML
+    protected Label currentFinishTime;
+
+    @FXML
+    protected Label underestimate;
+
+    @FXML
+    protected Label statesExplored;
+
+    @FXML
+    protected Label memory;
 
     @FXML
     private ProgressIndicator progressBar;
-
-    @FXML
-    private TableView<String> tableView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -56,7 +69,7 @@ public class SplashScreen implements Initializable {
         _graph = Main.getGraph();
         _gd = new GraphDrawer(_graph, graphPane, circleSize);
         _gd.drawGraph();
-        //_sg = new StatsGenerator(progressBar, currentExpected, statesExpected, timeElapsed);
+        _sg = new StatsGenerator(progressBar, timer, currentFinishTime, underestimate, statesExplored, memory);
         //generate stats
 
 
@@ -80,7 +93,7 @@ public class SplashScreen implements Initializable {
     }
 
     public void testUpdateStats(ActionEvent event) {
-        _sg.updateStats(0.6,12,12,12);
+        //_sg.updateStats(0.6,12,12,12);
     }
 }
 

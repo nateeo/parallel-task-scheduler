@@ -9,18 +9,19 @@ public class StatsGenerator {
     private ProgressIndicator _progressBar;
     private TableView<String> _tableView;
     private PartialSolution _ps;
-    private TableColumn<String, String> _tableColumn;
+    private Label _timer;
+    private Label _currentFinishTime;
+    private Label _underestimate;
+    private Label _statesExplored;
+    private Label _memory;
 
 
-
-    public StatsGenerator(ProgressIndicator pb, TableView tableView){
-        //_ps = ps;
-        _progressBar = pb;
-        _tableView = tableView;
-    }
-
-    public void updateStats(double psValue, int ce, int se, int te) {
-        _progressBar.setProgress(psValue);
-        //_tableView.edit(0,"Value").set(ce);
+    public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
+        _progressBar = progressBar;
+        _timer = timer;
+        _currentFinishTime = currentFinishTime;
+        _underestimate = underestimate;
+        _statesExplored = statesExplored;
+        _memory = memory;
     }
 }
