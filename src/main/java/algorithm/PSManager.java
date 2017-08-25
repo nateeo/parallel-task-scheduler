@@ -30,6 +30,10 @@ public class PSManager {
     private int[] _maxPredecessorTime;
     private int[] _earliestTimes;
 
+    public PSManager(){
+
+    }
+
     public PSManager(int processors, Graph graph){
         _numberOfProcessors = processors;
         _graph = graph;
@@ -288,7 +292,7 @@ public class PSManager {
         }
     }
 
-    private void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
+    protected void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
         if (!equivalenceCheck(ps, processorIndex)) {
             if (_cache.add(ps)) {
                 queue.add(ps);

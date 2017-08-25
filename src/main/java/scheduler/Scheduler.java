@@ -2,6 +2,7 @@ package scheduler;
 
 
 import algorithm.PSManager;
+import algorithm.PSManagerWrapper;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
@@ -37,6 +38,7 @@ public class Scheduler {
     public static Graph _graph;
     public static PSPriorityQueue _priorityQueue;
     private static String[] _args;
+
 
     private static PartialSolution _last;
 
@@ -146,6 +148,7 @@ public class Scheduler {
         Timer updater = new Timer();
 
         if(_visualize) {
+
             new Thread(() -> {
                 Application.launch(Main.class);
             }).start();
@@ -172,7 +175,11 @@ public class Scheduler {
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
-        PSManager psManager = new PSManager(_processors, _graph);
+        if(_visualize) {
+            PSManager psManager = new PSManagerWrapper(_processors, _graph);
+        } else {
+            PSManager psManager = new PSManager(_processors, _graph);
+        }
         //priority queue will terminate upon the first instance of a total solution
         while (_priorityQueue.hasNext()) {
             if (_parallelOn == false || _priorityQueue.size() <= 1000) {
@@ -209,33 +216,3 @@ public class Scheduler {
 
 }
 
-class PSPriorityQueueWrapper {
-    Timeline _timeline;
-    // Listeners to give EDS/Sam stats every second or so
-    // Uses decorator/wrapper pattern to wrap PSManager and send data every poll
-    // Wraps PSManager
-
-    // method to assign sam/eds stuff as a listneer, and this method has a timer to send
-    // PSManager's data every second or so
-
-    PSPriorityQueueWrapper(){
-        startEventTimer();
-    }
-
-    public void startEventTimer(){
-        Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(1000),
-                ae -> bestPS()));
-        _timeline = timeline;
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-    }
-
-    public void cancelEventTimer(){
-        _timeline.stop();
-    }
-
-    public PartialSolution bestPS(){
-        return _priorityQueue.getCurrentPartialSolution();
-    }
-}
