@@ -7,6 +7,14 @@
     <groupId>306-group5</groupId>
     <artifactId>scheduling-app</artifactId>
     <version>1.0</version>
+
+    <repositories>
+        <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${project.basedir}/local-maven-repo</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -42,6 +50,11 @@
         <artifactId>junit</artifactId>
         <version>4.12</version>
         <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>pttask</groupId>
+        <artifactId>pttask</artifactId>
+        <version>0.9.5</version>
     </dependency>
     <dependency>
         <groupId>org.junit.jupiter</groupId>

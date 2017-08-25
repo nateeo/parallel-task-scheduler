@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Node {
     String _name;
     int _id;
+    int _topId; // topological id
     int _weight;
     ArrayList<Edge> _outgoing;
     ArrayList<Edge> _incoming;
@@ -46,6 +47,18 @@ public class Node {
 
     public int getId() {
         return _id;
+    }
+
+    public void setId(int id) {
+        _id = id;
+    }
+
+    public void setTopId(int id) {
+        _topId = id;
+    }
+
+    public int getTopId() {
+        return _topId;
     }
 
     public String getName() {

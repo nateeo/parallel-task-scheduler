@@ -1,6 +1,7 @@
 package scheduler;
 
 
+import algorithm.Cache;
 import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
@@ -12,8 +13,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import logger.Logger;
+import parallelization.Parallelization;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.TimerTask;
 
 import static scheduler.Scheduler._priorityQueue;
@@ -32,7 +35,9 @@ public class Scheduler {
     public static PSPriorityQueue _priorityQueue;
     private static String[] _args;
 
-    private static String _consolePrefix = "(Hi-5 Scheduler v1.0)\t";
+    private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
+
+    private static boolean _parallelOn = false;
 
 
     /**
@@ -84,6 +89,10 @@ public class Scheduler {
             switch (args[i]) {
                 case "-p":
                     _cores = Integer.valueOf(args[i + 1]);
+
+                    if (_cores > 1) {
+                        _parallelOn = true;
+                    }
                     break;
                 case "-v":
                     _visualize = true;
@@ -120,10 +129,11 @@ public class Scheduler {
      * and the number of processors on which to schedule.
      * @return the valid optimal schedule
      */
-    private static PartialSolution solution() {
+    private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
          _priorityQueue = new PSPriorityQueue(_graph, _processors);
-
+        _priorityQueue.initialise();
+        Boolean parallelization = false;
 
         if(_visualize) {
             new Thread() {
@@ -143,18 +153,24 @@ public class Scheduler {
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
+        while (priorityQueue.hasNext()) {
+            if (_parallelOn == false || priorityQueue.size() <= 1000) {
+                ps = priorityQueue.getCurrentPartialSolution();
+                //generate the child partial solutions from the current "best" candidate partial solution
+                //then add to the priority queue based on conditions.
+                psManager.generateChildren(ps, priorityQueue);
+            } else {
+                parallelization = true;
+                Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores, psManager.getCache());
+                ps = parallelize.findOptimal();
+                break;
+            }
 
 
-        // if we're visualising, run the JavaFX application class
-
-
-        while (_priorityQueue.hasNext()) {
-            ps = _priorityQueue.getCurrentPartialSolution();
-            //generate the child partial solutions from the current "best" candidate partial solution
-            //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, _priorityQueue);
         }
-        ps = _priorityQueue.getCurrentPartialSolution();
+        if (!parallelization){
+            ps = priorityQueue.getCurrentPartialSolution();
+        }
         return ps;
     }
 
