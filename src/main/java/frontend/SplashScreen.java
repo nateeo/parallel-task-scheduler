@@ -14,8 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -25,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -41,6 +41,7 @@ public class SplashScreen implements Initializable {
     Graph _graph;
     PartialSolution _ps;
     GraphDrawer _gd;
+    StatsGenerator _sg;
 
     @FXML
     private AnchorPane graphPane;
@@ -52,6 +53,12 @@ public class SplashScreen implements Initializable {
     @FXML
     private AnchorPane schedulerPane;
 
+    @FXML
+    private ProgressIndicator progressBar;
+
+    @FXML
+    private TableView<String> tableView;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -59,7 +66,7 @@ public class SplashScreen implements Initializable {
         _graph = Main.getGraph();
         _gd = new GraphDrawer(_graph, graphPane, circleSize);
         _gd.drawGraph();
-
+        //_sg = new StatsGenerator(progressBar, currentExpected, statesExpected, timeElapsed);
         //generate stats
 
 
@@ -100,6 +107,10 @@ public class SplashScreen implements Initializable {
     public void testChangeColor(ActionEvent event) {
         int[] values = {80,50,32,31,21,17,13,8,1,1,1};
         _gd.updateHeatMap(values);
+    }
+
+    public void testUpdateStats(ActionEvent event) {
+        _sg.updateStats(0.6,12,12,12);
     }
 }
 

@@ -30,10 +30,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        /*// input the graph.
+
         File testGraph = new File ("src/test/resources/exampleLarge.dot");
         _graph = parseDotFile(testGraph);
-        List<Node> listOfNodes = _graph.getNodes();*/
+        List<Node> listOfNodes = _graph.getNodes();
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
         Parent root = FXMLLoader.load(url);

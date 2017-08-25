@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.net.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.text.*?>
@@ -10,34 +11,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="878.0" prefWidth="976.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
+<AnchorPane prefHeight="842.0" prefWidth="1014.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.SplashScreen">
    <children>
-      <HBox alignment="CENTER" layoutX="222.0" layoutY="2.0" prefHeight="58.0" prefWidth="517.0">
+      <HBox id="componentContent" layoutX="71.0" layoutY="87.0" prefHeight="708.0" prefWidth="1000.0" style="-fx-background-color: dedee6;">
          <children>
-            <Label alignment="CENTER" styleClass="title" stylesheets="@../../resources/style.css" text="HI-5 Task Scheduling" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Avenir Medium" size="22.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <HBox layoutX="39.0" layoutY="58.0" prefHeight="708.0" prefWidth="894.0">
-         <children>
-            <AnchorPane fx:id="schedulerPane" prefHeight="800.0" prefWidth="400.0">
+            <AnchorPane fx:id="schedulerPane" prefHeight="691.0" prefWidth="333.0" styleClass="cards">
                <stylesheets>
                   <URL value="@style.css" />
                   <URL value="@style.css" />
                </stylesheets>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-            <AnchorPane fx:id="graphPane" prefHeight="470.0" prefWidth="379.0" />
+            <AnchorPane prefHeight="708.0" prefWidth="333.0" styleClass="cards">
+               <children>
+                  <ProgressIndicator fx:id="progressBar" layoutX="96.0" layoutY="78.0" prefHeight="131.0" prefWidth="119.0" progress="0.0" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" right="10.0" top="10.0" />
+               </HBox.margin></AnchorPane>
+            <AnchorPane fx:id="graphPane" prefHeight="708.0" prefWidth="333.0" styleClass="cards">
+               <HBox.margin>
+                  <Insets bottom="10.0" right="10.0" top="10.0" />
+               </HBox.margin></AnchorPane>
          </children>
       </HBox>
-      <Button layoutX="386.0" layoutY="790.0" mnemonicParsing="false" onAction="#testChangeColor" text="Work" />
+      <Button layoutX="488.0" layoutY="796.0" mnemonicParsing="false" onAction="#testChangeColor" text="Work" />
+      <Button layoutX="586.0" layoutY="812.0" mnemonicParsing="false" onAction="#testUpdateStats" text="Test Stats" />
    </children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
    <stylesheets>
       <URL value="@../../resources/style.css" />
       <URL value="@style.css" />
