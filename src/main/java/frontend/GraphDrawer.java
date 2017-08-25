@@ -43,6 +43,10 @@ public class GraphDrawer {
 
         edges.removeAll(edgesToRemove);
 
+        for(Edge edge: edges) {
+            System.out.println("Edge To"+ edge.getTo() +"From "+ edge.getFrom()+ "with weight of"+edge.getWeight());
+        }
+
         List<Node> source = _graph.getStart();
         double graphPaneX = _graphPane.getPrefWidth();
         double graphPaneY = _graphPane.getPrefHeight();
@@ -177,14 +181,15 @@ public class GraphDrawer {
         // Adds all the source nodes into the Queue.
         for(Node node: source) {
             queuedNodes.add(node);
-            levelsMap.put(node.getId(),0);
+            //levelsMap.put(node.getId(),0);
         }
 
         while(!queuedNodes.isEmpty()) {
             currentNode = queuedNodes.remove();
             level = 0;
+
             // If there are incoming edges on the node, this is for not source
-            if(!currentNode.getIncoming().isEmpty()) {
+            if(!currentNode.getIncoming().isEmpty() && !(currentNode.getIncoming().size() == 1 && currentNode.getIncoming().get(0).getWeight() == 0)) {
                 for(Edge predecessors: currentNode.getIncoming()) {
                     currentLevel = levelsMap.get(predecessors.getFrom().getId());
                     if(currentLevel > level) {
@@ -192,7 +197,6 @@ public class GraphDrawer {
                     }
                 }
                 level = level + 1;
-                levelsMap.put(currentNode.getId(),level);
 
                 // if the level is higher or equal to the returnList size then create a new arrayList. This is
                 // adding the currentNode to the correct level array.
@@ -205,6 +209,8 @@ public class GraphDrawer {
                     returnList.get(level).add(currentNode);
                 }
             }
+
+            levelsMap.put(currentNode.getId(),level);
 
             // Adding nodes to the queue if all predecessors levels have been computed.
             if(!currentNode.getOutgoing().isEmpty()) {
