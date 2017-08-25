@@ -6,10 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import scheduler.Scheduler;
-
 
 import java.util.ArrayList;
 
@@ -80,8 +78,8 @@ public class ScheduleGraphGenerator {
         _decoratedGraph = new HBox();
         _decoratedGraph.getStylesheets().add("style.css");
 
-        _returnPane = new ScrollPane();
-        _returnPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+//        _returnPane = new ScrollPane();
+//        _returnPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
     }
 
@@ -91,7 +89,8 @@ public class ScheduleGraphGenerator {
      * @return Pane Node containing the graph
      * @throws Exception
      */
-    public ScrollPane generateGraph() throws Exception{
+    public ScrollPane generateGraph() {
+        _returnPane = new ScrollPane();
 
         ArrayList<ProcessorSlot>[] processorLists = _ps.getProcessors();
         for (int i = 0; i<processorLists.length; i++){

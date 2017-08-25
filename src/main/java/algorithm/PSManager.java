@@ -1,16 +1,13 @@
 package algorithm;
 
-import com.sun.javafx.applet.Splash;
-import frontend.Main;
-import frontend.ScheduleGraphGenerator;
-import frontend.SplashScreen;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import javafx.animation.Timeline;
-import scheduler.Scheduler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This static class utilises the Partial solutions to generate children partial solutions.
@@ -39,36 +36,6 @@ public class PSManager {
         _idleConstantHeuristic = (double)graph.totalMinimumWork() / processors;
         _bottomLevelWork = graph._bottomLevelWork;
         _cache = new Cache(processors);
-
-        SplashScreen ss = new SplashScreen();
-        if(Scheduler._visualize) new Thread() {
-
-
-            @Override
-            public void run() {
-                Timer timer = new Timer();
-
-                TimerTask task = new TimerTask() {
-                    public void run() {
-
-                        System.out.println("In the timer");
-                        if (!Scheduler._priorityQueue._queue.peek().equals(null)) {
-
-                            PartialSolution currentBestPS = Scheduler._priorityQueue._queue.peek();
-
-                            System.out.println("in this section of code");
-
-                            ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(currentBestPS);
-
-
-                            ss.update(sgm);
-                        }
-                    }
-                };
-                timer.schedule(task, 3000l); // call every 3seconds
-            }
-        }.start();
-
     }
 
     public PSManager(int processors, Graph graph, Cache cache) {
