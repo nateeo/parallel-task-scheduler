@@ -41,9 +41,9 @@ public class Main extends Application {
 
     @Override
     public void stop(){
-        // kill the updater
-        Scheduler.updater.cancel();
-        Scheduler.updater.purge();
+        // Tell scheduler that the updater can stop
+        Scheduler._stopTimer = true;
+        System.exit(0);
     }
 
 

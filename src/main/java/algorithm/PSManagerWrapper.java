@@ -35,10 +35,11 @@ public class PSManagerWrapper extends PSManager{
     public void generateChildren(PartialSolution ps, PSPriorityQueue queue) {
 
         // update currentFinishTime, cost, loaded and states explored
-        _currentFinishTime = ps._currentFinishTime;
-        _cost = ps._cost;
+        _currentStatPS = ps;
         _statesExplored++;
-        _loaded = ps._nodes.size() / _totalNodes;
+        _loaded = (double)ps._nodes.size() / _totalNodes;
+        _currentFinishTime = ps._latestSlot.getFinish();
+        _cost = ps._cost;
 
         // update _nodeVisitCounts
         for(int i = 0; i<ps._processors.length; i++){
