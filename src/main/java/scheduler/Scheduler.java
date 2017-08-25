@@ -5,25 +5,46 @@ import algorithm.PSManager;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
+import frontend.Listener;
 import frontend.Main;
+import frontend.ScheduleGraphGenerator;
 import graph.Graph;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.util.Duration;
 import logger.Logger;
+import parallelization.Parallelization;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
+
+import static scheduler.Scheduler._priorityQueue;
 
 /**
  * Entry point to the scheduling algorithm
  */
 public class Scheduler {
     private static String _inputFileName;
-    private static int _processors;
+    public static int _processors;
     private static int _cores = 1;
-    private static boolean _visualize = false;
+    public static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
     private static File _inputFile;
-    private static Graph _graph;
+    public static Graph _graph;
+    public static PSPriorityQueue _priorityQueue;
+    private static String[] _args;
+
+    private static PartialSolution _last;
+
+    public static Listener _listener;
 
     private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
+
+    private static boolean _parallelOn = false;
 
 
     /**
@@ -32,6 +53,7 @@ public class Scheduler {
      * @param args
      */
     public static void main(String[] args) {
+        _args = args;
         try {
             parseConsole(args);
         } catch (InvalidInputException e) {
@@ -74,6 +96,10 @@ public class Scheduler {
             switch (args[i]) {
                 case "-p":
                     _cores = Integer.valueOf(args[i + 1]);
+
+                    if (_cores > 1) {
+                        _parallelOn = true;
+                    }
                     break;
                 case "-v":
                     _visualize = true;
@@ -102,7 +128,6 @@ public class Scheduler {
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
         System.out.println(ps.toString());
-        Main.main(_graph,ps);
 
         return ps; // for testing
     }
@@ -112,21 +137,65 @@ public class Scheduler {
      * and the number of processors on which to schedule.
      * @return the valid optimal schedule
      */
-    private static PartialSolution solution() {
+    private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
-        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
+         _priorityQueue = new PSPriorityQueue(_graph, _processors);
+        _priorityQueue.initialise();
+        Boolean parallelization = false;
+
+        Timer updater = new Timer();
+
+        if(_visualize) {
+            new Thread(() -> {
+                Application.launch(Main.class);
+            }).start();
+            new Thread(() -> {
+                TimerTask task = new TimerTask() {
+                    public void run() {
+                        PartialSolution ps = _priorityQueue._queue.peek();
+                            if (ps != null) {
+                                _last = ps;
+                            }
+                            if (_last != null) {
+                                PartialSolution currentBestPS = Scheduler._priorityQueue._queue.peek();
+                                ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(currentBestPS);
+                                if (_listener != null) {
+                                    _listener.notify("Updated", currentBestPS);
+                                }
+                            }
+                    }
+                };
+                updater.schedule(task, 1000, 2000);
+            }).start();
+        }
+
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
         PartialSolution ps = null;
         PSManager psManager = new PSManager(_processors, _graph);
         //priority queue will terminate upon the first instance of a total solution
-        while (priorityQueue.hasNext()) {
-            ps = priorityQueue.getCurrentPartialSolution();
-            //generate the child partial solutions from the current "best" candidate partial solution
-            //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, priorityQueue);
+        while (_priorityQueue.hasNext()) {
+            if (_parallelOn == false || _priorityQueue.size() <= 1000) {
+                ps = _priorityQueue.getCurrentPartialSolution();
+                //generate the child partial solutions from the current "best" candidate partial solution
+                //then add to the priority queue based on conditions.
+                psManager.generateChildren(ps, _priorityQueue);
+            } else {
+                parallelization = true;
+                Parallelization parallelize = new Parallelization(_priorityQueue, _processors, _graph, _cores, psManager.getCache());
+                ps = parallelize.findOptimal();
+                break;
+            }
+
+
         }
-        ps = priorityQueue.getCurrentPartialSolution();
+        if (!parallelization){
+            ps = _priorityQueue.getCurrentPartialSolution();
+        }
+        // kill timer
+//        updater.cancel();
+//        updater.purge();
+//        System.out.println("killed updater");
         return ps;
     }
 
@@ -138,4 +207,35 @@ public class Scheduler {
         Parser.outputGraphToFile(ps,_outputFile,_inputFile);
     }
 
+}
+
+class PSPriorityQueueWrapper {
+    Timeline _timeline;
+    // Listeners to give EDS/Sam stats every second or so
+    // Uses decorator/wrapper pattern to wrap PSManager and send data every poll
+    // Wraps PSManager
+
+    // method to assign sam/eds stuff as a listneer, and this method has a timer to send
+    // PSManager's data every second or so
+
+    PSPriorityQueueWrapper(){
+        startEventTimer();
+    }
+
+    public void startEventTimer(){
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.millis(1000),
+                ae -> bestPS()));
+        _timeline = timeline;
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    public void cancelEventTimer(){
+        _timeline.stop();
+    }
+
+    public PartialSolution bestPS(){
+        return _priorityQueue.getCurrentPartialSolution();
+    }
 }

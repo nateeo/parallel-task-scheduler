@@ -1,84 +1,47 @@
 package frontend;
 
-import algorithm.PSManager;
-import algorithm.PSPriorityQueue;
-import algorithm.PartialSolution;
-import graph.Node;
+import graph.Graph;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.Parent;
-
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import scheduler.Scheduler;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
-
-import graph.Graph;
-
-import static dotParser.Parser.parseDotFile;
 
 public class Main extends Application {
 
     static Graph _graph;
-    static PartialSolution _ps;
+
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-
-        File testGraph = new File ("src/test/resources/exampleLarge.dot");
-        _graph = parseDotFile(testGraph);
-        List<Node> listOfNodes = _graph.getNodes();
+        _graph = Scheduler._graph;
 
         URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
-        Parent root = FXMLLoader.load(url);
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
+        FXMLLoader loader = new FXMLLoader();
+        SplashScreen controller = new SplashScreen();
+        Listener listener = new Listener(controller);
+        controller.listener = listener;
+        System.out.println("Controller listener is " + listener);
+        loader.setController(controller);
 
-
-        //TESTING-START
-        /*
-        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, 3);
-
-        // PSManager instance to perform calculations and generate states from existing Partial Solutions
-        PartialSolution ps = null;
-        PSManager psManager = new PSManager(3, _graph);
-        //priority queue will terminate upon the first instance of a total solution
-        while (priorityQueue.hasNext()) {
-            ps = priorityQueue.getCurrentPartialSolution();
-            //generate the child partial solutions from the current "best" candidate partial solution
-            //then add to the priority queue based on conditions.
-            psManager.generateChildren(ps, priorityQueue);
-        }
-        ps = priorityQueue.getCurrentPartialSolution();
-
-        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);*/
-
-
-        //ScrollPane root = sgm.generateGraph(ps);
+        Parent root = loader.load(url);
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
-
-
-        //TESTING-END
         primaryStage.show();
+
     }
+
 
     public static Graph getGraph(){
         return _graph;
     }
-
-    public static void main(Graph graph, PartialSolution ps) {
-        _graph = graph;
-        _ps = ps;
-        launch();
-
-    }
-
 
 }

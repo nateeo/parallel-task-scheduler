@@ -1,8 +1,8 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.TreeSet;
+import logger.Logger;
+
+import java.util.*;
 
 /**
  * This class manages the storage and checking of duplicates
@@ -14,9 +14,10 @@ import java.util.TreeSet;
  * author: nhur714
  */
 public class Cache {
-
-    private TreeSet<PartialSolution> _treeSet;
+    private SortedSet<PartialSolution>  _treeSet;
     private int _processorCount;
+    private int[] _firstNormalisedProcessors;
+    private int[] _secondNormalisedProcessors;
 
     private Comparator<PartialSolution> comparator = (PartialSolution o1, PartialSolution o2) -> {
         int costDiff = o1._cost - o2._cost;
@@ -33,6 +34,7 @@ public class Cache {
                 }
                 // go through each processor, return if size different
                 for (int i = 0; i < _processorCount; i++) {
+                    if (o1._startingNodes[i] != 0) {
                     ArrayList<ProcessorSlot> o1Processor = o1.getProcessors()[o1._startingNodeIndices[i]];
                     ArrayList<ProcessorSlot> o2Processor = o2.getProcessors()[o2._startingNodeIndices[i]];
                     int size1 = o1Processor.size();
@@ -42,6 +44,7 @@ public class Cache {
                         int slotNodeDiff = o1Processor.get(j).getNode().getId() - o2Processor.get(j).getNode().getId();
                         if (slotNodeDiff != 0) return slotNodeDiff;
                     }
+                }
                 }
                 // same!
                 return 0;
@@ -53,12 +56,9 @@ public class Cache {
         }
     };
 
-    /**
-     * constructs a cache object
-     * @param processorCount
-     */
     public Cache(int processorCount) {
-        _treeSet = new TreeSet<>(comparator);
+        TreeSet<PartialSolution> ts = new TreeSet<>(comparator);
+        _treeSet = Collections.synchronizedSortedSet(ts);
         _processorCount = processorCount;
     }
 

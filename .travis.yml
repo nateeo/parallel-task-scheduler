@@ -1,2 +1,4 @@
 language: java
+before_install:
+- rm ~/.m2/settings.xml
 install: travis_wait 35 mvn test -B

@@ -6,9 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
+import scheduler.Scheduler;
 
 import java.util.ArrayList;
 
@@ -42,6 +41,21 @@ public class ScheduleGraphGenerator {
     private int _actualRows;
 
     /**
+     * Create empty graph
+     */
+    public ScheduleGraphGenerator(){
+        _numProcessors = Scheduler._processors;
+        ABSOLUTE_WIDTH = DESIRED_WIDTH/_numProcessors;
+        _unitHeight = 3;
+
+        _ps = new PartialSolution(_numProcessors);
+        _actualRows = 20;
+        _gridHeight = 12;
+
+
+    }
+
+    /**
      * create the generator based off of the given partial solution.
      * @param ps
      */
@@ -52,6 +66,10 @@ public class ScheduleGraphGenerator {
         ABSOLUTE_WIDTH = DESIRED_WIDTH/_numProcessors;
         _graphLayout = new GridPane();
         computeGridDimensions();//calculate dimensions of graph
+        //use the preferred grid height size to compute how many grid rows it would require
+        int preferredRows = GRID_HEIGHT/_unitHeight;
+        _actualRows = round(preferredRows);//round grid to neat number
+        _gridHeight = (int)Math.ceil(_ps._cost/(double)_actualRows);
         GridPane gridWithBorders = drawGridBorders();//draws the background grid of the graph
 
         _graphComponent.getChildren().add(gridWithBorders);
@@ -60,31 +78,26 @@ public class ScheduleGraphGenerator {
         _decoratedGraph = new HBox();
         _decoratedGraph.getStylesheets().add("style.css");
 
-        _returnPane = new ScrollPane();
-        _returnPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+//        _returnPane = new ScrollPane();
+//        _returnPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
     }
 
     /**
      * Generates the graph based on the partial solution as well as the preferred dimensions of the
      * graph.
-     * @param ps
      * @return Pane Node containing the graph
      * @throws Exception
      */
-    public ScrollPane generateGraph(PartialSolution ps) throws Exception{
+    public ScrollPane generateGraph() {
+        _returnPane = new ScrollPane();
 
-        ArrayList<ProcessorSlot>[] processorLists = ps.getProcessors();
+        ArrayList<ProcessorSlot>[] processorLists = _ps.getProcessors();
         for (int i = 0; i<processorLists.length; i++){
             for (ProcessorSlot task : processorLists[i]){
                 //generate the rectangle
                 int height = task.getNode().getWeight();
-                /*Rectangle taskBlock = new Rectangle(ABSOLUTE_WIDTH, _unitHeight*height);
-                taskBlock.setFill(Color.GREEN);
-                taskBlock.setStroke(Color.WHITE);
-                taskBlock.setStrokeWidth(1);
-                taskBlock.getStyleClass().add("rectangle");*/
-                //stackpane encloses rectangle and text (required to nest text inside rectangle)
+
                 StackPane rectangleLayout = new StackPane();
                 rectangleLayout.setMinWidth(ABSOLUTE_WIDTH);
                 rectangleLayout.setMaxWidth(ABSOLUTE_WIDTH);
@@ -109,6 +122,8 @@ public class ScheduleGraphGenerator {
 
         return _returnPane;
     }
+
+
 
     /**
      * Helper function for decorating the graph with labels
@@ -207,15 +222,45 @@ public class ScheduleGraphGenerator {
 
     }
 
+    public ScrollPane initialise(){
+        GridPane backgroundGrid = drawGridBorders();
+        ScrollPane scrollPane = new ScrollPane();
+
+        VBox rightContainer = new VBox();
+        //text label container
+        HBox topLabelContainer = new HBox();
+        for (int i = 0; i<_numProcessors; i++){
+            StackPane labelPane = new StackPane();
+            labelPane.setMinWidth(ABSOLUTE_WIDTH);
+            labelPane.setPrefWidth(ABSOLUTE_WIDTH);
+            labelPane.setMinHeight(25);
+            Text processorText = new Text(i+"");
+            labelPane.getChildren().addAll(processorText);
+
+            topLabelContainer.getChildren().add(labelPane);
+        }
+
+        StackPane topNameContainer = new StackPane();
+        Text topName = new Text("Processors");
+        topNameContainer.setMinHeight(20);
+        topNameContainer.setPrefHeight(20);
+        topNameContainer.getChildren().add(topName);
+
+
+        rightContainer.getChildren().addAll(topNameContainer, topLabelContainer, backgroundGrid);
+        scrollPane.setContent(rightContainer);
+
+        return scrollPane;
+
+
+    }
+
     /**
      * Helper function for creating a ruled grid.
      * @return
      */
     private GridPane drawGridBorders(){
-        //use the preferred grid height size to compute how many grid rows it would require
-        int preferredRows = GRID_HEIGHT/_unitHeight;
-        _actualRows = round(preferredRows);//round grid to neat number
-        _gridHeight = (int)Math.ceil(_ps._cost/(double)_actualRows);
+
         System.out.println("Grid height is "+_actualRows);
 
         GridPane backgroundGrid = new GridPane();
@@ -234,10 +279,6 @@ public class ScheduleGraphGenerator {
         //create the grid
         for (int i = 0; i<_numProcessors; i++){
             for (int j =0; j<_gridHeight; j++){
-                /*Rectangle bg = new Rectangle(ABSOLUTE_WIDTH, _unitHeight*_actualRows);
-                bg.setStrokeWidth(1);
-                bg.setStroke(Color.DARKGRAY);
-                bg.setFill(Color.LINEN);*/
 
                 Pane bg = new Pane();
                 bg.setMinWidth(ABSOLUTE_WIDTH);
@@ -250,9 +291,6 @@ public class ScheduleGraphGenerator {
         }
 
         return backgroundGrid;
-
-
-
 
 
     }
