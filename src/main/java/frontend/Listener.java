@@ -4,15 +4,17 @@ import algorithm.PartialSolution;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 
+import java.awt.*;
+
 /**
  * Created by nateeo on 25/08/17.
  */
 public class Listener {
-    AnchorPane _schedulePane;
+    ScrollPane _schedulePane;
     AnchorPane _statsPane;
     SplashScreen _ss;
 
-    public Listener(AnchorPane schedulePane, AnchorPane statsPane) {
+    public Listener(ScrollPane schedulePane, AnchorPane statsPane) {
         _schedulePane = schedulePane;
         _statsPane = statsPane;
     }
@@ -26,7 +28,7 @@ public class Listener {
         System.out.println(_ss);
             if (_ss.schedulerPane != null) {
                 ScheduleGraphGenerator sgg = new ScheduleGraphGenerator(ps);
-                Platform.runLater(() -> _ss.schedulerPane.getChildren().set(0, sgg.generateGraph()));
+                Platform.runLater(() -> _ss.schedulerPane.setContent(sgg.generateGraph()));
             }
 
     }
