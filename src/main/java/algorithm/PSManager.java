@@ -44,9 +44,10 @@ public class PSManager {
         _bottomLevelWork = bottomLevelCalculator(graph);
         _cache = new Cache(processors);
 
-
+        SplashScreen ss = new SplashScreen();
         if(Scheduler._visualize) new Thread() {
-            SplashScreen ss = new SplashScreen();
+
+
             @Override
             public void run() {
                 Timer timer = new Timer();

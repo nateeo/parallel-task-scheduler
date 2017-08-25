@@ -29,6 +29,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+import static scheduler.Scheduler._priorityQueue;
+
 /**
  * The splash Screen is meant to provide visual feedback to the user while it waits for the Task Schedular algorithm to complete
  * running.
@@ -56,14 +58,18 @@ public class SplashScreen implements Initializable {
         _graph = Main.getGraph();
         drawGraph(_graph);
 
+        PartialSolution ps = _priorityQueue.getCurrentPartialSolution();
 
+        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
 
         try {
-            //currentSGM = sgm.generateGraph();
-            //schedulerPane.getChildren().add(currentSGM);
+            currentSGM = sgm.generateGraph();
+            schedulerPane.getChildren().add(currentSGM);
 
         } catch (Exception e) {
+            System.out.println("in exception for initialisation method");
             e.printStackTrace();
+
         }
     }
 
@@ -264,10 +270,13 @@ public class SplashScreen implements Initializable {
 
     public void update(ScheduleGraphGenerator sgm) {
         try {
+
+            System.out.println("in the update hook method");
             schedulerPane.getChildren().remove(currentSGM);
             schedulerPane.getChildren().add(sgm.generateGraph());
         } catch (Exception e) {
-
+            System.out.println("blahblahblahblah");
+            e.printStackTrace();
         }
     }
 
