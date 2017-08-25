@@ -4,6 +4,11 @@ import graph.Graph;
 
 public class PSManagerWrapper extends PSManager{
 
+    public int[] _nodeVisitCounts;
+    public int _currentFinishTime;
+    public int _cost;
+    public int _statesExplored;
+    public int _memory;
 
     public PSManagerWrapper(){
         super();
@@ -11,7 +16,7 @@ public class PSManagerWrapper extends PSManager{
 
     public PSManagerWrapper(int processors, Graph graph){
         super(processors, graph);
-        _nodeVisitCounts = new int[graph.getNodes().size()];
+        _nodeVisitCounts = new int[graph.getNodes().size()+1];
     }
 
     public PSManagerWrapper(int processors, Graph graph, Cache cache) {
@@ -20,13 +25,16 @@ public class PSManagerWrapper extends PSManager{
     }
 
     @Override
-    protected void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
-        for(int i = 0; i<ps._processors.length; i++){
-            for(int j=0; j<ps._processors[i].size(); j++){
-                _nodeVisitCounts[ps._processors[i].get(j).getNode().getId() - 1]++;
+    public void generateChildren(PartialSolution parentPS, PSPriorityQueue queue) {
+        _cost = parentPS._cost;
+        _currentFinishTime = parentPS._latestSlot.getFinish();
+        _statesExplored++;
+        for(int i = 0; i<parentPS._processors.length; i++){
+            for(int j=0; j<parentPS._processors[i].size(); j++){
+                _nodeVisitCounts[parentPS._processors[i].get(j).getNode().getId()]++;
             }
         }
-        super.checkAndAdd(ps, processorIndex, queue);
+
 
 
     }
