@@ -93,7 +93,7 @@ public class SplashScreen implements Initializable {
     }
 
     public void testUpdateStats(ActionEvent event) {
-        //_sg.updateStats(0.6,12,12,12);
+        _sg.updateStats(0.6,12,12121212,121212,12121212,1212);
     }
 }
 

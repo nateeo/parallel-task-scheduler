@@ -35,7 +35,7 @@
                            </VBox.margin>
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" text="Timer" />
-                              <Label layoutX="206.0" layoutY="17.0" styleClass="statsValues" text="0">
+                              <Label fx:id="timer" layoutX="197.0" layoutY="23.0" styleClass="statsValues" text="0">
                                  <font>
                                     <Font size="36.0" />
                                  </font>
@@ -48,7 +48,7 @@
                            </VBox.margin>
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" text="Current Finish Time" />
-                              <Label layoutX="206.0" layoutY="16.0" styleClass="statsValues" text="0" />
+                              <Label fx:id="currentFinishTime" layoutX="199.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats3" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #F1C40F;" styleClass="statsPane">
@@ -57,7 +57,7 @@
                            </VBox.margin>
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" text="Underestimate" />
-                              <Label layoutX="206.0" layoutY="20.0" styleClass="statsValues" text="0" />
+                              <Label fx:id="underestimate" layoutX="199.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats4" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #19BC9D;" styleClass="statsPane">
@@ -66,7 +66,7 @@
                            </VBox.margin>
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" text="States explored" />
-                              <Label layoutX="205.0" layoutY="17.0" styleClass="statsValues" text="0" />
+                              <Label fx:id="statesExplored" layoutX="198.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats5" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #3598DB;" styleClass="statsPane">
@@ -75,7 +75,7 @@
                            </VBox.margin>
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" text="Memory" />
-                              <Label layoutX="205.0" layoutY="16.0" styleClass="statsValues" text="0" />
+                              <Label fx:id="memory" layoutX="199.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                      </children>
