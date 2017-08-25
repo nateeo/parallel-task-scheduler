@@ -117,6 +117,30 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10,0,0,0);
 }
 
+.statsPane {
+    -fx-background-radius: 10px;
+}
+
+#stats1 {
+    -fx-background-color: #19647e;
+}
+
+#stats2 {
+    -fx-background-color: #20547c;
+}
+
+#stats3 {
+    -fx-background-color: #30125c;
+}
+
+#stats4 {
+    -fx-background-color: #42245c;
+}
+
+#stats5 {
+    -fx-background-color: #57245c;
+}
+
 
 
 

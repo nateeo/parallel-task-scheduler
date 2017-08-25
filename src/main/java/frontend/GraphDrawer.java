@@ -127,12 +127,12 @@ public class GraphDrawer {
         System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
 
         Line line = new Line(beginningOfLineX,beginningOfLineY,endOfLineX,endOfLineY);
-        line.setStroke(Color.WHITE);
+        line.setStroke(Color.BLACK);
         line.setStrokeWidth(1);
         Line rightArrow = new Line(endOfLineX,endOfLineY,endOfLineX + 5,endOfLineY - 5);
-        rightArrow.setStroke(Color.WHITE);
+        rightArrow.setStroke(Color.BLACK);
         Line leftArrow = new Line(endOfLineX,endOfLineY, endOfLineX - 5, endOfLineY - 5);
-        leftArrow.setStroke(Color.WHITE);
+        leftArrow.setStroke(Color.BLACK);
         _graphPane.getChildren().add(0,line);
         _graphPane.getChildren().add(0,rightArrow);
         _graphPane.getChildren().add(0,leftArrow);
@@ -229,7 +229,8 @@ public class GraphDrawer {
             }
         }
         for(int i = 0; i < nodesVisited.length; i++) {
-            circleMap.get(i + 1).setFill(Color.hsb(240, nodesVisited[i]/maxVisitedValue,1));
+            Color.hsb(272, 1, 1);
+            circleMap.get(i + 1).setFill(Color.hsb(280, nodesVisited[i]/maxVisitedValue,1));
         }
     }
 }

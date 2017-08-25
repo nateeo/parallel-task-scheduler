@@ -31,7 +31,7 @@ public class ScheduleGraphGenerator {
 
     //FIXED DIMENSIONS
     private int ABSOLUTE_HEIGHT = 700;//height of the output
-    private int DESIRED_WIDTH= 400;
+    private int DESIRED_WIDTH= 200;
     private int ABSOLUTE_WIDTH = 100;
     private int GRID_HEIGHT = 80;//preferred grid height. Will be rounded to a 'neat' number
 
