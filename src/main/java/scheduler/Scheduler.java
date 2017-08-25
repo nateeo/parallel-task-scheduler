@@ -22,7 +22,7 @@ import static scheduler.Scheduler._priorityQueue;
  */
 public class Scheduler {
     private static String _inputFileName;
-    private static int _processors;
+    public static int _processors;
     private static int _cores = 1;
     public static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";

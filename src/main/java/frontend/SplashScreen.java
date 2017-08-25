@@ -24,6 +24,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
+import scheduler.Scheduler;
 
 import java.io.File;
 import java.net.URL;
@@ -39,6 +40,7 @@ import java.util.*;
 public class SplashScreen implements Initializable {
 
     Graph _graph;
+
     Map<Integer, StackPane> shapeMap = new HashMap<>();
     Map<Integer, Circle> circleMap = new HashMap<>();
     static ScrollPane currentSGM;
@@ -59,8 +61,11 @@ public class SplashScreen implements Initializable {
 
 
         try {
-            //currentSGM = sgm.generateGraph();
-            //schedulerPane.getChildren().add(currentSGM);
+
+            ScheduleGraphGenerator sgm = new ScheduleGraphGenerator();
+
+            currentSGM = sgm.initialise();
+            schedulerPane.getChildren().add(currentSGM);
 
         } catch (Exception e) {
             e.printStackTrace();
