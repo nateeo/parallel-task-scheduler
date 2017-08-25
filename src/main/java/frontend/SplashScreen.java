@@ -24,6 +24,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
+import scheduler.Scheduler;
 
 import java.io.File;
 import java.net.URL;
@@ -58,18 +59,17 @@ public class SplashScreen implements Initializable {
         _graph = Main.getGraph();
         drawGraph(_graph);
 
-        PartialSolution ps = _priorityQueue.getCurrentPartialSolution();
 
-        ScheduleGraphGenerator sgm = new ScheduleGraphGenerator(ps);
 
         try {
-            currentSGM = sgm.generateGraph();
+
+            ScheduleGraphGenerator sgm = new ScheduleGraphGenerator();
+
+            currentSGM = sgm.initialise();
             schedulerPane.getChildren().add(currentSGM);
 
         } catch (Exception e) {
-            System.out.println("in exception for initialisation method");
             e.printStackTrace();
-
         }
     }
 
@@ -270,13 +270,10 @@ public class SplashScreen implements Initializable {
 
     public void update(ScheduleGraphGenerator sgm) {
         try {
-
-            System.out.println("in the update hook method");
             schedulerPane.getChildren().remove(currentSGM);
             schedulerPane.getChildren().add(sgm.generateGraph());
         } catch (Exception e) {
-            System.out.println("blahblahblahblah");
-            e.printStackTrace();
+
         }
     }
 

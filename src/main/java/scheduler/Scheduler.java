@@ -14,6 +14,7 @@ import javafx.util.Duration;
 import logger.Logger;
 
 import java.io.File;
+import java.util.TimerTask;
 
 import static scheduler.Scheduler._priorityQueue;
 
@@ -22,7 +23,7 @@ import static scheduler.Scheduler._priorityQueue;
  */
 public class Scheduler {
     private static String _inputFileName;
-    private static int _processors;
+    public static int _processors;
     private static int _cores = 1;
     public static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
@@ -126,10 +127,14 @@ public class Scheduler {
 
         if(_visualize) {
             new Thread() {
-                @Override
-                public void run() {
-                    javafx.application.Application.launch(Main.class);
-                }
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        javafx.application.Application.launch(Main.class);
+                    }
+
+                };
+
             }.start();
         }
 
