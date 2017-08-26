@@ -34,11 +34,11 @@ public class Listener {
 
     }
 
-    public void update(int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
+    public void update(boolean isFinished, int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
         if(nodeCounts != null){
             _ss._gd.updateHeatMap(nodeCounts);
             System.out.println("loaded value: "+loaded);
-            Platform.runLater(() ->_ss._sg.updateStats(loaded,0,currentFinishTime,cost,statesExplored,memory));
+            Platform.runLater(() ->_ss._sg.updateStats(loaded,isFinished,currentFinishTime,cost,statesExplored,memory));
         }
     }
 }

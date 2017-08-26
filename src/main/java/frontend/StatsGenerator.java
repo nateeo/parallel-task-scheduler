@@ -17,6 +17,7 @@ public class StatsGenerator {
     private Label _underestimate;
     private Label _statesExplored;
     private Label _memory;
+    private AnimationTimer _animationTimer;
 
 
     public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
@@ -43,12 +44,18 @@ public class StatsGenerator {
         }.start();
     }
 
-    public void updateStats(double pvalue, int timer, int currentFinishTime, int underestimates, int statesExplored, int memory) {
+    public void updateStats(double pvalue, boolean timer, int currentFinishTime, int underestimates, int statesExplored, int memory) {
         _progressBar.setProgress(pvalue);
-        //_timer.setText((timer + ""));
         _currentFinishTime.setText((currentFinishTime + ""));
         _underestimate.setText((underestimates + ""));
         _statesExplored.setText((statesExplored+ ""));
         _memory.setText((memory + ""));
+
+        if (timer){
+            String finalTime = _timer.getText();
+            _timer = new Label();
+            _timer.setText(finalTime);
+
+        }
     }
 }

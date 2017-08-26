@@ -165,7 +165,11 @@ public class Scheduler {
                             }
                             if (_last != null && _listener != null) {
                                 _listener.notify("Updated", _psManager._currentStatPS);
-                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                                boolean isFinished =false;
+                                if (_psManager._nodeVisitCounts.length == _graph.getNodes().size()){
+                                    isFinished = true;
+                                }
+                                _listener.update(isFinished, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
                                         _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             }
                     }
