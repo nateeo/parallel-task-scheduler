@@ -36,8 +36,9 @@ public class PSManagerGroup {
                         _psManager = managers.get(currentIndex);
                         if (Scheduler._stopTimer) this.cancel();
                         if (_listener != null) {
-                            System.out.println(_psManager._nodeVisitCounts);
-                            _listener.updateThread(_psManager._currentStatPS, currentIndex, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                            boolean isFinished = false;
+                            if (_psManager._currentStatPS._nodes.size() == _psManager._graph.getNodes().size()) isFinished = true;
+                            _listener.updateThread(isFinished, _psManager._currentStatPS, currentIndex, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
                                     _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             currentIndex = (currentIndex + 1) % _cores;
                         }

@@ -26,6 +26,7 @@ public class StatsGenerator {
         _progressBar = progressBar;
         _timer = timer;
         _currentFinishTime = currentFinishTime;
+        _currentThread = currentThread;
         _underestimate = underestimate;
         _statesExplored = statesExplored;
         _memory = memory;
@@ -48,14 +49,18 @@ public class StatsGenerator {
         }.start();
     }
 
-    public void updateStats(double pvalue, int currentThread, int currentFinishTime, int underestimates, int statesExplored, int memory) {
+    public void updateStats(boolean isFinished, double pvalue, int currentThread, int currentFinishTime, int underestimates, int statesExplored, int memory) {
         String currentThreadText = currentThread == 0 ? "Main" : currentThread + "";
         _progressBar.setProgress(pvalue);
-        //_timer.setText((timer +
         _currentThread.setText(currentThreadText);
         _currentFinishTime.setText((currentFinishTime + ""));
         _underestimate.setText((underestimates + ""));
         _statesExplored.setText((statesExplored+ ""));
         _memory.setText((memory + ""));
+        if (isFinished) {
+            String finalTime = _timer.getText();
+            _timer = new Label();
+            _timer.setText(finalTime);
+        }
     }
 }

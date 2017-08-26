@@ -42,6 +42,7 @@ public class Scheduler {
     private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
 
     private static boolean _parallelOn = false;
+    private static boolean _parallelization;
 
 
     /**
@@ -138,12 +139,12 @@ public class Scheduler {
         // Priority queue containing generated states
          _priorityQueue = new PSPriorityQueue(_graph, _processors);
         _priorityQueue.initialise();
-        Boolean parallelization = false;
+        _parallelization = false;
         PartialSolution ps = null;
 
         Timer updater = new Timer();
 
-        if(_visualize && !_parallelOn) {
+        if(_visualize) {
 
             Thread frontEnd = new Thread(() -> {
                 Application.launch(Main.class);
@@ -157,7 +158,9 @@ public class Scheduler {
                         public void run() {
                             if (_stopTimer) this.cancel();
                             if (_listener != null) {
-                                _listener.update(_psManager._currentStatPS, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                                boolean isFinished = false;
+                                if (_graph.getNodes().size() == _psManager._currentStatPS._nodes.size()) isFinished = true;
+                                _listener.update(isFinished, _psManager._currentStatPS, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
                                         _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             }
                         }
@@ -190,7 +193,10 @@ public class Scheduler {
                 //then add to the priority queue based on conditions.
                 _psManager.generateChildren(ps, _priorityQueue);
             } else {
-                if (_visualize) _group = new PSManagerGroup(_cores);
+                if (_visualize) {
+                    _group = new PSManagerGroup(_cores);
+                    updater.cancel(); // kill the main queue updater
+                }
                 Parallelization parallelize = new Parallelization(_priorityQueue, _processors, _graph, _cores, _psManager.getCache());
                 ps = parallelize.findOptimal(_group);
                 break;
@@ -198,7 +204,7 @@ public class Scheduler {
 
 
         }
-        if (!parallelization){
+        if (!_parallelization){
             ps = _priorityQueue.getCurrentPartialSolution();
         }
         // kill timer
