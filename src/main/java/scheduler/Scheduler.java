@@ -1,14 +1,10 @@
 package scheduler;
 
 
-import algorithm.PSManager;
-import algorithm.PSManagerWrapper;
-import algorithm.PSPriorityQueue;
-import algorithm.PartialSolution;
+import algorithm.*;
 import dotParser.Parser;
 import frontend.Listener;
 import frontend.Main;
-import frontend.ScheduleGraphGenerator;
 import graph.Graph;
 import javafx.application.Application;
 import logger.Logger;
@@ -35,12 +31,11 @@ public class Scheduler {
     private static PSManager _psManager;
 
     // for visualisation
-    private static int DELAY_TIME = 5000;
-    private static int REFRESH_TIME = 1000;
+    public static int DELAY_TIME = 3000;
+    public static int REFRESH_TIME = 2000;
+    public static PSManagerGroup _group;
 
     public static boolean _stopTimer;
-
-    private static PartialSolution _last;
 
     public static Listener _listener;
 
@@ -148,30 +143,34 @@ public class Scheduler {
 
         Timer updater = new Timer();
 
-        if(_visualize) {
+        if(_visualize && !_parallelOn) {
 
-            new Thread(() -> {
+            Thread frontEnd = new Thread(() -> {
                 Application.launch(Main.class);
-            }).start();
-            new Thread(() -> {
-                TimerTask task = new TimerTask() {
-                    public void run() {
-                        if (_stopTimer) this.cancel();
-                        if (_priorityQueue._queue.isEmpty()) {
-                        }
-                        PartialSolution ps = _priorityQueue._queue.peek();
-                            if (ps != null) {
-                                _last = ps;
-                            }
-                            if (_last != null && _listener != null) {
-                                _listener.notify("Updated", _psManager._currentStatPS);
-                                _listener.update(_psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+            });
+            frontEnd.setPriority(Thread.MAX_PRIORITY);
+            frontEnd.start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    TimerTask task = new TimerTask() {
+                        public void run() {
+                            if (_stopTimer) this.cancel();
+                            if (_listener != null) {
+                                _listener.update(_psManager._currentStatPS, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
                                         _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
                             }
-                    }
-                };
-                updater.schedule(task, DELAY_TIME, REFRESH_TIME);
+                        }
+                    };
+                    updater.schedule(task, DELAY_TIME, REFRESH_TIME);
+                }
             }).start();
+        } else if (_visualize) {
+            Thread frontEnd = new Thread(() -> {
+                Application.launch(Main.class);
+            });
+            frontEnd.setPriority(Thread.MAX_PRIORITY);
+            frontEnd.start();
         }
 
 
@@ -182,6 +181,7 @@ public class Scheduler {
             _psManager = new PSManager(_processors, _graph);
         }
 
+
         //priority queue will terminate upon the first instance of a total solution
         while (_priorityQueue.hasNext()) {
             if (_parallelOn == false || _priorityQueue.size() <= 1000) {
@@ -190,9 +190,9 @@ public class Scheduler {
                 //then add to the priority queue based on conditions.
                 _psManager.generateChildren(ps, _priorityQueue);
             } else {
-                parallelization = true;
+                if (_visualize) _group = new PSManagerGroup(_cores);
                 Parallelization parallelize = new Parallelization(_priorityQueue, _processors, _graph, _cores, _psManager.getCache());
-                ps = parallelize.findOptimal();
+                ps = parallelize.findOptimal(_group);
                 break;
             }
 

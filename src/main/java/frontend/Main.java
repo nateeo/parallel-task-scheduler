@@ -1,5 +1,6 @@
 package frontend;
 
+import algorithm.PSManagerGroup;
 import graph.Graph;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +27,6 @@ public class Main extends Application {
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
         FXMLLoader loader = new FXMLLoader();
         SplashScreen controller = new SplashScreen();
-        Listener listener = new Listener(controller);
-        controller.listener = listener;
         loader.setController(controller);
 
         Parent root = loader.load(url);

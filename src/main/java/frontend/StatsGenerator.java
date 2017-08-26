@@ -2,6 +2,7 @@ package frontend;
 
 import algorithm.PartialSolution;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 
@@ -13,15 +14,17 @@ public class StatsGenerator {
     private TableView<String> _tableView;
     private PartialSolution _ps;
     private Label _timer;
+    private Label _currentThread;
     private Label _currentFinishTime;
     private Label _underestimate;
     private Label _statesExplored;
     private Label _memory;
 
 
-    public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
+    public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentThread, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
         _progressBar = progressBar;
         _timer = timer;
+        _currentThread = currentThread;
         _currentFinishTime = currentFinishTime;
         _underestimate = underestimate;
         _statesExplored = statesExplored;
@@ -32,20 +35,24 @@ public class StatsGenerator {
             @Override
             public void handle(long now) {
                 long elapsedMillisec = System.currentTimeMillis() - startTime;
-                String output= String.format("%02d:%02d:",
+                String output= String.format("%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(elapsedMillisec),
                         TimeUnit.MILLISECONDS.toSeconds(elapsedMillisec) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedMillisec))
                 );
-                String milliseconds = String.format("%02d", elapsedMillisec%100);
-                _timer.setText(output+ milliseconds);
+                Platform.runLater(() -> {
+                    _timer.setText(output);
+                });
+
             }
         }.start();
     }
 
-    public void updateStats(double pvalue, int timer, int currentFinishTime, int underestimates, int statesExplored, int memory) {
+    public void updateStats(double pvalue, int currentThread, int currentFinishTime, int underestimates, int statesExplored, int memory) {
+        String currentThreadText = currentThread == 0 ? "Main" : currentThread + "";
         _progressBar.setProgress(pvalue);
-        //_timer.setText((timer + ""));
+        //_timer.setText((timer +
+        _currentThread.setText(currentThreadText);
         _currentFinishTime.setText((currentFinishTime + ""));
         _underestimate.setText((underestimates + ""));
         _statesExplored.setText((statesExplored+ ""));

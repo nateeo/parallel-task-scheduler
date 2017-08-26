@@ -16,6 +16,9 @@ import java.util.List;
 
 public class PSManager {
 
+    // identify each PSManager on each thread
+    public int _id;
+
     protected Graph _graph;
     protected int _numberOfProcessors;
 
@@ -44,6 +47,7 @@ public class PSManager {
     }
 
     public PSManager(int processors, Graph graph){
+        _nodeVisitCounts = new int[graph.getNodes().size()];
         _numberOfProcessors = processors;
         _graph = graph;
         _idleConstantHeuristic = (double)graph.totalMinimumWork() / processors;
@@ -51,8 +55,9 @@ public class PSManager {
         _cache = new Cache(processors);
     }
 
-    public PSManager(int processors, Graph graph, Cache cache) {
+    public PSManager(int processors, Graph graph, Cache cache, int id) {
         this(processors, graph);
+        _id = id;
         _cache = cache;
     }
 

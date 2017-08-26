@@ -1,5 +1,6 @@
 package frontend;
 
+import algorithm.PSManagerGroup;
 import graph.Graph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,6 +43,9 @@ public class SplashScreen implements Initializable {
     protected Label timer;
 
     @FXML
+    protected Label currentThread;
+
+    @FXML
     protected Label currentFinishTime;
 
     @FXML
@@ -58,14 +62,15 @@ public class SplashScreen implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        listener = new Listener(this);
-        Scheduler._listener = listener;
 
         //draw graph
         _graph = Main.getGraph();
         _gd = new GraphDrawer(_graph, graphPane, circleSize);
         _gd.drawGraph();
-        _sg = new StatsGenerator(progressBar, timer, currentFinishTime, underestimate, statesExplored, memory);
+        _sg = new StatsGenerator(progressBar, timer, currentThread ,currentFinishTime, underestimate, statesExplored, memory);
+        listener = new Listener(this);
+        Scheduler._listener = listener;
+        PSManagerGroup._listener = listener;
         //generate stats
 
 
@@ -81,10 +86,6 @@ public class SplashScreen implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void testUpdateStats(ActionEvent event) {
-        _sg.updateStats(0.6,12,12121212,121212,12121212,1212);
     }
 }
 

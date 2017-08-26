@@ -4,8 +4,6 @@ import graph.Graph;
 
 public class PSManagerWrapper extends PSManager{
 
-    protected int _totalNodes;
-
     public PSManagerWrapper(){
         super();
     }
@@ -13,12 +11,10 @@ public class PSManagerWrapper extends PSManager{
     public PSManagerWrapper(int processors, Graph graph){
         super(processors, graph);
         _nodeVisitCounts = new int[graph.getNodes().size()];
-        _totalNodes = _graph.getNodes().size();
     }
 
-    public PSManagerWrapper(int processors, Graph graph, Cache cache) {
-        super(processors, graph, cache);
-        _nodeVisitCounts = new int[graph.getNodes().size()];
+    public PSManagerWrapper(int processors, Graph graph, Cache cache, int id) {
+        super(processors, graph, cache, id);
     }
 
     @Override
@@ -27,7 +23,7 @@ public class PSManagerWrapper extends PSManager{
             if (_cache.add(ps)) {
                 // update currentFinishTime, cost, loaded and states explored
                 _currentStatPS = ps;
-                _loaded = (double)ps._nodes.size() / (_totalNodes);
+                _loaded = (double)ps._nodes.size() / (_graph.getNodes().size());
                 _currentFinishTime = ps._latestSlot.getFinish();
                 _cost = ps._cost;
                 _memory++;

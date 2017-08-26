@@ -46,8 +46,8 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Current Finish Time" />
-                              <Label fx:id="currentFinishTime" layoutX="177.0" layoutY="26.0" styleClass="statsValues" text="0" />
+                              <Label layoutX="14.0" layoutY="14.0" text="Current Thread" />
+                              <Label fx:id="currentThread" layoutX="177.0" layoutY="26.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats3" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #F1C40F;" styleClass="statsPane">
@@ -55,8 +55,8 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Underestimate" />
-                              <Label fx:id="underestimate" layoutX="177.0" layoutY="23.0" styleClass="statsValues" text="0" />
+                              <Label layoutX="14.0" layoutY="14.0" text="Current Finish Time" />
+                              <Label fx:id="currentFinishTime" layoutX="177.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats4" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #19BC9D;" styleClass="statsPane">
@@ -64,8 +64,8 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="States explored" />
-                              <Label fx:id="statesExplored" layoutX="179.0" layoutY="23.0" styleClass="statsValues" text="0" />
+                              <Label layoutX="14.0" layoutY="14.0" text="Underestimate" />
+                              <Label fx:id="underestimate" layoutX="179.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane id="stats5" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #3598DB;" styleClass="statsPane">
@@ -73,7 +73,13 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                            <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Memory" />
+                              <Label layoutX="14.0" layoutY="14.0" text="States Explored" />
+                              <Label fx:id="statesExplored" layoutX="178.0" layoutY="23.0" styleClass="statsValues" text="0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane id="stats5" prefHeight="75.0" prefWidth="300.0" style="-fx-background-color: #CA98C9;" styleClass="statsPane">
+                           <children>
+                              <Label layoutX="14.0" layoutY="14.0" text="States in memory" />
                               <Label fx:id="memory" layoutX="178.0" layoutY="23.0" styleClass="statsValues" text="0" />
                            </children>
                         </AnchorPane>
