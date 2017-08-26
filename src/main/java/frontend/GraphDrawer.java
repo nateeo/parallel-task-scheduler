@@ -215,10 +215,10 @@ public class GraphDrawer {
             }
         }
         for(int i = 0; i < nodesVisited.length; i++) {
-            Color.hsb(272, 1, 1);
+            Color.hsb(5, 1, 1);
             double sat = nodesVisited[i]/maxVisitedValue;
             sat = sat > 1 ? 1 : sat;
-            circleMap.get(i + 1).setFill(Color.hsb(280, sat,1));
+            circleMap.get(i + 1).setFill(Color.hsb(5, sat,1));
         }
     }
 }
