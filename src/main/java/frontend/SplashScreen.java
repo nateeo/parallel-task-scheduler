@@ -87,6 +87,8 @@ public class SplashScreen implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }
 
 

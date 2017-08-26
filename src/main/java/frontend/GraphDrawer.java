@@ -207,7 +207,7 @@ public class GraphDrawer {
 
     public void updateHeatMap(double[] saturationValues) {
         for(int i = 0; i < saturationValues.length; i++) {
-            circleMap.get(i + 1).setFill(Color.hsb(280, saturationValues[i],1));
+            circleMap.get(i + 1).setFill(Color.hsb(5, saturationValues[i],1));
         }
     }
 }

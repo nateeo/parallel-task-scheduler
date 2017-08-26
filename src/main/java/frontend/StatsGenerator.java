@@ -19,12 +19,12 @@ public class StatsGenerator {
     private Label _underestimate;
     private Label _statesExplored;
     private Label _memory;
+    private AnimationTimer _animationTimer;
 
 
     public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentThread, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
         _progressBar = progressBar;
         _timer = timer;
-        _currentThread = currentThread;
         _currentFinishTime = currentFinishTime;
         _underestimate = underestimate;
         _statesExplored = statesExplored;
