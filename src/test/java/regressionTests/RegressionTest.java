@@ -1,6 +1,7 @@
 package regressionTests;
 
 import algorithm.PSManager;
+import algorithm.PSManagerGroup;
 import algorithm.PSPriorityQueue;
 import algorithm.PartialSolution;
 import dotParser.Parser;
@@ -92,7 +93,7 @@ public class RegressionTest {
                     } else {
                         parallelization = true;
                         Parallelization parallelize = new Parallelization(priorityQueue, processorNumber, graph, 4, psManager.getCache());
-                        ps = parallelize.findOptimal();
+                        ps = parallelize.findOptimal(new PSManagerGroup(2));
                         break;
                     }
                 }

@@ -4,7 +4,10 @@ import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This static class utilises the Partial solutions to generate children partial solutions.
@@ -13,12 +16,15 @@ import java.util.*;
 
 public class PSManager {
 
-    private Graph _graph;
-    private int _numberOfProcessors;
+    // identify each PSManager on each thread
+    public int _id;
+
+    protected Graph _graph;
+    protected int _numberOfProcessors;
 
     //calculate all bottom level work values and cache them for the cost function
-    private HashMap<String, Integer> _bottomLevelWork;
-    private Cache _cache;
+    protected HashMap<String, Integer> _bottomLevelWork;
+    protected Cache _cache;
 
     //cache the constant portion of the idle time heuristic (total work / processors)
     private double _idleConstantHeuristic;
@@ -27,7 +33,21 @@ public class PSManager {
     private int[] _maxPredecessorTime;
     private int[] _earliestTimes;
 
+    // for stats
+    public int[] _nodeVisitCounts;
+    public int _currentFinishTime;
+    public int _cost;
+    public int _statesExplored;
+    public int _memory;
+    public double _loaded;
+    public PartialSolution _currentStatPS;
+
+    public PSManager(){
+
+    }
+
     public PSManager(int processors, Graph graph){
+        _nodeVisitCounts = new int[graph.getNodes().size()];
         _numberOfProcessors = processors;
         _graph = graph;
         _idleConstantHeuristic = (double)graph.totalMinimumWork() / processors;
@@ -35,8 +55,9 @@ public class PSManager {
         _cache = new Cache(processors);
     }
 
-    public PSManager(int processors, Graph graph, Cache cache) {
+    public PSManager(int processors, Graph graph, Cache cache, int id) {
         this(processors, graph);
+        _id = id;
         _cache = cache;
     }
 
@@ -254,8 +275,6 @@ public class PSManager {
      * @param slot
      */
     public void addSlot(PartialSolution ps, ProcessorSlot slot) {
-        ps._slotMap.put(slot.getNode().getId(), slot);
-
         ProcessorSlot latestSlot = ps._latestSlots[slot.getProcessor()];
         int prevSlotFinishTime;
 
@@ -285,7 +304,7 @@ public class PSManager {
         }
     }
 
-    private void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
+    protected void checkAndAdd(PartialSolution ps, int processorIndex, PSPriorityQueue queue) {
         if (!equivalenceCheck(ps, processorIndex)) {
             if (_cache.add(ps)) {
                 queue.add(ps);
@@ -301,13 +320,12 @@ public class PSManager {
         return partialSolution;
     }
 
-    private boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
+    protected boolean equivalenceCheck(PartialSolution ps, int processorIndex) {
         ArrayList<ProcessorSlot> toCopy = ps.getProcessors()[processorIndex];
         ArrayList<ProcessorSlot> copy = new ArrayList<>(toCopy); // copy we use re order
 
         //backups
         ArrayList<ProcessorSlot> backup = new ArrayList<>(ps.getProcessors()[processorIndex]);
-        HashMap<Integer, ProcessorSlot> backupSlotMap = new HashMap<>(ps._slotMap);
         ProcessorSlot[] latestSlotsBackup = ps._latestSlots.clone();
 
         ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
@@ -334,7 +352,6 @@ public class PSManager {
         }
         // restore and return
         processors[processorIndex] = backup;
-        ps._slotMap = backupSlotMap;
         ps._latestSlots = latestSlotsBackup;
         return false;
     }
@@ -350,8 +367,8 @@ public class PSManager {
                 for (Edge e : newSlot.getNode().getOutgoing()) {
                     Node child = e.getTo();
                     int dataTime = newSlot.getFinish() + e.getWeight();
-                    if (ps._slotMap.containsKey(child.getId())) { // child is already schedule
-                        ProcessorSlot childSlot = ps._slotMap.get(child.getId());
+                    if (ps._nodes.contains(child.getName())) { // child is already schedule
+                        ProcessorSlot childSlot = getSlot(ps, child.getId());
                         if (!(childSlot.getProcessor() == processorIndex || childSlot.getStart() > dataTime)) {
                             return false;
                         }
@@ -362,7 +379,7 @@ public class PSManager {
                             Node parent = parentEdge.getFrom();
                             if (ps._nodes.contains(parent.getName())) {
                                 // go through each processor and find it, compare it to dataTime
-                                ProcessorSlot parentSlot = ps._slotMap.get(parent.getId());
+                                ProcessorSlot parentSlot = getSlot(ps, parent.getId());
                                 if (parentSlot.getFinish() + parentEdge.getWeight() > dataTime) {
                                     atLeastOneLater = true;
                                 }
@@ -395,5 +412,16 @@ public class PSManager {
                 return;
             }
         }
+    }
+
+    private ProcessorSlot getSlot(PartialSolution ps, int nodeId) {
+        ArrayList<ProcessorSlot>[] processors = ps.getProcessors();
+        for (int i = 0; i < processors.length; i++) {
+            for (int j = 0; j < processors[i].size(); j++) {
+                ProcessorSlot slot = processors[i].get(j);
+                if (slot.getNode().getId() == nodeId) return slot;
+            }
+        }
+        return null;
     }
 }

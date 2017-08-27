@@ -12,8 +12,8 @@ import java.util.PriorityQueue;
  * priority PartialSolution while initialising it with an estimated length.
  */
 public class PSPriorityQueue {
-    protected PriorityQueue<PartialSolution> _queue;
     protected Graph _graph;
+    public PriorityQueue<PartialSolution> _queue;
     private int _totalNodes;
     private int _processors;
     protected PartialSolution _currentPartialSolution;
@@ -111,3 +111,4 @@ public class PSPriorityQueue {
         return childQueues;
     }
 }
+

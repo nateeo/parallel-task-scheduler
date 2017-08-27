@@ -1,16 +1,18 @@
 package scheduler;
 
 
-import algorithm.Cache;
-import algorithm.PSManager;
-import algorithm.PSPriorityQueue;
-import algorithm.PartialSolution;
+import algorithm.*;
 import dotParser.Parser;
+import frontend.Listener;
+import frontend.Main;
 import graph.Graph;
+import javafx.application.Application;
 import logger.Logger;
 import parallelization.Parallelization;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -18,16 +20,29 @@ import java.util.concurrent.ExecutionException;
  */
 public class Scheduler {
     private static String _inputFileName;
-    private static int _processors;
+    public static int _processors;
     private static int _cores = 1;
-    private static boolean _visualize = false;
+    public static boolean _visualize = false;
     private static String _outputFile = "INPUT-output.dot";
     private static File _inputFile;
-    private static Graph _graph;
+    public static Graph _graph;
+    public static PSPriorityQueue _priorityQueue;
+    private static String[] _args;
+    private static PSManager _psManager;
+
+    // for visualisation
+    public static int DELAY_TIME = 3000;
+    public static int REFRESH_TIME = 2000;
+    public static PSManagerGroup _group;
+
+    public static boolean _stopTimer;
+
+    public static Listener _listener;
 
     private static String _consolePrefix = "(Hi-5 A* Scheduler v2.0)\t";
 
     private static boolean _parallelOn = false;
+    private static boolean _parallelization;
 
 
     /**
@@ -36,6 +51,7 @@ public class Scheduler {
      * @param args
      */
     public static void main(String[] args) {
+        _args = args;
         try {
             parseConsole(args);
         } catch (InvalidInputException e) {
@@ -110,6 +126,7 @@ public class Scheduler {
         parseOutput(ps); // output to file
         System.out.println(_consolePrefix + "Finished!");
         System.out.println(ps.toString());
+
         return ps; // for testing
     }
 
@@ -120,32 +137,80 @@ public class Scheduler {
      */
     private static PartialSolution solution() throws ExecutionException, InterruptedException {
         // Priority queue containing generated states
-        PSPriorityQueue priorityQueue = new PSPriorityQueue(_graph, _processors);
-        priorityQueue.initialise();
-        Boolean parallelization = false;
+         _priorityQueue = new PSPriorityQueue(_graph, _processors);
+        _priorityQueue.initialise();
+        _parallelization = false;
+        PartialSolution ps = null;
+
+        Timer updater = new Timer();
+
+        if(_visualize) {
+
+            Thread frontEnd = new Thread(() -> {
+                Application.launch(Main.class);
+            });
+            frontEnd.setPriority(Thread.MAX_PRIORITY);
+            frontEnd.start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    TimerTask task = new TimerTask() {
+                        public void run() {
+                            if (_stopTimer) this.cancel();
+                            if (_listener != null) {
+                                boolean isFinished = false;
+                                if (_graph.getNodes().size() == _psManager._currentStatPS._nodes.size()) isFinished = true;
+                                _listener.update(isFinished, _psManager._currentStatPS, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                                        _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
+                            }
+                        }
+                    };
+                    updater.schedule(task, DELAY_TIME, REFRESH_TIME);
+                }
+            }).start();
+        } else if (_visualize) {
+            Thread frontEnd = new Thread(() -> {
+                Application.launch(Main.class);
+            });
+            frontEnd.setPriority(Thread.MAX_PRIORITY);
+            frontEnd.start();
+        }
+
 
         // PSManager instance to perform calculations and generate states from existing Partial Solutions
-        PartialSolution ps = null;
-        PSManager psManager = new PSManager(_processors, _graph);
+        if(_visualize){
+            _psManager = new PSManagerWrapper(_processors, _graph);
+        } else {
+            _psManager = new PSManager(_processors, _graph);
+        }
+
+
         //priority queue will terminate upon the first instance of a total solution
-        while (priorityQueue.hasNext()) {
-            if (_parallelOn == false || priorityQueue.size() <= 1000) {
-                ps = priorityQueue.getCurrentPartialSolution();
+        while (_priorityQueue.hasNext()) {
+            if (_parallelOn == false || _priorityQueue.size() <= 1000) {
+                ps = _priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
-                psManager.generateChildren(ps, priorityQueue);
+                _psManager.generateChildren(ps, _priorityQueue);
             } else {
-                parallelization = true;
-                Parallelization parallelize = new Parallelization(priorityQueue, _processors, _graph, _cores, psManager.getCache());
-                ps = parallelize.findOptimal();
+                if (_visualize) {
+                    _group = new PSManagerGroup(_cores);
+                    updater.cancel(); // kill the main queue updater
+                }
+                Parallelization parallelize = new Parallelization(_priorityQueue, _processors, _graph, _cores, _psManager.getCache());
+                ps = parallelize.findOptimal(_group);
                 break;
             }
 
 
         }
-        if (!parallelization){
-            ps = priorityQueue.getCurrentPartialSolution();
+        if (!_parallelization){
+            ps = _priorityQueue.getCurrentPartialSolution();
         }
+        // kill timer
+//        updater.cancel();
+//        updater.purge();
+//        System.out.println("killed updater");
         return ps;
     }
 
@@ -158,3 +223,4 @@ public class Scheduler {
     }
 
 }
+

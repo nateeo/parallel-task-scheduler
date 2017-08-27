@@ -30,7 +30,9 @@ public class Cache {
                 // go through starting nodes
                 for (int i = 0; i < _processorCount; i++) {
                     int startNodeDiff = o1._startingNodes[i] - o2._startingNodes[i];
-                    if (startNodeDiff != 0) return startNodeDiff;
+                    if (startNodeDiff != 0) {
+                        return startNodeDiff;
+                    }
                 }
                 // go through each processor, return if size different
                 for (int i = 0; i < _processorCount; i++) {
