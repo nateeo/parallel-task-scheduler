@@ -52,7 +52,6 @@ public class Graph {
 
     public Edge getEdge(int fromId, int toId) {
         if (!_edgeMap.containsKey(fromId)) {
-            System.out.println("no edge from " + fromId + "to " + toId + " in graph " + _name);
             for (int i = 0; i < _edges.size(); i++) {
                 System.out.println(_edges.get(i)._from.getId() + " " +  _edges.get(i)._to.getId());
             }
@@ -130,7 +129,6 @@ public class Graph {
         _bottomLevelWork = bottomLevels;
     }
 
-    // TODO string representation for duplicate state removal
     @Override
     public String toString() {
         String nodes = "";

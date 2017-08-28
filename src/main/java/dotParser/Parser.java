@@ -226,9 +226,9 @@ public class Parser {
                     for (ArrayList<ProcessorSlot> processor: finalSolution.getProcessors()){
                         for (ProcessorSlot processorSlot: processor){
                             if (processorSlot.getNode().getName().equals(taskName)){
-                                String taskOutput = "\t"+taskName+"\t\t\t\t"+"[ Weight ="+weight
-                                        +",Start ="+processorSlot.getStart()
-                                        +",Processor ="+(processorSlot.getProcessor()+1)+"];\n";
+                                String taskOutput = "\t"+taskName+"\t\t\t\t"+"[ Weight="+weight
+                                        +",Start="+processorSlot.getStart()
+                                        +",Processor="+(processorSlot.getProcessor()+1)+"];\n";
                                 output.append(taskOutput);
                             }
                         }

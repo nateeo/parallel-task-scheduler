@@ -3,7 +3,6 @@ package frontend;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import javafx.event.ActionEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -15,12 +14,18 @@ import javafx.scene.text.TextBoundsType;
 import java.util.*;
 
 /**
- * Class leveraged to draw the 3rd panel in the visualisation display, takes in a graph and draws it
+ * This class utilises JavaFX to create a visualisation heat map of the graph.
+ * Calculates position to place nodes on the graph.
+ * Author: Samule Li
  */
 public class GraphDrawer {
+
+    // Data kept to update information during run time
     private Graph _graph;
     private Map<Integer, StackPane> shapeMap = new HashMap<>();
     private Map<Integer, Circle> circleMap = new HashMap<>();
+
+    // Fields inherited from the parent pane
     private AnchorPane _graphPane;
     private double _circleSize;
 
@@ -32,6 +37,7 @@ public class GraphDrawer {
 
     // This function is used to draw the graph of the input dot file.
     public void drawGraph() {
+
         List<Node> nodes = _graph.getNodes();
         List<Edge> edges = _graph.getEdges();
         List<Edge> edgesToRemove = new ArrayList<>();
@@ -75,7 +81,10 @@ public class GraphDrawer {
 
         for (List<Node> levels: graphLevels) {
 
+            // Increments the yCoordinate for the next level of the nodes to be drawn on.
             yCoordinate += ySpacing;
+
+            // A new xSpacing is calculated for every level since the size of the array list could be different.
             xSpacing = (graphPaneX - (levels.size() * _circleSize)) / (levels.size() + 1);
             xCoordinate = 0;
             for(Node circlesDrawn: levels) {
@@ -85,6 +94,8 @@ public class GraphDrawer {
             }
             yCoordinate += _circleSize;
         }
+
+        // Draws edges in if they are present.
         if(edges.size() > 0) {
             for (Edge edge : edges) {
                 StackPane to = shapeMap.get(edge.getTo().getId());
@@ -96,14 +107,19 @@ public class GraphDrawer {
 
     // Constant values to draw the circle. Set inside a stackPane in order to overlay text.
     public void drawCircle(Node node,double layoutX, double layoutY) {
+
         Circle circle = new Circle();
+        StackPane stackPane = new StackPane();
+        Text text = new Text(node.getName());
+
+        // Setting up the circle's size and color
         circle.setCenterX(_circleSize);
         circle.setCenterY(_circleSize);
         circle.setRadius(_circleSize/2);
         circle.setFill(Color.WHITE);
         circle.setStroke(Color.BLACK);
-        StackPane stackPane = new StackPane();
-        Text text = new Text(node.getName());
+
+        // Adding text to the circle shape over a StackPane.
         text.setBoundsType(TextBoundsType.VISUAL);
         stackPane.getChildren().addAll(circle,text);
         _graphPane.getChildren().add(stackPane);
@@ -114,12 +130,12 @@ public class GraphDrawer {
     }
 
     public void drawEdges(StackPane from, StackPane to) {
+
+        // Coordinates for all the edges.
         double beginningOfLineX = from.getLayoutX() + _circleSize/2;
         double beginningOfLineY = from.getLayoutY() + _circleSize/2;
         double endOfLineX = to.getLayoutX() + _circleSize/2;
         double endOfLineY = to.getLayoutY(); //+ circleSize/2;
-
-        System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
 
         Line line = new Line(beginningOfLineX,beginningOfLineY,endOfLineX,endOfLineY);
         line.setStroke(Color.BLACK);
@@ -128,23 +144,11 @@ public class GraphDrawer {
         rightArrow.setStroke(Color.BLACK);
         Line leftArrow = new Line(endOfLineX,endOfLineY, endOfLineX - 5, endOfLineY - 5);
         leftArrow.setStroke(Color.BLACK);
+
+        // Drawing the final edges onto the graph.
         _graphPane.getChildren().add(0,line);
         _graphPane.getChildren().add(0,rightArrow);
         _graphPane.getChildren().add(0,leftArrow);
-    }
-
-    public void handleColorChange(ActionEvent action) {
-        System.out.println(shapeMap.keySet());
-        circleMap.get(0).setFill(Color.RED);
-        //circleMap.get(16).setFill(Color.RED);
-        //circleMap.get(2).setFill(Color.RED);
-        //circleMap.get(18).setFill(Color.RED);
-        //circleMap.get(4).setFill(Color.RED);
-        //circleMap.get(6).setFill(Color.RED); // 9
-        //circleMap.get(8).setFill(Color.RED); // 1
-        //circleMap.get(10).setFill(Color.RED);
-        //circleMap.get(12).setFill(Color.RED);
-        //circleMap.get(14).setFill(Color.RED);
     }
 
     // This function is used to calculate the levels of each node, depending on the maximum level of it's parent
@@ -152,6 +156,7 @@ public class GraphDrawer {
     // to 4.
 
     public List<List<Node>> calculateLevels(List<Node> nodes, List<Edge> edges, List<Node> source) {
+
         Queue<Node> queuedNodes = new LinkedList<Node>();
         List<List<Node>> returnList = new ArrayList<>();
         Map<Integer,Integer> levelsMap = new HashMap<>();
@@ -216,7 +221,9 @@ public class GraphDrawer {
         return returnList;
     }
 
+    // Used to increase or decrease saturation of nodes
     public void updateHeatMap(double[] saturationValues) {
+
         for(int i = 0; i < saturationValues.length; i++) {
             circleMap.get(i + 1).setFill(Color.hsb(5, saturationValues[i],1));
         }
