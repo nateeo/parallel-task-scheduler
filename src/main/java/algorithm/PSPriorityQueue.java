@@ -78,6 +78,12 @@ public class PSPriorityQueue {
         return _queue.size();
     }
 
+    /**
+     * This method is used for parallelization and splits the parent PSPriorityQueue into smaller queues
+     * Returns an array of PSPriorityQueueChild objects
+     * @param cores
+     * @return
+     */
     public PSPriorityQueueChild[] splitQueue(int cores){
         PriorityQueue<PartialSolution>[] queues = new PriorityQueue[4];
         for (int i = 0; i < cores; i++) {
@@ -87,6 +93,7 @@ public class PSPriorityQueue {
 
         int originalQueueSize = _queue.size();
         int counter = 0;
+        // Splitting of queues
         for (int i = 0; i < originalQueueSize; i++) {
             queues[counter].add(_queue.poll());
 
@@ -95,13 +102,6 @@ public class PSPriorityQueue {
                 counter = 0;
             }
         }
-
-//        for (int i = 0; i < cores; i++){
-//            System.out.println("THIS QUEUE...:");
-//            for (PartialSolution ps : queues[i]){
-//                System.out.println(ps.toString());
-//            }
-//        }
 
         PSPriorityQueueChild[] childQueues = new PSPriorityQueueChild[cores];
         for (int i = 0; i < cores; i++) {
