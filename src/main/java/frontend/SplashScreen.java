@@ -34,9 +34,6 @@ public class SplashScreen implements Initializable {
     private double circleSize = 40;
 
     @FXML
-    protected AnchorPane statsPane;
-
-    @FXML
     protected ScrollPane schedulerPane;
 
     @FXML
@@ -63,21 +60,21 @@ public class SplashScreen implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        //draw graph
+        // Sets up the Graph
         _graph = Main.getGraph();
         _gd = new GraphDrawer(_graph, graphPane, circleSize);
         _gd.drawGraph();
+
+        // Sets up the stats generator
         _sg = new StatsGenerator(progressBar, timer, currentThread ,currentFinishTime, underestimate, statesExplored, memory);
+
+        // Sets up the listners for polling
         listener = new Listener(this);
         Scheduler._listener = listener;
         PSManagerGroup._listener = listener;
-        //generate stats
-
-
-
 
         try {
-
+            // Sets up the scheduleGraphGenerator
             ScheduleGraphGenerator sgm = new ScheduleGraphGenerator();
 
             currentSGM = sgm.initialise();

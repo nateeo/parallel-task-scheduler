@@ -8,11 +8,15 @@ import javafx.scene.layout.Pane;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ *  This class is created for visualisation of useful to stats of the running algorithm, it is able to update itself
+ *  by updating the text inside label components.
+ *  Author: Edison Rho, Samule Li
+ */
+
 public class StatsGenerator {
 
     private ProgressIndicator _progressBar;
-    private TableView<String> _tableView;
-    private PartialSolution _ps;
     private Label _timer;
     private Label _currentThread;
     private Label _currentFinishTime;
@@ -23,6 +27,7 @@ public class StatsGenerator {
 
 
     public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentThread, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
+
         _progressBar = progressBar;
         _timer = timer;
         _currentFinishTime = currentFinishTime;
@@ -50,6 +55,7 @@ public class StatsGenerator {
     }
 
     public void updateStats(boolean isFinished, double pvalue, int currentThread, int currentFinishTime, int underestimates, int statesExplored, int memory) {
+
         String currentThreadText = currentThread == 0 ? "Main" : currentThread + "";
         _progressBar.setProgress(pvalue);
         _currentThread.setText(currentThreadText);
