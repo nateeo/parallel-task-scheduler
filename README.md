@@ -2,20 +2,9 @@
 
 [![Build Status](https://travis-ci.com/Nateeo/306-scheduling.svg?token=8jyemjiGm66sspKKLBKp&branch=master)](https://travis-ci.com/Nateeo/306-scheduling)
 
-Parallel processor task scheduling application with visualisation.
+Parallel processor task scheduling application with visualisation, built with Java and [ParallelTask](http://parallel.auckland.ac.nz/ParallelIT/PT_About.html).
 
-## Team Hi-5
-
-- Edison Rho   (@OurEdds)
-- Eli Salter   (@elisalter)
-- Samule Li    (@sli473)
-- Zihao Yang   (@zihao123yang)
-- Sueyeon Lee  (@sy133)
-- Nathan Hur   (@Nateeo)
-
-This project uses Java and Maven.
-
-**Command-line usage**
+## Command-line usage
 
 `java -jar scheduler.jar INPUT.dot P [OPTION]`
 
@@ -25,18 +14,28 @@ This project uses Java and Maven.
     * `-v` visualise search
     * `-o` specify output file (default is `INPUT-output.dot`)
 
-**Building from source**
+## Building from source
 
 execute the maven goal: `clean compile assembly:single`
 
-**IntelliJ setup:**
+## Final release with source code and jar download
 
-1. Import from VCS
+[Final release tag](https://github.com/Nateeo/306-scheduling/releases/tag/FINAL)
 
-2. `IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Maven -> Importing -> Import Maven projects automatically (tick)` This downloads dependencies automatically
+## Documentation, implementation decisions
 
-3. `View -> Tool Windows -> Maven Projects -> Execute Maven Goal` (box with a lowercase m)
+[Hi-5 Team Wiki](https://github.com/Nateeo/306-scheduling/wiki)
 
-4. Run Maven target 'install'
+## Planning, timeline, issue tracking
 
-5. Build will be in `/target` folder
+[https://trello.com/b/T6QTKZpC/hi-5](https://trello.com/b/T6QTKZpC/hi-5)
+
+
+## Team Hi-5
+
+- Edison Rho   **(@OurEdds)**
+- Eli Salter   **(@elisalter)**
+- Samule Li    **(@sli473)**
+- Zihao Yang   **(@zihao123yang)**
+- Sueyeon Lee  **(@sy133)**
+- Nathan Hur   **(@Nateeo)** (Team Leader)
