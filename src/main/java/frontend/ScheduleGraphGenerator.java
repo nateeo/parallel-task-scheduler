@@ -220,6 +220,10 @@ public class ScheduleGraphGenerator {
 
     }
 
+    /**
+     * initialise schedule with a blank schedule
+     * @return
+     */
     public ScrollPane initialise(){
         GridPane backgroundGrid = drawGridBorders();
         ScrollPane scrollPane = new ScrollPane();
