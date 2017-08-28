@@ -11,7 +11,8 @@ import java.util.TimerTask;
  * Created by nateeo on 26/08/2017.
  */
 public class PSManagerGroup {
-    ArrayList<PSManager> managers = new ArrayList<>();
+    public ArrayList<PSManager> managers = new ArrayList<>();
+    public boolean _override = false;
     public int _cores;
     public int currentIndex = 0;
     PSManager _psManager;
@@ -34,7 +35,7 @@ public class PSManagerGroup {
                 TimerTask task = new TimerTask() {
                     public void run() {
                         _psManager = managers.get(currentIndex);
-                        if (Scheduler._stopTimer) this.cancel();
+                        if (Scheduler._stopTimer || _override) this.cancel();
                         if (_listener != null) {
                             boolean isFinished = false;
                             if (_psManager._currentStatPS._nodes.size() == _psManager._graph.getNodes().size()) isFinished = true;
