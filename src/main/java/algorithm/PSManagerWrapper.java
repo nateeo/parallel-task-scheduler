@@ -2,12 +2,25 @@ package algorithm;
 
 import graph.Graph;
 
+/**
+ * Wrapper class for algorithm.PSManager
+ * PSManagerWrapper is generated when the schedule is called with the -v flag for visualisation
+ * PSManagerWrapper is needed to stash important statistics for the frontend
+ */
 public class PSManagerWrapper extends PSManager{
 
+    /**
+     * Calls the parent constructor
+     */
     public PSManagerWrapper(){
         super();
     }
 
+    /**
+     * Calls the parent constructor and initialises
+     * @param processors
+     * @param graph
+     */
     public PSManagerWrapper(int processors, Graph graph){
         super(processors, graph);
         _nodeVisitCounts = new int[graph.getNodes().size()];
