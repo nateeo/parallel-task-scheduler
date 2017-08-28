@@ -15,21 +15,53 @@ public class Listener {
     int[] _memory;
     int[] _statesExplored;
 
+
+    /**
+     * creates the listener object based on the frontend.SplashScreen object
+     * @param ss
+     */
     public Listener(SplashScreen ss) {
         _ss = ss;
         int size = ss._graph.getNodes().size();
+        // atomicintegers to make _nodeVisitCounts thread safe
+        // as it will be updated by all threads
         _nodeVisitCounts = new AtomicInteger[size];
         _memory = new int[size];
         _statesExplored = new int [size];
+
+        // initialise the _nodeVisitCounts array
         for (int i = 0; i < size; i++) {
             _nodeVisitCounts[i] = new AtomicInteger();
         }
     }
 
+    /**
+     * hook method to update all the fields required by the front end
+     * @param isFinished
+     * @param ps
+     * @param nodeCounts
+     * @param memory
+     * @param cost
+     * @param currentFinishTime
+     * @param statesExplored
+     * @param loaded
+     */
     public void update(boolean isFinished, PartialSolution ps, int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
         this.sendUpdate(isFinished, 0, ps, nodeCounts, memory, cost, currentFinishTime, statesExplored, loaded);
     }
 
+    /**
+     * when running in a parallel system this method updates the stats for one thread
+     * @param isFinished
+     * @param ps
+     * @param id
+     * @param nodeVisitCounts
+     * @param memory
+     * @param cost
+     * @param currentFinishTime
+     * @param statesExplored
+     * @param loaded
+     */
     public void updateThread(boolean isFinished, PartialSolution ps, int id, int[] nodeVisitCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded) {
         int[] currentNodeVisitCount = new int[_nodeVisitCounts.length];
         for (int j = 0; j < nodeVisitCounts.length; j++) {
@@ -48,6 +80,18 @@ public class Listener {
         this.sendUpdate(isFinished, id, ps, currentNodeVisitCount, totalMemory, cost, currentFinishTime, totalStatesExplored, loaded);
     }
 
+    /**
+     * fires events to the frontend to update the stats
+     * @param isFinished
+     * @param id
+     * @param ps
+     * @param nodeCounts
+     * @param memory
+     * @param cost
+     * @param currentFinishTime
+     * @param statesExplored
+     * @param loaded
+     */
     private void sendUpdate(boolean isFinished, int id, PartialSolution ps, int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
         new Thread(() -> {
             System.out.println("updating");

@@ -14,6 +14,9 @@ import javafx.scene.text.TextBoundsType;
 
 import java.util.*;
 
+/**
+ * Class leveraged to draw the 3rd panel in the visualisation display, takes in a graph and draws it
+ */
 public class GraphDrawer {
     private Graph _graph;
     private Map<Integer, StackPane> shapeMap = new HashMap<>();
