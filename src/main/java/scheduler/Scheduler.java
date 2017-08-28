@@ -200,6 +200,14 @@ public class Scheduler {
         if (!_parallelization){
             ps = _priorityQueue.getCurrentPartialSolution();
         }
+        // done
+        Scheduler._stopTimer = true;
+        if (_parallelization) {
+            _listener.update(true, ps, _groupnodevisitcounts, )
+        } else {
+            _listener.update(true, ps, _psManager._nodeVisitCounts, _psManager._memory, _psManager._cost,
+                    _psManager._currentFinishTime, _psManager._statesExplored, _psManager._loaded);
+        }
         return ps;
     }
 

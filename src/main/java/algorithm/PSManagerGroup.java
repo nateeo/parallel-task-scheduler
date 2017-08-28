@@ -12,8 +12,8 @@ import java.util.TimerTask;
  */
 public class PSManagerGroup {
     ArrayList<PSManager> managers = new ArrayList<>();
-    int _cores;
-    int currentIndex = 0;
+    public int _cores;
+    public int currentIndex = 0;
     PSManager _psManager;
     public static Listener _listener;
 
