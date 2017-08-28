@@ -27,9 +27,6 @@ import java.util.ArrayList;//####[18]####
 import java.util.List;//####[18]####
 //####[18]####
 /**
- * This class represents the parallelization into different threads. The number of cores represents the
- * amount of threads used. This class uses ParallelTask and pt runtime.
- * One-off threads are used.
  * Created by zihaoyang on 19/08/17.
  * @author sueyeonlee
  * @author zihaoyang
@@ -238,37 +235,21 @@ public class Parallelization {//####[25]####
         taskinfo.setInstance(this);//####[58]####
         return TaskpoolFactory.getTaskpool().enqueue(taskinfo);//####[58]####
     }//####[58]####
-
-    /**
-     * This method processes each child queue to find its preoptimal solution. the method is
-     * called by the different threads.
-     * @param childQueue the child queue to be processed
-     * @param psManager the manager to process the queues
-     */
     public void __pt__threadQueue(PSPriorityQueueChild childQueue, PSManager psManager) {//####[58]####
         PartialSolution ps = null;//####[59]####
-        // If the partial solution contains all nodes, we have found the pre-optimal solution.
         while (childQueue.hasNext()) //####[60]####
         {//####[60]####
-            // Generate children
             ps = childQueue.getCurrentPartialSolution();//####[61]####
             psManager.generateChildren(ps, childQueue);//####[62]####
         }//####[63]####
-        // If the pre-optimal solution is found, return the solution.
         ps = childQueue.getCurrentPartialSolution();//####[64]####
         _solutions.add(ps);//####[65]####
     }//####[66]####
 //####[66]####
 //####[68]####
-
-    /**
-     * This method finds the optimal solution by running 4 threads of child queues in parallel. After finding
-     * the preoptimal solutions, this method compares the solutions to find the optimal solution.
-     */
     public PartialSolution findOptimal(PSManagerGroup group) throws ExecutionException, InterruptedException {//####[68]####
         PartialSolution[] ps = new PartialSolution[_cores];//####[69]####
         TaskIDGroup g = new TaskIDGroup(_cores);//####[70]####
-        // For the amount of cores, create a new thread and execute threadQueues() to find its pre-optimal solution
         for (int i = 0; i < _cores; i++) //####[71]####
         {//####[71]####
             PSManager psManager = new PSManagerWrapper(_processors, _graph, _cache, i);//####[72]####
@@ -277,21 +258,21 @@ public class Parallelization {//####[25]####
             TaskID id = threadQueue(_childQueues[i], psManager);//####[74]####
             g.add(id);//####[75]####
         }//####[76]####
-        // Wait until all threads are finished
         g.waitTillFinished();//####[77]####
-        PartialSolution solution = null;//####[78]####
-        int finalTime = -1;//####[79]####
-        // Comparing pre-optimal solutions when one is found
-        for (int i = 0; i < _solutions.size(); i++) //####[80]####
-        {//####[80]####
-            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[81]####
-            if (finalTime == -1 || psFinishTime < finalTime) //####[82]####
-            {//####[82]####
-                // Update new best optimal solution if it is better than the current best.
-                solution = _solutions.get(i);//####[83]####
-                finalTime = psFinishTime;//####[84]####
-            }//####[85]####
-        }//####[86]####
-        return solution;//####[87]####
-    }//####[98]####
-}//####[98]####
+        for (PartialSolution p : _solutions) //####[78]####
+        {//####[78]####
+        }//####[79]####
+        PartialSolution solution = null;//####[80]####
+        int finalTime = -1;//####[81]####
+        for (int i = 0; i < _solutions.size(); i++) //####[82]####
+        {//####[82]####
+            int psFinishTime = _solutions.get(i)._latestSlot.getFinish();//####[83]####
+            if (finalTime == -1 || psFinishTime < finalTime) //####[84]####
+            {//####[84]####
+                solution = _solutions.get(i);//####[85]####
+                finalTime = psFinishTime;//####[86]####
+            }//####[87]####
+        }//####[88]####
+        return solution;//####[89]####
+    }//####[90]####
+}//####[90]####
