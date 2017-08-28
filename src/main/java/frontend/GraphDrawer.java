@@ -20,6 +20,7 @@ import java.util.*;
  * Author: Samule Li
  */
 public class GraphDrawer {
+
     private Graph _graph;
     private Map<Integer, StackPane> shapeMap = new HashMap<>();
     private Map<Integer, Circle> circleMap = new HashMap<>();
@@ -34,8 +35,8 @@ public class GraphDrawer {
 
     // This function is used to draw the graph of the input dot file.
     public void drawGraph() {
+
         List<Node> nodes = _graph.getNodes();
-        //List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = _graph.getEdges();
 
         List<Node> source = _graph.getStart();
@@ -69,7 +70,10 @@ public class GraphDrawer {
 
         for (List<Node> levels: graphLevels) {
 
+            // Increments the yCoordinate for the next level of the nodes to be drawn on.
             yCoordinate += ySpacing;
+
+            // A new xSpacing is calculated for every level since the size of the array list could be different.
             xSpacing = (graphPaneX - (levels.size() * _circleSize)) / (levels.size() + 1);
             xCoordinate = 0;
             for(Node circlesDrawn: levels) {
@@ -79,6 +83,8 @@ public class GraphDrawer {
             }
             yCoordinate += _circleSize;
         }
+
+        // Draws edges in if they are present.
         if(edges.size() > 0) {
             for (Edge edge : edges) {
                 StackPane to = shapeMap.get(edge.getTo().getId());
@@ -90,14 +96,17 @@ public class GraphDrawer {
 
     // Constant values to draw the circle. Set inside a stackPane in order to overlay text.
     public void drawCircle(Node node,double layoutX, double layoutY) {
+
         Circle circle = new Circle();
+        StackPane stackPane = new StackPane();
+        Text text = new Text(node.getName());
+
         circle.setCenterX(_circleSize);
         circle.setCenterY(_circleSize);
         circle.setRadius(_circleSize/2);
         circle.setFill(Color.WHITE);
         circle.setStroke(Color.BLACK);
-        StackPane stackPane = new StackPane();
-        Text text = new Text(node.getName());
+
         text.setBoundsType(TextBoundsType.VISUAL);
         stackPane.getChildren().addAll(circle,text);
         _graphPane.getChildren().add(stackPane);
@@ -108,12 +117,11 @@ public class GraphDrawer {
     }
 
     public void drawEdges(StackPane from, StackPane to) {
+
         double beginningOfLineX = from.getLayoutX() + _circleSize/2;
         double beginningOfLineY = from.getLayoutY() + _circleSize/2;
         double endOfLineX = to.getLayoutX() + _circleSize/2;
         double endOfLineY = to.getLayoutY(); //+ circleSize/2;
-
-        System.out.println(beginningOfLineX+ " " + beginningOfLineY +" " +endOfLineX +" "+  endOfLineY);
 
         Line line = new Line(beginningOfLineX,beginningOfLineY,endOfLineX,endOfLineY);
         line.setStroke(Color.BLACK);
@@ -122,6 +130,7 @@ public class GraphDrawer {
         rightArrow.setStroke(Color.BLACK);
         Line leftArrow = new Line(endOfLineX,endOfLineY, endOfLineX - 5, endOfLineY - 5);
         leftArrow.setStroke(Color.BLACK);
+
         _graphPane.getChildren().add(0,line);
         _graphPane.getChildren().add(0,rightArrow);
         _graphPane.getChildren().add(0,leftArrow);
@@ -132,6 +141,7 @@ public class GraphDrawer {
     // to 4.
 
     public List<List<Node>> calculateLevels(List<Node> nodes, List<Edge> edges, List<Node> source) {
+
         Queue<Node> queuedNodes = new LinkedList<Node>();
         List<List<Node>> returnList = new ArrayList<>();
         Map<Integer,Integer> levelsMap = new HashMap<>();
@@ -198,6 +208,7 @@ public class GraphDrawer {
 
     // Used to increase or decrease saturation of nodes
     public void updateHeatMap(double[] saturationValues) {
+
         for(int i = 0; i < saturationValues.length; i++) {
             circleMap.get(i + 1).setFill(Color.hsb(5, saturationValues[i],1));
         }
