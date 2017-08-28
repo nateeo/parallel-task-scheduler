@@ -22,7 +22,6 @@ public class PSManagerGroup {
     }
 
     public void add(PSManager ps) {
-        System.out.print("fuck");
         managers.add(ps);
         if (managers.size() == _cores && Scheduler._visualize) start(); // begin timer
     }

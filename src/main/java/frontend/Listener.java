@@ -111,8 +111,6 @@ public class Listener {
                     _ss._sg.updateStats(isFinished, loaded,id,currentFinishTime,cost,statesExplored,memory);
                     if (_ss.schedulerPane != null) _ss.schedulerPane.setContent(sgg.generateGraph());
                 });
-            } else {
-                System.out.println(":Ge");
             }
         }).start();
 
