@@ -31,7 +31,7 @@ public class Scheduler {
     private static PSManager _psManager;
 
     // for visualisation
-    public static int DELAY_TIME = 3000;
+    public static int DELAY_TIME = 4000;
     public static int REFRESH_TIME = 2000;
     public static PSManagerGroup _group;
 
@@ -62,6 +62,10 @@ public class Scheduler {
             System.out.println("Invalid input");
             e.printStackTrace();
         }
+        if (!_visualize) { // let window handle termination if visualisation
+            System.exit(0);
+        }
+
     }
 
     /**
@@ -195,7 +199,6 @@ public class Scheduler {
         if (!_parallelization){
             ps = _priorityQueue.getCurrentPartialSolution();
         }
-
         return ps;
     }
 

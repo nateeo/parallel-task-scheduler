@@ -97,7 +97,6 @@
       </HBox>
    </children>
    <stylesheets>
-      <URL value="@../../resources/style.css" />
       <URL value="@style.css" />
    </stylesheets>
 </AnchorPane>

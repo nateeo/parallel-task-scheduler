@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import scheduler.Scheduler;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 
 public class Main extends Application {
@@ -26,19 +27,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         _graph = Scheduler._graph;
-
-        URL url = new File("src/main/java/frontend/SplashScreen.fxml").toURI().toURL();
         primaryStage.setTitle("Welcome to Hi-5 Scheduling");
         FXMLLoader loader = new FXMLLoader();
         SplashScreen controller = new SplashScreen();
         loader.setController(controller);
-
-        Parent root = loader.load(url);
+        Parent root = loader.load(getClass().getResource("SplashScreen.fxml").toURI().toURL());
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
         primaryStage.show();
-
 
     }
 
