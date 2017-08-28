@@ -30,8 +30,16 @@ public class GraphDrawer {
     // This function is used to draw the graph of the input dot file.
     public void drawGraph() {
         List<Node> nodes = _graph.getNodes();
-        //List<graph.Node> finishedNodes = new ArrayList<graph.Node>();
         List<Edge> edges = _graph.getEdges();
+        List<Edge> edgesToRemove = new ArrayList<>();
+
+        for (Edge deletededges: edges) {
+            if(deletededges.getWeight() == 0) {
+                edgesToRemove.add(deletededges);
+            }
+        }
+
+        edges.removeAll(edgesToRemove);
 
         List<Node> source = _graph.getStart();
         double graphPaneX = _graphPane.getPrefWidth();
