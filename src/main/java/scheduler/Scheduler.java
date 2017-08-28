@@ -145,7 +145,7 @@ public class Scheduler {
         Timer updater = new Timer();
 
         if(_visualize) {
-
+            _psManager = new PSManagerWrapper(_processors, _graph);
             Thread frontEnd = new Thread(() -> {
                 Application.launch(Main.class);
             });
@@ -168,18 +168,6 @@ public class Scheduler {
                     updater.schedule(task, DELAY_TIME, REFRESH_TIME);
                 }
             }).start();
-        } else if (_visualize) {
-            Thread frontEnd = new Thread(() -> {
-                Application.launch(Main.class);
-            });
-            frontEnd.setPriority(Thread.MAX_PRIORITY);
-            frontEnd.start();
-        }
-
-
-        // PSManager instance to perform calculations and generate states from existing Partial Solutions
-        if(_visualize){
-            _psManager = new PSManagerWrapper(_processors, _graph);
         } else {
             _psManager = new PSManager(_processors, _graph);
         }
@@ -187,7 +175,7 @@ public class Scheduler {
 
         //priority queue will terminate upon the first instance of a total solution
         while (_priorityQueue.hasNext()) {
-            if (_parallelOn == false || _priorityQueue.size() <= 1000) {
+            if (!_parallelOn || _priorityQueue.size() <= 1000) {
                 ps = _priorityQueue.getCurrentPartialSolution();
                 //generate the child partial solutions from the current "best" candidate partial solution
                 //then add to the priority queue based on conditions.
