@@ -207,10 +207,7 @@ public class Scheduler {
         if (!_parallelization){
             ps = _priorityQueue.getCurrentPartialSolution();
         }
-        // kill timer
-//        updater.cancel();
-//        updater.purge();
-//        System.out.println("killed updater");
+
         return ps;
     }
 

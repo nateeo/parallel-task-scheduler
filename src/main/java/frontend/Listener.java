@@ -50,7 +50,6 @@ public class Listener {
 
     private void sendUpdate(boolean isFinished, int id, PartialSolution ps, int[] nodeCounts, int memory, int cost, int currentFinishTime, int statesExplored, double loaded){
         new Thread(() -> {
-            System.out.println("updating");
             if (ps == null) return;
             double maxVisitedValue = 0;
             double[] saturationValues = new double[nodeCounts.length];

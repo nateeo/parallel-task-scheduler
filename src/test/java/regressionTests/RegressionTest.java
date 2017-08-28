@@ -82,7 +82,6 @@ public class RegressionTest {
                 PSManager psManager = new PSManager(processorNumber, graph);
                 //find the optimal partial solution, and time the execution
                 Logger.startTiming();
-                System.out.println(">>>> attempting to process " + graph.getName());
                 //priority queue will terminate upon the first instance of a total solution
                 while (priorityQueue.hasNext()) {
                     if (priorityQueue.size() <= 10) {
