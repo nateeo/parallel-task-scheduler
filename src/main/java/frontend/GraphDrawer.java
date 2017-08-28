@@ -40,6 +40,15 @@ public class GraphDrawer {
 
         List<Node> nodes = _graph.getNodes();
         List<Edge> edges = _graph.getEdges();
+        List<Edge> edgesToRemove = new ArrayList<>();
+
+        for (Edge deletededges: edges) {
+            if(deletededges.getWeight() == 0) {
+                edgesToRemove.add(deletededges);
+            }
+        }
+
+        edges.removeAll(edgesToRemove);
 
         List<Node> source = _graph.getStart();
         double graphPaneX = _graphPane.getPrefWidth();

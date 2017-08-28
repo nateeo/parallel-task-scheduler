@@ -57,6 +57,11 @@ public class SplashScreen implements Initializable {
     @FXML
     private ProgressIndicator progressBar;
 
+    /**
+     *
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 

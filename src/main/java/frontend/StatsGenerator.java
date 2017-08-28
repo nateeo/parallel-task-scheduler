@@ -26,6 +26,16 @@ public class StatsGenerator {
     private AnimationTimer _animationTimer;
 
 
+    /**
+     * generators the front end stats
+     * @param progressBar
+     * @param timer
+     * @param currentThread
+     * @param currentFinishTime
+     * @param underestimate
+     * @param statesExplored
+     * @param memory
+     */
     public StatsGenerator(ProgressIndicator progressBar, Label timer, Label currentThread, Label currentFinishTime, Label underestimate, Label statesExplored, Label memory) {
 
         _progressBar = progressBar;
@@ -54,6 +64,16 @@ public class StatsGenerator {
         }.start();
     }
 
+    /**
+     * updates the values of all the stats in the front end
+     * @param isFinished
+     * @param pvalue
+     * @param currentThread
+     * @param currentFinishTime
+     * @param underestimates
+     * @param statesExplored
+     * @param memory
+     */
     public void updateStats(boolean isFinished, double pvalue, int currentThread, int currentFinishTime, int underestimates, int statesExplored, int memory) {
 
         String currentThreadText = currentThread == 0 ? "Main" : currentThread + "";
