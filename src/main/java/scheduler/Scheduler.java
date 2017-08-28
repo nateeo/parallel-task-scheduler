@@ -31,7 +31,7 @@ public class Scheduler {
     private static PSManager _psManager;
 
     // for visualisation
-    public static int DELAY_TIME = 5000;
+    public static int DELAY_TIME = 4000;
     public static int REFRESH_TIME = 2000;
     public static PSManagerGroup _group;
 
