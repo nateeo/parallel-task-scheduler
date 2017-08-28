@@ -3,7 +3,6 @@ package frontend;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import javafx.event.ActionEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -21,9 +20,12 @@ import java.util.*;
  */
 public class GraphDrawer {
 
+    // Data kept to update information during run time
     private Graph _graph;
     private Map<Integer, StackPane> shapeMap = new HashMap<>();
     private Map<Integer, Circle> circleMap = new HashMap<>();
+
+    // Fields inherited from the parent pane
     private AnchorPane _graphPane;
     private double _circleSize;
 
@@ -101,12 +103,14 @@ public class GraphDrawer {
         StackPane stackPane = new StackPane();
         Text text = new Text(node.getName());
 
+        // Setting up the circle's size and color
         circle.setCenterX(_circleSize);
         circle.setCenterY(_circleSize);
         circle.setRadius(_circleSize/2);
         circle.setFill(Color.WHITE);
         circle.setStroke(Color.BLACK);
 
+        // Adding text to the circle shape over a StackPane.
         text.setBoundsType(TextBoundsType.VISUAL);
         stackPane.getChildren().addAll(circle,text);
         _graphPane.getChildren().add(stackPane);
@@ -118,6 +122,7 @@ public class GraphDrawer {
 
     public void drawEdges(StackPane from, StackPane to) {
 
+        // Coordinates for all the edges.
         double beginningOfLineX = from.getLayoutX() + _circleSize/2;
         double beginningOfLineY = from.getLayoutY() + _circleSize/2;
         double endOfLineX = to.getLayoutX() + _circleSize/2;
@@ -131,6 +136,7 @@ public class GraphDrawer {
         Line leftArrow = new Line(endOfLineX,endOfLineY, endOfLineX - 5, endOfLineY - 5);
         leftArrow.setStroke(Color.BLACK);
 
+        // Drawing the final edges onto the graph.
         _graphPane.getChildren().add(0,line);
         _graphPane.getChildren().add(0,rightArrow);
         _graphPane.getChildren().add(0,leftArrow);
