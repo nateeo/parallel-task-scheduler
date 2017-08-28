@@ -200,6 +200,45 @@ public class Scheduler {
         if (!_parallelization){
             ps = _priorityQueue.getCurrentPartialSolution();
         }
+        // done
+        _group._override = true;
+        final PartialSolution finalPS = ps;
+        if (_parallelization && _visualize) {
+            new Thread() {
+                @Override
+                public void run() {
+                    int currentIndex = _group.currentIndex;
+                    PSManager currentManager = _group.managers.get(currentIndex);
+                    TimerTask task = new TimerTask() {
+                        public void run() {
+                            if (_stopTimer) this.cancel();
+                            if (_listener != null) {
+                                _listener.update(true, finalPS, currentManager._nodeVisitCounts, currentManager._memory, finalPS._cost,
+                                        finalPS._latestSlot.getFinish(), currentManager._statesExplored, currentManager._loaded);
+                            }
+                        }
+                    };
+                    new Timer().schedule(task, 1000, 2000);
+                }
+            }.start();
+        } else if (_visualize) {
+            new Thread() {
+                @Override
+                public void run() {
+                    TimerTask task = new TimerTask() {
+                        public void run() {
+                            if (_stopTimer) this.cancel();
+                            if (_listener != null) {
+                                _listener.update(true, finalPS, _psManager._nodeVisitCounts, _psManager._memory, finalPS._cost,
+                                        finalPS._latestSlot.getFinish(), _psManager._statesExplored, _psManager._loaded);
+                            }
+                        }
+                    };
+                    new Timer().schedule(task, 1000, 2000);
+                }
+            }.start();
+        }
+
         return ps;
     }
 
