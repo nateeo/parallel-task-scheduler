@@ -48,9 +48,6 @@ public class PSPriorityQueue {
     public boolean hasNext() {
         if (!_queue.isEmpty()) {
             _currentPartialSolution = _queue.poll();
-//            System.out.println("current partial solution has " + _currentPartialSolution._nodes.size());
-//            System.out.println("totalNodes: " + _totalNodes);
-//            System.out.println("HAS NEXT??? " + (_currentPartialSolution._nodes.size() != _totalNodes));
             return _currentPartialSolution._nodes.size() != _totalNodes;
         } else {
             return false;

@@ -129,7 +129,6 @@ public class Graph {
         _bottomLevelWork = bottomLevels;
     }
 
-    // TODO string representation for duplicate state removal
     @Override
     public String toString() {
         String nodes = "";
