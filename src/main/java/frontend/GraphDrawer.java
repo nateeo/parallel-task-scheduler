@@ -14,6 +14,11 @@ import javafx.scene.text.TextBoundsType;
 
 import java.util.*;
 
+/**
+ * This class utilises JavaFX to create a visualisation heat map of the graph.
+ * Calculates position to place nodes on the graph.
+ * Author: Samule Li
+ */
 public class GraphDrawer {
     private Graph _graph;
     private Map<Integer, StackPane> shapeMap = new HashMap<>();
@@ -122,20 +127,6 @@ public class GraphDrawer {
         _graphPane.getChildren().add(0,leftArrow);
     }
 
-    public void handleColorChange(ActionEvent action) {
-        System.out.println(shapeMap.keySet());
-        circleMap.get(0).setFill(Color.RED);
-        //circleMap.get(16).setFill(Color.RED);
-        //circleMap.get(2).setFill(Color.RED);
-        //circleMap.get(18).setFill(Color.RED);
-        //circleMap.get(4).setFill(Color.RED);
-        //circleMap.get(6).setFill(Color.RED); // 9
-        //circleMap.get(8).setFill(Color.RED); // 1
-        //circleMap.get(10).setFill(Color.RED);
-        //circleMap.get(12).setFill(Color.RED);
-        //circleMap.get(14).setFill(Color.RED);
-    }
-
     // This function is used to calculate the levels of each node, depending on the maximum level of it's parent
     // nodes. If the node has two parent nodes at levels 1 and 3, the level of the current node would be equivalent
     // to 4.
@@ -205,6 +196,7 @@ public class GraphDrawer {
         return returnList;
     }
 
+    // Used to increase or decrease saturation of nodes
     public void updateHeatMap(double[] saturationValues) {
         for(int i = 0; i < saturationValues.length; i++) {
             circleMap.get(i + 1).setFill(Color.hsb(5, saturationValues[i],1));
