@@ -185,6 +185,7 @@ public class Scheduler {
                 //then add to the priority queue based on conditions.
                 _psManager.generateChildren(ps, _priorityQueue);
             } else {
+                _parallelization = true;
                 if (_visualize) {
                     _group = new PSManagerGroup(_cores);
                     updater.cancel(); // kill the main queue updater
